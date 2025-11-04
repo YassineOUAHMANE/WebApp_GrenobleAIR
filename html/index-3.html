@@ -56,6 +56,7 @@
 
         tiles_pr = Promise.all(tile().map(async d => {
             d.layers = new VectorTile(new Pbf(await d3.buffer(`https://tile.nextzen.org/tilezen/vector/v1/256/all/${d[2]}/${d[0]}/${d[1]}.mvt?api_key=${API_KEY}`))).layers;
+            console.log(d)
             return d;
         }))
 
@@ -64,7 +65,7 @@
                 //console.log(tiles)
                 map = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">${tiles.map(d => `
                     <path fill="#eee" d="${path(geojson(d, d.layers.water, d => !d.properties.boundary))}"></path>
-                    <path fill="none" stroke="#aaa" d="${path(geojson(d, d.layers.water, d => d.properties.boundary))}"></path>
+                    <path fill="none" stroke="#34ebe5" d="${path(geojson(d, d.layers.water, d => d.properties.boundary))}"></path>
                     <path fill="none" stroke="#000" stroke-width="0.75" d="${path(geojson(d, d.layers.roads))}"></path>
                     `)}
                     </svg>`
