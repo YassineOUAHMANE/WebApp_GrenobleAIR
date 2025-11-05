@@ -18,100 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-tile@1"></script>
     <script src="https://d3js.org/d3-dsv.v2.min.js"></script>
     <script src="https://d3js.org/d3-fetch.v2.min.js"></script>
-    
-    <script>
-        height = 600;
-        width = 954;
 
-        const minZoom = 19, maxZoom = 24;
+    <script src="https://unpkg.com/pbf@3.0.5/dist/pbf.js"></script>
+    <script src="https://bundle.run/@mapbox/vector-tile@1.3.1"></script>
 
-        //Create the svg
-        const svg = d3.select("#map")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", [0, 0, width, height]);
-
-        //Create the projection
-        const projection = d3.geoMercator()
-            .center([5.7249,45.1885])
-            .scale(Math.pow(2, minZoom) / (2 * Math.PI))
-            .translate([width / 2, height / 2]).precision(0);
-
-        // Initial transform
-        let transform = d3.zoomIdentity
-            .translate(width >> 1, height >> 1)
-            .scale(Math.pow(2, minZoom) / (2 * Math.PI));
-
-        // Create the zoom behavior
-        const zoom = d3.zoom()
-            .scaleExtent([Math.pow(2, minZoom) / (2 * Math.PI), Math.pow(2, maxZoom) / (2 * Math.PI)])
-            .extent([[0, 0], [width, height]])
-            .on("zoom", (event) => zoomed(event.transform));
-
-        // Create the tile generator
-        const tile = d3.tile()
-            .size([width, height])
-            .scale(projection.scale() * 2 * Math.PI)
-            .translate(projection([0, 0]));
-
-        // Apply zoom behavior to the SVG
-        svg.call(zoom)
-            .call(zoom.transform, transform);
-
-        
-
-        // Function to handle zoom events
-        function zoomed(t) {
-            console.log("Zoomed", t)
-        }
-
-        path = d3.geoPath(projection)
-
-        function filter({ features }, test) {
-            return { type: "FeatureCollection", features: features.filter(test) };
-        };
-
-        function geojson([x, y, z], layer, filter = () => true) {
-            console.log(x,y,z,layer,filter)
-            if (!layer) return;
-            const features = [];
-            for (let i = 0; i < layer.length; ++i) {
-                const f = layer[i];//layer.feature(i).toGeoJSON(x, y, z);
-                if (filter.call(null, f, i, features)) features.push(f);
-            }
-            return { type: "FeatureCollection", features };
-        }
-
-        async function fetchTiles(){
-            const tiles = await Promise.all(tile().map(async d => {
-                const res = await fetch(`/geojson/output-${d[2]}-${d[0]}-${d[1]}.geojson`);
-                d.layers = await res.json();
-                console.log(d)
-                return d;
-            }))
-            tiles.map(d => {
-                svg.append('path')
-                    .attr('fill', '#eee')
-                    .attr('d', path(geojson(d, d.layers.water, d => !d.properties.boundary)))
-                
-                svg.append('path')
-                    .attr('fill', 'none')
-                    .attr('stroke', '#34ebe5')
-                    .attr('d', path(geojson(d, d.layers.water, d => d.properties.boundary)))
-                
-                svg.append('path')
-                    .attr('fill', 'none')
-                    .attr('stroke', '#000')
-                    .attr('stroke-width', '0.75')
-                    .attr('d', path(geojson(d, d.layers.roads)))
-            })
-        }
-
-        fetchTiles();
-    </script>
-
-
+    <script src="js/tiles-local.js"></script>
+    <script src="js/map.js"></script>
 </body>
-
 </html>
