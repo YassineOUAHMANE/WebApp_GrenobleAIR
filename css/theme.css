@@ -1,0 +1,11 @@
+/* Light theme */
+html[data-theme="light"] {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --text: #1b1e26;
+  --muted: #4f5561;
+  --brand: #2b5cff;
+  --accent: #15a874;
+  --danger: #d83b3b;
+  color-scheme: light;
+}
