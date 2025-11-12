@@ -5,6 +5,7 @@ const routes = {
   'zfe':       () => import('./views/zfeView.js').catch(() => import('./views/aboutView.js')),
   'irve':      () => import('./views/irveView.js').catch(() => import('./views/aboutView.js')),
   'qualite-air': () => import('./views/qualiteAirView.js').catch(() => import('./views/aboutView.js')),
+  'lignes': () => import('./views/lignesTransportView.js'),
   'about':     () => import('./views/aboutView.js')
 };
 
