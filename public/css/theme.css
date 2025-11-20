@@ -1,0 +1,28 @@
+/* Dark theme (default) */
+html[data-theme="dark"] {
+  --primary: #4f7cff;
+  --secondary: #29c18c;
+  --accent: #ffd166;
+  --danger: #ff6b6b;
+  --bg-dark: #0f1419;
+  --bg-light: #1a1f2e;
+  --card-bg: #252b3a;
+  --text-primary: #ffffff;
+  --text-secondary: #a8b2d1;
+  --border: rgba(79, 124, 255, 0.1);
+}
+
+/* Light theme */
+html[data-theme="light"] {
+  --primary: #2b5cff;
+  --secondary: #15a874;
+  --accent: #ffa500;
+  --danger: #d83b3b;
+  --bg-dark: #f6f7fb;
+  --bg-light: #ffffff;
+  --card-bg: #f0f2f8;
+  --text-primary: #1b1e26;
+  --text-secondary: #4f5561;
+  --border: rgba(43, 92, 255, 0.1);
+  color-scheme: light;
+}
