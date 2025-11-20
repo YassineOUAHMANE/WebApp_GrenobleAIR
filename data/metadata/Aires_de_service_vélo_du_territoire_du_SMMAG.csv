@@ -1,13 +1,13 @@
 id,geo_point_2d,nom,rue,commune,pose,ligne_cv,service,type,code,epci
-1,"45.17908,5.72035","Parc Pompidou","11 Rue Général Mangin",Grenoble,2019,2,"Pompe, plan orienté, banc de repos.",veloservice,0,LaMetro
-2,"45.18794,5.72648",Georgette,"1 Cours Lafontaine",Grenoble,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,1,LaMetro
-3,"45.2054,5.7646","Aiguinards - Hexagone","81 rue des Aiguinards",Meylan,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,2,LaMetro
-4,"45.21159,5.79129","Les Bealières","chemin des Bealières",Meylan,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,3,LaMetro
-5,"45.18742,5.71617","Mathilde Péri - Estacade","28 rue Joseph Rey",Grenoble,2020,2,"Pompe, plan orienté, banc de repos.",veloservice,4,LaMetro
-6,"45.15427,5.71215",Monmousseau,"6 Avenue Victor Hugo",Echirolles,2020,3,"Pompe, plan orienté, banc de repos.",veloservice,5,LaMetro
-7,"45.12475,5.69798","Winsen Luhe","3 Cours Saint André","Le Pont-de-Claix",2020,3,"Pompe, plan orienté, banc de repos.",veloservice,6,LaMetro
-8,"45.13784,5.7024","Les Minotiers","94 Cours Saint André","Le Pont-de-Claix",2020,3,"Pompe, plan orienté, banc de repos.",veloservice,7,LaMetro
-9,"45.1961,5.75237","Antoine Biboud","Passage Ricou","La Tronche",2020,1,"Pompe, plan orienté, banc de repos.",veloservice,8,LaMetro
-10,"45.18036,5.76645","Elsa Triolet","213 Av. Ambroise Croizat",Saint-Martin-d'Hères,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,9,LaMetro
-11,"45.19113,5.76908",Diderot,"73 Rue des Universités",Saint-Martin-d'Hères,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,10,LaMetro
-12,"45.19534,5.71353","Annie Londonderry","Rue Emile Gueymard",Grenoble,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,11,LaMetro
+1,"45.17908,5.72035",Parc Pompidou,11 Rue Général Mangin,Grenoble,2019,2,"Pompe, plan orienté, banc de repos.",veloservice,0,LaMetro
+2,"45.18794,5.72648",Georgette,1 Cours Lafontaine,Grenoble,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,1,LaMetro
+3,"45.2054,5.7646",Aiguinards - Hexagone,81 rue des Aiguinards,Meylan,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,2,LaMetro
+4,"45.21159,5.79129",Les Bealières,chemin des Bealières,Meylan,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,3,LaMetro
+5,"45.18742,5.71617",Mathilde Péri - Estacade,28 rue Joseph Rey,Grenoble,2020,2,"Pompe, plan orienté, banc de repos.",veloservice,4,LaMetro
+6,"45.15427,5.71215",Monmousseau,6 Avenue Victor Hugo,Echirolles,2020,3,"Pompe, plan orienté, banc de repos.",veloservice,5,LaMetro
+7,"45.12475,5.69798",Winsen Luhe,3 Cours Saint André,Le Pont-de-Claix,2020,3,"Pompe, plan orienté, banc de repos.",veloservice,6,LaMetro
+8,"45.13784,5.7024",Les Minotiers,94 Cours Saint André,Le Pont-de-Claix,2020,3,"Pompe, plan orienté, banc de repos.",veloservice,7,LaMetro
+9,"45.1961,5.75237",Antoine Biboud,Passage Ricou,La Tronche,2020,1,"Pompe, plan orienté, banc de repos.",veloservice,8,LaMetro
+10,"45.18036,5.76645",Elsa Triolet,213 Av. Ambroise Croizat,Saint-Martin-d'Hères,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,9,LaMetro
+11,"45.19113,5.76908",Diderot,73 Rue des Universités,Saint-Martin-d'Hères,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,10,LaMetro
+12,"45.19534,5.71353",Annie Londonderry,Rue Emile Gueymard,Grenoble,2022,2,"Pompe, plan orienté, banc de repos.",veloservice,11,LaMetro
