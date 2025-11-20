@@ -1,2 +1,2 @@
  # Run the server
- npx serve -l 5173
+Run ./start-server.sh
