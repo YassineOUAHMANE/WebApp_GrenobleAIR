@@ -1,6 +1,0 @@
-type,geo_point_2d,id,nom,adresse,code_postal,commune,code,epci
-gnv,"45.19386662478724,5.709333384269477",29,Station GEG (limitée aux véhicules jusqu’à 12 tonnes),49 rue Félix-Esclangon,38000,Grenoble,0,LaMetro
-gnv,"45.199472,5.758889",30,Station GEG,Chemin de la Carronerie,38700,La Tronche,1,LaMetro
-gnv,"45.23405,5.668465",31,Station GEG,"56, avenue de l’Ile Brune",38120,Saint-Egrève,2,LaMetro
-gnv,"45.17301184784404,5.717605757165029",32,Station Gnvert,Rue des Alliés,38100,Grenoble,3,LaMetro
-gnv,"45.197863,5.780686",43,Station Total Petite-Taillat,N87 (Rocade Sud),38240,Meylan,4,LaMetro
