@@ -1,6 +1,6 @@
 import { createRouter } from './router.js';
 
-const bus = new EventTarget();            // simple event bus
+// const bus = new EventTarget();            // simple event bus
 const state = Object.seal({               // global, extend as needed
   metadata: null,
   lastRoute: null,
@@ -53,7 +53,7 @@ async function bootstrap() {
 
   // Router
   const appEl = document.getElementById('app');
-  const router = createRouter(appEl, { state, bus });
+  const router = createRouter(appEl, { state });
 
   // First navigation (defaults to dashboard)
   router.start();

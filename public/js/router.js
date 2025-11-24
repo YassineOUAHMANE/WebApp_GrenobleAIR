@@ -52,9 +52,22 @@ export function createRouter(mountEl, ctx) {
   }
 
   return {
-    start() {
+    async start() {
       window.addEventListener('hashchange', navigate);
       if (!location.hash) location.hash = '#/dashboard';
+
+      //Add links in navigation section
+      for(const [route, loader] of Object.entries(routes)){
+        try {
+            const load = (await loader()).default;
+            const el = document.createElement('a')
+            el.setAttribute('href', `#/${route}`);
+            el.innerHTML = load.linkTitle || load.title;
+            document.querySelector('.topnav').append(el)
+        }catch(e){
+            console.error(e)
+        }
+      }
       navigate();
     }
   };

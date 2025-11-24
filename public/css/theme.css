@@ -10,6 +10,7 @@ html[data-theme="dark"] {
   --text-primary: #ffffff;
   --text-secondary: #a8b2d1;
   --border: rgba(79, 124, 255, 0.1);
+  color-scheme: dark;
 }
 
 /* Light theme */

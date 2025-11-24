@@ -2,19 +2,7 @@
  * dashboardView.js — Vue d'accueil avec KPIs animés
  * Statistiques clés, animations entrantes, données en temps réel
  */
-import { parseCSV } from '../utils/csv.js';
-
-const loadCSV = async (path) => {
-  try {
-    const res = await fetch(path);
-    if (!res.ok) return [];
-    const text = await res.text();
-    return parseCSV(text);
-  } catch (err) {
-    console.warn(`Failed to load ${path}:`, err);
-    return [];
-  }
-};
+import { loadCSV } from '../utils/csv.js';
 
 const animateCounter = (element, finalValue, duration = 1000) => {
   let currentValue = 0;

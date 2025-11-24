@@ -2,6 +2,7 @@ import { fetchCSV } from '../utils/fetchData.js';
 import { featureCollectionFromRows, addGeoJSON, fitToGeoJSON, addCircleMarkersFromPointCol } from '../utils/mapUtils.js';
 
 export default {
+  linkTitle: 'ZFE',
   title: 'Zone à Faibles Émissions (ZFE)',
   async mount(root) {
     // --- Layout

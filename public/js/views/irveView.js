@@ -1,6 +1,4 @@
-import { parseCSV } from '../utils/csv.js';
-
-const title = 'IRVE';
+import { loadCSV, parseCSV } from '../utils/csv.js';
 
 async function loadData() {
   const files = [
@@ -9,16 +7,14 @@ async function loadData() {
     './data/irve/irve_smmag.csv',
     './data/irve/irve_pays_voironnais.csv'
   ];
-  let all = [];
-  for (const file of files) {
-    try {
-      const resp = await fetch(file);
-      if (!resp.ok) continue;
-      all = all.concat(parseCSV(await resp.text()));
-    } catch (e) {
-      console.error('Load error:', e);
+  const all = [];
+  await Promise.all(files.map(async file => {
+    const data = await loadCSV(file);
+    console.log(data)
+    if(data.length > 0){
+        all.push(...data);
     }
-  }
+  }))
   return all.filter(d => {
     const lat = parseFloat(d.consolidated_latitude);
     const lon = parseFloat(d.consolidated_longitude);
@@ -32,7 +28,7 @@ async function loadData() {
 }
 
 export default {
-  title,
+  title: 'Véhicules Électriques',
   async mount(root) {
     root.innerHTML = '<p>⏳ Chargement...</p>';
     try {

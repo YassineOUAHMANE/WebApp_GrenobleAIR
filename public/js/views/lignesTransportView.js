@@ -3,7 +3,8 @@ import { fetchCSV } from '../utils/fetchData.js';
 import { featureCollectionFromRows } from '../utils/mapUtils.js';
 
 export default {
-  title: 'Lignes de transport (TAG) — carte réelle',
+    linkTitle: 'TAG',
+  title: 'Lignes de transport en commun (TAG)',
   async mount(root) {
     const d3 = window.d3;
     root.innerHTML = `

@@ -2,10 +2,10 @@ import { fetchCSV } from '../utils/fetchData.js';
 import { lineChart, simpleTable } from '../utils/chartUtils.js';
 
 export default {
-  title: 'Stationnement',
+  title: 'À propos',
   async mount(root) {
     root.innerHTML = `
-      <div class="span-12 card"><h1>Stationnement</h1></div>
+      <div class="span-12 card"><h1>À propos</h1></div>
       <div class="span-6 card">
         <h2>Occupation moyenne</h2>
         <div id="chart-occup" class="chart"></div>
