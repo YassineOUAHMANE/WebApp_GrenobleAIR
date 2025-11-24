@@ -21,15 +21,15 @@ Slide pour voir l'évolution de ces différents critères dans le Temps
 
 ## Liste visualisation :
 
-- lignes tram/bus : 
-- pistes cyclables : 
-- bornes recharge voiture électrique :
-- parkings voiture auto-partage (citiz) :
-- disponibilité voiture auto-partage
-- parkings vélo/trotinette électrique
-- disponibilité vélo/trotinette électrique
-- arceaux vélo
-- qualité de l'aire (indice ATMO)
-- parkings voiture
-- comptage passages voiture/vélo (flux)
-- points de location M'velo
+- lignes tram/bus : https://grenoble-backoffice.data4citizen.com/dataset/lignes-de-transport-du-reseau-tag
+- pistes cyclables : https://grenoble-backoffice.data4citizen.com/dataset/pcm
+- bornes recharge voiture électrique : https://grenoble-backoffice.data4citizen.com/dataset/bornes-de-recharge-pour-vehicules-electriques
+- parkings voiture auto-partage (citiz) : https://grenoble-backoffice.data4citizen.com/dataset/emplacements-cite-lib
+- disponibilité voiture auto-partage : 
+- parkings vélo/trotinette électrique : https://grenoble-backoffice.data4citizen.com/dataset/parkings
+- disponibilité vélo/trotinette électrique : https://grenoble-backoffice.data4citizen.com/dataset/trottinettes-en-libre-service & https://grenoble-backoffice.data4citizen.com/dataset/velos-en-libre-service
+- arceaux vélo : https://grenoble-backoffice.data4citizen.com/dataset/les_arceaux_a_velo_sur_le_territoire_de_grenoble
+- qualité de l'aire (indice ATMO) : https://www.data.gouv.fr/datasets/indice-atmo ou https://www.atmo-auvergnerhonealpes.fr
+- parkings voiture : https://grenoble-backoffice.data4citizen.com/dataset/parkings & https://grenoble-backoffice.data4citizen.com/dataset/disponibilite-temps-des-parkings & https://grenoble-backoffice.data4citizen.com/dataset/places-disponibles-en-temps-reel-des-parkings-relais-p-r
+- comptage passages voiture/vélo (flux) : https://grenoble-backoffice.data4citizen.com/dataset/resultats_de_l_observatoire_des_comptages_de_mobilite
+- points de location M'velo : https://grenoble-backoffice.data4citizen.com/dataset/points_de_location_m_velo_
