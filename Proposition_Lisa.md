@@ -17,3 +17,19 @@ Slide pour voir l'évolution de ces différents critères dans le Temps
 
 --> destiné aux grenoblois & législateurs (mairie, métro)
 --> pour savoir comment ils peuvent se déplacer, impact de leur mode de déplacement (impact qualité de l'air l'hiver)
+
+
+## Liste visualisation :
+
+- lignes tram/bus : 
+- pistes cyclables : 
+- bornes recharge voiture électrique :
+- parkings voiture auto-partage (citiz) :
+- disponibilité voiture auto-partage
+- parkings vélo/trotinette électrique
+- disponibilité vélo/trotinette électrique
+- arceaux vélo
+- qualité de l'aire (indice ATMO)
+- parkings voiture
+- comptage passages voiture/vélo (flux)
+- points de location M'velo
