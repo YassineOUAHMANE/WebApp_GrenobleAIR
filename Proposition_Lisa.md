@@ -38,7 +38,7 @@ Slide pour voir l'évolution de ces différents critères dans le Temps
 # Début rédaction justification
 
 L'objectif de notre projet est de proposer une application interactive, permettant aux Grenoblois, touristes, ainsi qu'aux décideurs locaux (mairie, métropole, ...) de mieux comprendre comment ils peuvent se déplacer à Grenoble, comment sont équipées les différentes zones de la ville, et quels impacts les différentes mobilitées peuvent avoir.
-Pour réaliser notre projet, nous allons donc usiliser une carte avec différents réseaux et des icônes clicables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.
+Pour réaliser notre projet, nous allons donc utiliser une carte avec différents réseaux et des icônes clicables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.
 Voici la justification de nos choix de visualisation :
 
 ## 1 - Carte
@@ -87,6 +87,6 @@ Ce type de diagramme est efficace pour représenter des profils multidimensionne
 
 
 
-## - Pistes d'amélioration
+## 4 - Pistes d'amélioration
 
 
