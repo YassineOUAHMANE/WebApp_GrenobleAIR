@@ -247,27 +247,6 @@ section.grid {
     border-right: 1px solid var(--fg-1);
 }
 
-/* .kpi::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s ease;
-} */
-
-/* .kpi:hover::before { transform: scaleX(1); } */
-
-/* .kpi:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(79, 124, 255, 0.2);
-  border-color: rgba(79, 124, 255, 0.4);
-} */
-
 .kpi-icon {
     font-size: 2rem;
     margin-bottom: 0.5rem;
@@ -284,10 +263,6 @@ section.grid {
 .kpi .value {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 900;
-    /* background: linear-gradient(135deg, var(--primary), var(--secondary)); */
-    /* -webkit-background-clip: text; */
-    /* -webkit-text-fill-color: transparent; */
-    /* background-clip: text; */
     animation: fadeIn 0.8s ease;
 }
 
