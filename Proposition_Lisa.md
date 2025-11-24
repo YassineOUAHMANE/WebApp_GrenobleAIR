@@ -14,3 +14,6 @@ Couleur sur la carte pour voir les zones +/- polluées.
 Slide pour voir l'évolution de ces différents critères dans le Temps
 
 --> Ou est-ce qu'on circule le plus et comment, est-ce que la qualité de l'air est bonne ou mauvaise dans ces zones, comment sont équipés les différentes zones de la ville, qu'est-ce qui encourage ou freine les mobilités plus écologiques.
+
+--> destiné aux grenoblois & législateurs (mairie, métro)
+--> pour savoir comment ils peuvent se déplacer, impact de leur mode de déplacement (impact qualité de l'air l'hiver)
