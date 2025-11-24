@@ -3,9 +3,13 @@ import { lineChart, simpleTable } from '../utils/chartUtils.js';
 
 export default {
   title: 'À propos',
+  icon: 'info',
   async mount(root) {
     root.innerHTML = `
-      <div class="span-12 card"><h1>À propos</h1></div>
+    <h2 class="title">À propos</h2>
+    <p></p>
+        
+    <section class="grid">
       <div class="span-6 card">
         <h2>Occupation moyenne</h2>
         <div id="chart-occup" class="chart"></div>
@@ -14,6 +18,7 @@ export default {
         <h2>Dernières mesures</h2>
         <div id="table-last"></div>
       </div>
+    </section>
     `;
 
     const cleanups = [];

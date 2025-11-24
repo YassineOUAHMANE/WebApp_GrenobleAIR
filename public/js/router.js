@@ -1,3 +1,5 @@
+import { icons } from './utils/icons.js'; 
+
 const routes = {
   'dashboard': () => import('./views/dashboardView.js'),
   'parking':   () => import('./views/parkingView.js'),
@@ -23,20 +25,24 @@ export function createRouter(mountEl, ctx) {
     const { name, params } = parseRoute();
     if (name === current.name) return;
 
-    // unmount previous
+    //Make the current link active
+    document.querySelectorAll('.topnav > a').forEach(i => i.classList.remove('active'));
+    document.querySelector(`.topnav > a[href="#/${name}"`).classList.add('active');
+
+    // unmount previous view
     if (typeof current.unmount === 'function') {
       try { current.unmount(); } catch {}
       current.unmount = null;
     }
 
-    // load & mount new
+    // load & mount new view
     const loader = routes[name] || routes['dashboard'];
     try {
       const mod = await loader();
       const view = mod.default;
       mountEl.innerHTML = ''; // clear
       const section = document.createElement('section');
-      section.className = 'grid';
+    //   section.className = 'grid';
       mountEl.appendChild(section);
 
       const maybeCleanup = await view.mount(section, { ...ctx, params });
@@ -62,7 +68,7 @@ export function createRouter(mountEl, ctx) {
             const load = (await loader()).default;
             const el = document.createElement('a')
             el.setAttribute('href', `#/${route}`);
-            el.innerHTML = load.linkTitle || load.title;
+            el.innerHTML = (icons[load.icon] || icons.info) + `\n<p>${(load.linkTitle || load.title)}</p>`;
             document.querySelector('.topnav').append(el)
         }catch(e){
             console.error(e)

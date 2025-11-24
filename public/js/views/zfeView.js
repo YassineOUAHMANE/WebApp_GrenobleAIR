@@ -4,13 +4,14 @@ import { featureCollectionFromRows, addGeoJSON, fitToGeoJSON, addCircleMarkersFr
 export default {
   linkTitle: 'ZFE',
   title: 'Zone à Faibles Émissions (ZFE)',
+  icon: 'car',
   async mount(root) {
     // --- Layout
     root.innerHTML = `
-      <div class="span-12 card">
-        <h1>ZFE — périmètre, axes, voies, aires & infrastructures</h1>
-        <p class="muted">Active/désactive les couches et explore les règles par voie.</p>
-      </div>
+    <h2 class="title">ZFE — périmètre, axes, voies, aires & infrastructures</h2>
+    <p>Activez/désactivez les couches et explorez les règles par voie.</p>
+        
+    <section class="grid">
 
       <div class="span-3 card" id="controls">
         <h3>Calques</h3>
@@ -41,6 +42,7 @@ export default {
         <h2>Infrastructures — répartition par type</h2>
         <div id="infra-bars" class="chart"></div>
       </div>
+    </grid>
     `;
 
     // --- Init Leaflet

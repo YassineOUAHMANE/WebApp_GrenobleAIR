@@ -1,7 +1,7 @@
 import { createRouter } from './router.js';
+import { icons } from './utils/icons.js';
 
-// const bus = new EventTarget();            // simple event bus
-const state = Object.seal({               // global, extend as needed
+const state = Object.seal({               
   metadata: null,
   lastRoute: null,
   theme: (localStorage.getItem('theme') || 'dark')
@@ -13,6 +13,7 @@ function setTheme(next) {
   document.documentElement.style.colorScheme = next;
   localStorage.setItem('theme', next);
   state.theme = next;
+  updateThemeButton();
 }
 
 function toggleTheme() {
@@ -20,23 +21,18 @@ function toggleTheme() {
   setTheme(nextTheme);
 }
 
-// Exposer globalement pour onclick HTML
-window.toggleTheme = toggleTheme;
-
 function initThemeToggle() {
-  // Attendre que le DOM soit complètement prêt
   const themeBtn = document.getElementById('themeToggle');
-  console.log('Looking for themeToggle button:', themeBtn);
-  
   if (themeBtn) {
     themeBtn.addEventListener('click', (e) => {
       console.log('Theme button clicked!');
       toggleTheme();
     });
-    console.log('Theme button initialized');
-  } else {
-    console.log('Theme button NOT found!');
   }
+}
+
+function updateThemeButton(){
+    document.getElementById('themeToggle').innerHTML = state.theme == 'dark' ? icons.sun : icons.moon;
 }
 
 function wireNavActive(route) {
@@ -45,8 +41,9 @@ function wireNavActive(route) {
   });
 }
 
-async function bootstrap() {
+async function init() {
   setTheme(state.theme);
+  updateThemeButton();
 
   // Initialize theme toggle button FIRST before everything else
   initThemeToggle();
@@ -72,4 +69,4 @@ async function bootstrap() {
     .catch(() => {});
 }
 
-bootstrap();
+init();

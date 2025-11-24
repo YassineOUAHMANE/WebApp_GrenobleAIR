@@ -29,6 +29,7 @@ async function loadData() {
 
 export default {
   title: 'Véhicules Électriques',
+  icon: 'ev',
   async mount(root) {
     root.innerHTML = '<p>⏳ Chargement...</p>';
     try {
@@ -36,10 +37,10 @@ export default {
       const totalPoints = data.reduce((s, d) => s + d.pdc, 0);
       
       root.innerHTML = `
-        <div class="span-12" style="background: linear-gradient(135deg, rgba(255,209,102,0.1), rgba(255,165,0,0.1)); border-radius: 16px; padding: 2rem; border: 1px solid rgba(255,209,102,0.2); margin-bottom: 1rem;">
-          <h1 style="margin-top: 0; font-size: 2.2rem;">⚡ IRVE - Stations de Recharge</h1>
-          <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Carte interactive des stations de recharge électrique</p>
-        </div>
+    <h2 class="title">⚡ IRVE - Stations de Recharge</h2>
+    <p>Carte interactive des stations de recharge électrique</p>
+        
+    <section class="grid">
         <div class="span-12">
           <div class="kpis">
             <div class="kpi">
@@ -63,7 +64,8 @@ export default {
           <h3 style="margin-top: 0;">📍 Carte Interactive</h3>
           <div id="map" style="height:600px;width:100%;border-radius:12px;overflow:hidden;margin-top:1rem;"></div>
         </div>
-      `;
+    </section>
+    `;
       
       setTimeout(() => {
         if (window.L) {

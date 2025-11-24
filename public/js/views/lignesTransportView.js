@@ -5,14 +5,14 @@ import { featureCollectionFromRows } from '../utils/mapUtils.js';
 export default {
     linkTitle: 'TAG',
   title: 'Lignes de transport en commun (TAG)',
+  icon: 'publicTransport',
   async mount(root) {
     const d3 = window.d3;
     root.innerHTML = `
-      <div class="span-12 card">
-        <h1>Lignes de transport — Réseau TAG</h1>
-        <p class="muted">Fond de carte OSM (Leaflet), filtres Tram/Bus, recherche par code, stats & longueurs.</p>
-      </div>
-
+    <h2 class="title">Lignes de transport — Réseau TAG</h2>
+    <p>Fond de carte OSM (Leaflet), filtres Tram/Bus, recherche par code, stats & longueurs.</p>
+        
+    <section class="grid">
       <div class="span-3 card" id="panel">
         <h3>Filtres</h3>
         <label><input type="checkbox" id="chk-tram" checked> Tram</label><br/>
@@ -32,6 +32,7 @@ export default {
         <h2>Longueur totale par mode</h2>
         <div id="bar-wrap" class="chart"></div>
       </div>
+    </section>
     `;
 
     const cleanups = [];

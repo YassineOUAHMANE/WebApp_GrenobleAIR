@@ -7,15 +7,14 @@ import { loadCSV } from "../utils/csv.js";
 
 export default {
   title: 'Stationnement',
+  icon: 'parking',
   async mount(root) {
     const d3 = window.d3;
     
     root.innerHTML = `
-      <div class="span-12" style="background: linear-gradient(135deg, rgba(79,124,255,0.1), rgba(41,193,140,0.1)); border-radius: 16px; padding: 2rem; border: 1px solid rgba(79,124,255,0.2); margin-bottom: 1rem; animation: fadeIn 0.6s ease;">
-        <h1 style="margin-top: 0; font-size: 2.2rem;">🅿️ Stationnement</h1>
-        <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Analyse détaillée des parkings - 68 parkings, 12,022 places</p>
-      </div>
-
+        <h2 class="title">🅿️ Stationnement</h2>
+        <p>Analyse détaillée des parkings - 68 parkings, 12,022 places</p>
+        <section class="grid">
       <div class="span-12 card animate-fade-in" style="animation-delay:0.1s">
         <h2 style="margin-top:0">📊 Vue d'ensemble</h2>
         <div class="kpis" id="kpis-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
@@ -83,6 +82,7 @@ export default {
         </div>
         <div id="bubble-chart" style="flex: 1; min-height: 600px; border-radius: 8px; border: 1px solid rgba(79,124,255,0.2); overflow: hidden; background: linear-gradient(135deg, rgba(79,124,255,0.05), rgba(41,193,140,0.05));"></div>
       </div>
+      </section>
     `;
 
     const animateCounter = (element, finalValue, duration = 1000) => {

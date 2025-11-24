@@ -7,14 +7,15 @@ import { loadCSV } from "../utils/csv.js";
 
 export default {
   title: 'Mobilité Douce',
+  icon: 'bike',
   async mount(root) {
     const d3 = window.d3;
     
     root.innerHTML = `
-      <div class="span-12" style="background: linear-gradient(135deg, rgba(41,193,140,0.1), rgba(79,124,255,0.1)); border-radius: 16px; padding: 2rem; border: 1px solid rgba(41,193,140,0.2); margin-bottom: 1rem; animation: fadeIn 0.6s ease;">
-        <h1 style="margin-top: 0; font-size: 2.2rem;">🚴 Mobilité Douce - Comptages Vélo</h1>
-        <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Évolution des comptages cyclistes 2019-2022 - 24 capteurs permanents</p>
-      </div>
+    <h2 class="title">🚴 Mobilité Douce - Comptages Vélo</h2>
+    <p>Évolution des comptages cyclistes 2019-2022 - 24 capteurs permanents</p>
+        
+    <section class="grid">
 
       <div class="span-12 card animate-fade-in" style="animation-delay:0.1s">
         <h2 style="margin-top:0">📅 Sélectionner une année</h2>
@@ -90,6 +91,7 @@ export default {
           </table>
         </div>
       </div>
+    </section>
     `;
 
     let rawData = [];

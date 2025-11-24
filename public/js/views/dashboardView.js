@@ -19,89 +19,90 @@ const animateCounter = (element, finalValue, duration = 1000) => {
 
 export default {
   title: 'Tableau de bord',
+  icon: 'dashboard',
   async mount(root) {
     root.innerHTML = `
-      <div class="span-12" style="background: linear-gradient(135deg, rgba(79,124,255,0.1), rgba(41,193,140,0.1)); border-radius: 16px; padding: 2rem; border: 1px solid rgba(79,124,255,0.2); margin-bottom: 1rem; animation: fadeIn 0.6s ease;">
-        <h1 style="margin-top: 0; font-size: 2.2rem;">📊 Tableau de bord</h1>
-        <p style="color: var(--text-secondary); font-size: 1.1rem; margin: 0.5rem 0 0 0;">Mobilité & Environnement Grenoble-Alpes Métropole</p>
-      </div>
+        <h2 class="title">📊 Tableau de bord</h2>
+        <p>Mobilité & Environnement Grenoble-Alpes Métropole</p>
+        <section class="grid">
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.15s">
-        <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques en direct</h2>
-        <div class="kpis" id="kpis-container">
-          <div class="kpi">
-            <div class="kpi-icon">🅿️</div>
-            <div class="label">Places de parking</div>
-            <div class="value" id="kpi-parking">—</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;" id="kpi-parking-sub">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">🚴</div>
-            <div class="label">Comptages vélos</div>
-            <div class="value" id="kpi-velos">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">🚌</div>
-            <div class="label">Lignes de transport</div>
-            <div class="value" id="kpi-transport">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">⚡</div>
-            <div class="label">Stations de recharge</div>
-            <div class="value" id="kpi-irve">—</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="span-6 card animate-fade-in" style="animation-delay:0.3s">
-        <h3 style="margin-top:0">� Explorez les données</h3>
-        <div style="display: grid; gap: 0.75rem;">
-          <a href="#/parking" style="padding: 1rem; background: linear-gradient(135deg, rgba(79,124,255,0.15), transparent); border: 1px solid rgba(79,124,255,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-            <span style="font-size: 2rem;">🅿️</span>
-            <div>
-              <div style="font-weight: 600; color: var(--primary);">Stationnement</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary);">Répartition & disponibilité</div>
+        <div class="span-12 card animate-fade-in" style="animation-delay:0.15s">
+            <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques en direct</h2>
+            <div class="kpis" id="kpis-container">
+            <div class="kpi">
+                <div class="kpi-icon">🅿️</div>
+                <div class="label">Places de parking</div>
+                <div class="value" id="kpi-parking">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;" id="kpi-parking-sub">—</div>
             </div>
-          </a>
-          <a href="#/mobilite" style="padding: 1rem; background: linear-gradient(135deg, rgba(41,193,140,0.15), transparent); border: 1px solid rgba(41,193,140,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-            <span style="font-size: 2rem;">🚴</span>
-            <div>
-              <div style="font-weight: 600; color: var(--secondary);">Mobilité douce</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary);">Vélos & piétons</div>
+            <div class="kpi">
+                <div class="kpi-icon">🚴</div>
+                <div class="label">Comptages vélos</div>
+                <div class="value" id="kpi-velos">—</div>
             </div>
-          </a>
-          <a href="#/lignes" style="padding: 1rem; background: linear-gradient(135deg, rgba(255,209,102,0.15), transparent); border: 1px solid rgba(255,209,102,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-            <span style="font-size: 2rem;">🚌</span>
-            <div>
-              <div style="font-weight: 600; color: var(--accent);">Transport public</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary);">Lignes TAG & arrêts</div>
+            <div class="kpi">
+                <div class="kpi-icon">🚌</div>
+                <div class="label">Lignes de transport</div>
+                <div class="value" id="kpi-transport">—</div>
             </div>
-          </a>
+            <div class="kpi">
+                <div class="kpi-icon">⚡</div>
+                <div class="label">Stations de recharge</div>
+                <div class="value" id="kpi-irve">—</div>
+            </div>
+            </div>
         </div>
-      </div>
 
-      <div class="span-6 card animate-fade-in" style="animation-delay:0.45s">
-        <h3 style="margin-top:0">✨ Caractéristiques</h3>
-        <div style="display: grid; gap: 1rem;">
-          <div style="padding-left: 0.75rem; border-left: 4px solid var(--primary);">
-            <div style="font-weight: 600; color: var(--primary);">⚡ Temps réel</div>
-            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Données actualisées automatiquement</div>
-          </div>
-          <div style="padding-left: 0.75rem; border-left: 4px solid var(--secondary);">
-            <div style="font-weight: 600; color: var(--secondary);">📊 Visualisations</div>
-            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Graphiques animés et interactifs</div>
-          </div>
-          <div style="padding-left: 0.75rem; border-left: 4px solid var(--accent);">
-            <div style="font-weight: 600; color: var(--accent);">🎨 Design moderne</div>
-            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Interface élégante et responsive</div>
-          </div>
+        <div class="span-6 card animate-fade-in" style="animation-delay:0.3s">
+            <h3 style="margin-top:0">� Explorez les données</h3>
+            <div style="display: grid; gap: 0.75rem;">
+            <a href="#/parking" style="padding: 1rem; background: linear-gradient(135deg, rgba(79,124,255,0.15), transparent); border: 1px solid rgba(79,124,255,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+                <span style="font-size: 2rem;">🅿️</span>
+                <div>
+                <div style="font-weight: 600; color: var(--primary);">Stationnement</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Répartition & disponibilité</div>
+                </div>
+            </a>
+            <a href="#/mobilite" style="padding: 1rem; background: linear-gradient(135deg, rgba(41,193,140,0.15), transparent); border: 1px solid rgba(41,193,140,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+                <span style="font-size: 2rem;">🚴</span>
+                <div>
+                <div style="font-weight: 600; color: var(--secondary);">Mobilité douce</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Vélos & piétons</div>
+                </div>
+            </a>
+            <a href="#/lignes" style="padding: 1rem; background: linear-gradient(135deg, rgba(255,209,102,0.15), transparent); border: 1px solid rgba(255,209,102,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+                <span style="font-size: 2rem;">🚌</span>
+                <div>
+                <div style="font-weight: 600; color: var(--accent);">Transport public</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Lignes TAG & arrêts</div>
+                </div>
+            </a>
+            </div>
         </div>
-      </div>
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
-        <h2 style="margin-top:0;">📈 Vue d'ensemble</h2>
-        <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
-      </div>
+        <div class="span-6 card animate-fade-in" style="animation-delay:0.45s">
+            <h3 style="margin-top:0">✨ Caractéristiques</h3>
+            <div style="display: grid; gap: 1rem;">
+            <div style="padding-left: 0.75rem; border-left: 4px solid var(--primary);">
+                <div style="font-weight: 600; color: var(--primary);">⚡ Temps réel</div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Données actualisées automatiquement</div>
+            </div>
+            <div style="padding-left: 0.75rem; border-left: 4px solid var(--secondary);">
+                <div style="font-weight: 600; color: var(--secondary);">📊 Visualisations</div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Graphiques animés et interactifs</div>
+            </div>
+            <div style="padding-left: 0.75rem; border-left: 4px solid var(--accent);">
+                <div style="font-weight: 600; color: var(--accent);">🎨 Design moderne</div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Interface élégante et responsive</div>
+            </div>
+            </div>
+        </div>
+
+        <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
+            <h2 style="margin-top:0;">📈 Vue d'ensemble</h2>
+            <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
+        </div>
+    </section>
     `;
 
     const d3 = window.d3;
