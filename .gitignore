@@ -1,0 +1,46 @@
+# ============================================
+# ENVIRONNEMENT PYTHON
+# ============================================
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.Python
+
+# ============================================
+# FICHIERS TEMPORAIRES & BUFFERS
+# ============================================
+retrieve-geojson/buffers/
+retrieve-geojson/*.temp
+*.tmp
+*.log
+*.swp
+*.swo
+*~
+
+# ============================================
+# SYSTÈME & ÉDITEURS
+# ============================================
+.DS_Store
+.vscode/settings.json
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ============================================
+# NODE (si utilisé à l'avenir)
+# ============================================
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ============================================
+# FICHIERS LOCAUX DE DÉVELOPPEMENT
+# ============================================
+.env
+.env.local
+config.local.js

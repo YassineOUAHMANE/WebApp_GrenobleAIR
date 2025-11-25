@@ -1,2 +1,2 @@
  # Run the server
-Run ./start-server.sh
+Run ./scripts/start-server.sh
