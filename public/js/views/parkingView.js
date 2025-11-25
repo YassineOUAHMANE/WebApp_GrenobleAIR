@@ -3,7 +3,7 @@
  * Graphiques interactifs: tarifs, types, services, top parkings
  */
 
-import { loadCSV } from "../utils/csv.js";
+import { fetchCSV } from "../utils/fetchData.js";
 
 export default {
   title: 'Stationnement',
@@ -100,7 +100,7 @@ export default {
 
     let rawData = [];
     try {
-      rawData = await loadCSV('./data/parking/parking.csv');
+      rawData = await fetchCSV('./data/parking/parking.csv');
     } catch (err) {
       console.error('Error loading parking data:', err);
       return () => {};

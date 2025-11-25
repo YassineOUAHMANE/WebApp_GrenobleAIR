@@ -3,7 +3,7 @@
  * Analyse des comptages vélo 2019-2022 avec slider année
 */
 
-import { loadCSV } from "../utils/csv.js";
+import { fetchCSV } from "../utils/fetchData.js";
 
 export default {
   title: 'Mobilité Douce',
@@ -96,7 +96,7 @@ export default {
 
     let rawData = [];
     try {
-      rawData = await loadCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
+      rawData = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
     } catch (err) {
       console.error('Error loading mobilité data:', err);
       return () => {};

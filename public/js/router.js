@@ -1,6 +1,7 @@
 import { icons } from './utils/icons.js'; 
 
 const routes = {
+  'map': () => import('./views/mapView.js'),
   'dashboard': () => import('./views/dashboardView.js'),
   'parking':   () => import('./views/parkingView.js'),
   'mobilite':  () => import('./views/mobiliteView.js').catch(() => import('./views/aboutView.js')),
@@ -42,6 +43,7 @@ export function createRouter(mountEl, ctx) {
       const view = mod.default;
       mountEl.innerHTML = ''; // clear
       const section = document.createElement('section');
+      section.style.height = '100%';
     //   section.className = 'grid';
       mountEl.appendChild(section);
 
