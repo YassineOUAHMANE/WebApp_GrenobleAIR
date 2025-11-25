@@ -65,7 +65,7 @@ async function init() {
   // Example: load metadata once (optional)
   fetch('./data/metadata/manifest.json')
     .then(r => r.ok ? r.json() : null)
-    .then(meta => { state.metadata = meta; bus.dispatchEvent(new CustomEvent('metadata:ready')); })
+    .then(meta => { state.metadata = meta; })
     .catch(() => {});
 }
 

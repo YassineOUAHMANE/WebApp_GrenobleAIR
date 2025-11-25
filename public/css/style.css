@@ -218,9 +218,9 @@ section.grid {
 }
 
 .card:hover {
-    /* transform: translateY(-4px); */
-    /* box-shadow: var(--shadow-lg); */
-    /* border-color: rgba(79, 124, 255, 0.3); */
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(79, 124, 255, 0.3);
 }
 
 /* ===== KPIs ===== */
