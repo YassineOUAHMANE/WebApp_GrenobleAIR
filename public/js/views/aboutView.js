@@ -1,5 +1,3 @@
-import { fetchCSV } from '../utils/fetchData.js';
-import { lineChart, simpleTable } from '../utils/chartUtils.js';
 
 export default {
   title: 'À propos',

@@ -3,7 +3,7 @@
  * Graphique des top parkings avec bulles et filtres
  */
 
-import { loadCSV } from "../utils/csv.js";
+import { fetchCSV } from "../utils/fetchData.js";
 
 export default {
   title: 'Stationnement',
@@ -58,49 +58,8 @@ export default {
     let allData = [];
     let filters = { service: new Set() };
 
-    // Parse CSV
-    const parseCSVLine = (line) => {
-      const result = [];
-      let current = '';
-      let inside = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"') inside = !inside;
-        else if (char === ',' && !inside) {
-          result.push(current.replace(/^"|"$/g, ''));
-          current = '';
-        } else current += char;
-      }
-      result.push(current.replace(/^"|"$/g, ''));
-      return result;
-    };
-
-    const parseCSV = (csv) => {
-      const lines = csv.trim().split('\n');
-      const headers = parseCSVLine(lines[0]);
-      return lines.slice(1).map(line => {
-        const values = parseCSVLine(line);
-        const obj = {};
-        headers.forEach((h, i) => {
-          obj[h.toLowerCase().trim()] = values[i] ? values[i].trim() : '';
-        });
-        return obj;
-      });
-    };
-
-    const loadCSV = async (path) => {
-      try {
-        const res = await fetch(path);
-        const text = await res.text();
-        return parseCSV(text);
-      } catch (e) {
-        console.error('CSV Error:', e);
-        return [];
-      }
-    };
-
     const loadData = async () => {
-      const raw = await loadCSV('/data/parking/parking.csv');
+      const raw = await fetchCSV('/data/parking/parking.csv');
 
       allData = raw
         .filter(p => parseInt(p['nb_places'] || 0) > 0)
