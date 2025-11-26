@@ -1,492 +1,1114 @@
-/**
- * mobiliteView.js - Vue de mobilité douce avec timeline interactive
- * Analyse des comptages vélo 2019-2022 avec slider année
-*/
-
-import { loadCSV } from "../utils/csv.js";
+import { loadCSV } from '../utils/csv.js';
 
 export default {
-  title: 'Mobilité Douce',
-  icon: 'bike',
-  async mount(root) {
-    const d3 = window.d3;
-    
-    root.innerHTML = `
-    <h2 class="title">🚴 Mobilité Douce - Comptages Vélo</h2>
-    <p>Évolution des comptages cyclistes 2019-2022 - 24 capteurs permanents</p>
-        
-    <section class="grid">
+    title: 'Mobilité Douce',
+    icon: 'bike',
+    async mount(root) {
+        // --- Layout
+        root.innerHTML = `
+        <h2 class="title">Mobilité Douce — Comptages Vélo</h2>
+            
+        <section class="grid">
+            <div class="span-6 card" style="margin-bottom: 1rem;">
+                <h2 style="margin-bottom: 1.5rem;">Vue d'ensemble</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                    <button class="year-btn" data-year="2019" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                        2019
+                    </button>
+                    <button class="year-btn" data-year="2020" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                        2020
+                    </button>
+                    <button class="year-btn" data-year="2021" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                        2021
+                    </button>
+                    <button class="year-btn" data-year="2022" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                        2022
+                    </button>
+                </div>
+                <div id="overview-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <!-- Stats will be populated here -->
+                </div>
+            </div>
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.1s">
-        <h2 style="margin-top:0">📅 Sélectionner une année</h2>
-        <div style="display: flex; gap: 1rem; align-items: center; margin: 1.5rem 0;">
-          <input type="range" id="year-slider" min="2019" max="2022" value="2022" style="flex: 1; height: 8px; cursor: pointer; accent-color: var(--primary);">
-          <div style="min-width: 100px; text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary);" id="year-display">2022</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">TMJ (Trafic Moyen Journalier)</div>
-          </div>
-        </div>
-      </div>
+            <div class="span-6 card" style="margin-bottom: 1rem;">
+                        <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes recensés par les compteurs</h2>
+                        <div id="evolution-chart"></div>
+                    </div>
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.2s">
-        <h2 style="margin-top:0">📊 Vue d'ensemble</h2>
-        <div class="kpis" id="kpis-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-          <div class="kpi">
-            <div class="kpi-icon">🚴</div>
-            <div class="label">Capteurs actifs</div>
-            <div class="value" id="kpi-capteurs">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">📈</div>
-            <div class="label">Trafic moyen</div>
-            <div class="value" id="kpi-moyen">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">⬆️</div>
-            <div class="label">Trafic max</div>
-            <div class="value" id="kpi-max">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-icon">📍</div>
-            <div class="label">Région</div>
-            <div class="value" id="kpi-region">—</div>
-          </div>
-        </div>
-      </div>
+            <div class="span-12 card" style="margin-bottom: 1rem;">
+                        <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes par compteur</h2>
+                <div id="mini-charts-container"></div>
+            </div>
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.3s">
-        <h3 style="margin-top:0">📊 Top 10 capteurs par trafic</h3>
-        <div id="chart-top10" class="chart" style="height:450px;"></div>
-      </div>
+            <div class="span-6 card" style="margin-bottom: 1rem;">
+                <h2 style="margin-bottom: 1rem;">Répartition des pistes cyclables par type d'axe</h2>
+                <div id="bike-lanes-chart"></div>
+            </div>
 
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.4s">
-        <h3 style="margin-top:0">📈 Évolution 2019-2022</h3>
-        <div id="chart-evolution" class="chart" style="height:350px;"></div>
-      </div>
-
-      <div class="span-6 card animate-fade-in" style="animation-delay:0.5s">
-        <h3 style="margin-top:0">🏙️ Répartition par territoire</h3>
-        <div id="chart-territoire" class="chart" style="height:300px;"></div>
-      </div>
-
-      <div class="span-6 card animate-fade-in" style="animation-delay:0.5s">
-        <h3 style="margin-top:0">🌍 Répartition par type d'axe</h3>
-        <div id="chart-axe" class="chart" style="height:300px;"></div>
-      </div>
-
-      <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
-        <h3 style="margin-top:0">📋 Détail des capteurs</h3>
-        <div id="table-container" style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-            <thead style="background: linear-gradient(135deg, rgba(79,124,255,0.1), rgba(41,193,140,0.1)); border-bottom: 2px solid var(--primary);">
-              <tr>
-                <th style="padding: 1rem; text-align: left;">📍 Capteur</th>
-                <th style="padding: 1rem; text-align: left;">🏘️ Commune</th>
-                <th style="padding: 1rem; text-align: left;">🌐 Type d'axe</th>
-                <th style="padding: 1rem; text-align: center;">Trafic année</th>
-              </tr>
-            </thead>
-            <tbody id="table-body">
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-    `;
-
-    let rawData = [];
-    try {
-      rawData = await loadCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
-    } catch (err) {
-      console.error('Error loading mobilité data:', err);
-      return () => {};
-    }
-
-    if (!rawData.length) return () => {};
-
-    // Parser les données
-    const data = rawData
-      .filter(d => d.nom_post && d.tmj_2019)
-      .map(d => {
-        const tmj2019 = parseFloat(d.tmj_2019) || 0;
-        const tmj2020 = parseFloat(d.tmj_2020) || 0;
-        const tmj2021 = parseFloat(d.tmj_2021) || 0;
-        const tmj2022 = parseFloat(d.tmj_2022) || 0;
-        
-        return {
-          nom: d.nom_post.replace(/^\(.*?\)\s*/, ''),
-          commune: d.nom_comm,
-          territoire: d.territoire,
-          typeAxe: d.type_axe || 'unknown',
-          tmj: { 2019: tmj2019, 2020: tmj2020, 2021: tmj2021, 2022: tmj2022 },
-          tmjo: { 
-            2019: parseFloat(d.tmjo_2019) || 0,
-            2020: parseFloat(d.tmjo_2020) || 0,
-            2021: parseFloat(d.tmjo_2021) || 0,
-            2022: parseFloat(d.tmjo_2022) || 0
-          },
-          tmjwe: {
-            2019: parseFloat(d.tmjwe_2019) || 0,
-            2020: parseFloat(d.tmjwe_2020) || 0,
-            2021: parseFloat(d.tmjwe_2021) || 0,
-            2022: parseFloat(d.tmjwe_2022) || 0
-          }
-        };
-      });
-
-    // Filtrer données valides
-    const validData = data.filter(d => d.tmj[2022] > 0).sort((a, b) => b.tmj[2022] - a.tmj[2022]);
-
-    const animateCounter = (element, finalValue, duration = 1000) => {
-      let currentValue = 0;
-      const increment = finalValue / (duration / 30);
-      const interval = setInterval(() => {
-        currentValue += increment;
-        if (currentValue >= finalValue) {
-          currentValue = finalValue;
-          clearInterval(interval);
-        }
-        element.textContent = Math.floor(currentValue).toLocaleString();
-      }, 30);
-    };
-
-    // Initialiser KPIs
-    const updateKPIs = (year) => {
-      const yearData = validData.filter(d => d.tmj[year] > 0);
-      const avgTmj = d3.mean(yearData, d => d.tmj[year]);
-      const maxTmj = d3.max(yearData, d => d.tmj[year]);
-      
-      root.querySelector('#kpi-capteurs').textContent = yearData.length;
-      root.querySelector('#kpi-moyen').textContent = Math.round(avgTmj).toLocaleString();
-      root.querySelector('#kpi-max').textContent = Math.round(maxTmj).toLocaleString();
-      
-      const territories = new Set(validData.map(d => d.territoire));
-      root.querySelector('#kpi-region').textContent = territories.size + ' régions';
-    };
-
-    updateKPIs(2022);
-
-    // ===== GRAPHIQUE 1: Top 10 =====
-    const updateTop10Chart = (year) => {
-      const el = root.querySelector('#chart-top10');
-      el.innerHTML = '';
-
-      const top10 = validData.slice(0, 10);
-      const w = el.clientWidth || 900, h = 450;
-      const m = { t: 20, r: 40, b: 100, l: 250 };
-
-      const svg = d3.select(el).append('svg')
-        .attr('viewBox', [0, 0, w, h])
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .style('background', 'transparent');
-
-      const x = d3.scaleLinear()
-        .domain([0, d3.max(top10, d => d.tmj[year]) || 1])
-        .range([m.l, w - m.r]);
-
-      const y = d3.scaleBand()
-        .domain(top10.map(d => d.nom.substring(0, 35)))
-        .range([m.t, h - m.b])
-        .padding(0.35);
-
-      // Axes
-      svg.append('g')
-        .attr('transform', `translate(0,${h - m.b})`)
-        .call(d3.axisBottom(x).ticks(5))
-        .style('color', 'var(--text-secondary)');
-
-      svg.append('g')
-        .attr('transform', `translate(${m.l},0)`)
-        .call(d3.axisLeft(y).tickSize(0))
-        .style('color', 'var(--text-secondary)');
-
-      // Barres
-      svg.append('g').selectAll('rect')
-        .data(top10)
-        .join('rect')
-        .attr('x', x(0))
-        .attr('y', d => y(d.nom.substring(0, 35)))
-        .attr('height', y.bandwidth())
-        .attr('width', 0)
-        .attr('fill', '#29c18c')
-        .attr('fill-opacity', 0.85)
-        .attr('rx', 6)
-        .on('mouseover', function() {
-          d3.select(this).transition().duration(150).attr('fill-opacity', 1);
-        })
-        .on('mouseout', function() {
-          d3.select(this).transition().duration(150).attr('fill-opacity', 0.85);
-        })
-        .transition()
-        .duration(1000)
-        .delay((d, i) => i * 80)
-        .attr('width', d => x(d.tmj[year]) - x(0));
-
-      // Valeurs
-      svg.append('g').selectAll('text')
-        .data(top10)
-        .join('text')
-        .attr('x', d => x(d.tmj[year]) + 8)
-        .attr('y', d => y(d.nom.substring(0, 35)) + y.bandwidth() / 2 + 5)
-        .attr('font-size', '0.9rem')
-        .attr('font-weight', '700')
-        .attr('fill', 'var(--text-primary)')
-        .text(d => Math.round(d.tmj[year]).toLocaleString())
-        .style('opacity', 0)
-        .transition()
-        .duration(1000)
-        .delay((d, i) => i * 80 + 700)
-        .style('opacity', 1);
-    };
-
-    // ===== GRAPHIQUE 2: Évolution 2019-2022 =====
-    const updateEvolutionChart = () => {
-      const el = root.querySelector('#chart-evolution');
-      el.innerHTML = '';
-
-      const years = [2019, 2020, 2021, 2022];
-      const evolutionData = years.map(year => ({
-        year,
-        avg: d3.mean(validData, d => d.tmj[year]),
-        max: d3.max(validData, d => d.tmj[year]),
-        min: d3.min(validData, d => d.tmj[year])
-      }));
-
-      const w = el.clientWidth || 900, h = 350;
-      const m = { t: 20, r: 40, b: 60, l: 60 };
-
-      const svg = d3.select(el).append('svg')
-        .attr('viewBox', [0, 0, w, h])
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .style('background', 'transparent');
-
-      const x = d3.scaleLinear()
-        .domain([2019, 2022])
-        .range([m.l, w - m.r]);
-
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(evolutionData, d => d.max) || 1])
-        .range([h - m.b, m.t]);
-
-      // Axes
-      svg.append('g')
-        .attr('transform', `translate(0,${h - m.b})`)
-        .call(d3.axisBottom(x).tickValues(years))
-        .style('color', 'var(--text-secondary)');
-
-      svg.append('g')
-        .attr('transform', `translate(${m.l},0)`)
-        .call(d3.axisLeft(y).ticks(5))
-        .style('color', 'var(--text-secondary)');
-
-      // Ligne moyenne
-      const lineAvg = d3.line()
-        .x(d => x(d.year))
-        .y(d => y(d.avg));
-
-      const pathAvg = svg.append('path')
-        .attr('d', lineAvg(evolutionData))
-        .attr('fill', 'none')
-        .attr('stroke', '#4f7cff')
-        .attr('stroke-width', 3)
-        .attr('stroke-dasharray', function() { return this.getTotalLength(); })
-        .attr('stroke-dashoffset', function() { return this.getTotalLength(); });
-
-      pathAvg.transition()
-        .duration(1500)
-        .ease(d3.easeQuadInOut)
-        .attr('stroke-dashoffset', 0);
-
-      // Points
-      svg.append('g').selectAll('circle')
-        .data(evolutionData)
-        .join('circle')
-        .attr('cx', d => x(d.year))
-        .attr('cy', d => y(d.avg))
-        .attr('r', 0)
-        .attr('fill', '#4f7cff')
-        .attr('fill-opacity', 0.85)
-        .transition()
-        .duration(1500)
-        .delay((d, i) => i * 300)
-        .attr('r', 6);
-
-      // Étiquettes
-      svg.append('g').selectAll('text')
-        .data(evolutionData)
-        .join('text')
-        .attr('x', d => x(d.year))
-        .attr('y', d => y(d.avg) - 15)
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '0.9rem')
-        .attr('font-weight', '700')
-        .attr('fill', 'var(--text-primary)')
-        .text(d => Math.round(d.avg).toLocaleString())
-        .style('opacity', 0)
-        .transition()
-        .duration(1500)
-        .delay((d, i) => i * 300 + 800)
-        .style('opacity', 1);
-    };
-
-    updateEvolutionChart();
-
-    // ===== GRAPHIQUE 3: Territoire =====
-    const updateTerritoireChart = (year) => {
-      const el = root.querySelector('#chart-territoire');
-      el.innerHTML = '';
-
-      const territoireData = d3.rollup(validData, v => d3.sum(v, d => d.tmj[year]), d => d.territoire);
-      const chartData = Array.from(territoireData, ([label, value]) => ({
-        label,
-        value
-      })).sort((a, b) => b.value - a.value);
-
-      const w = el.clientWidth || 400, h = 300;
-      const radius = Math.min(w, h) / 2 - 40;
-
-      const svg = d3.select(el).append('svg')
-        .attr('viewBox', [0, 0, w, h])
-        .attr('width', '100%')
-        .attr('height', '100%');
-
-      const pie = d3.pie().value(d => d.value);
-      const arc = d3.arc().innerRadius(0).outerRadius(radius);
-
-      const colors = d3.scaleOrdinal()
-        .domain(chartData.map(d => d.label))
-        .range(['#4f7cff', '#29c18c', '#ffd166', '#ff6b6b', '#a78bfa']);
-
-      const g = svg.append('g')
-        .attr('transform', `translate(${w / 2},${h / 2})`);
-
-      const slices = g.selectAll('g')
-        .data(pie(chartData))
-        .join('g');
-
-      slices.append('path')
-        .attr('fill', d => colors(d.data.label))
-        .attr('fill-opacity', 0.85)
-        .attr('d', arc)
-        .on('mouseover', function() {
-          d3.select(this).transition().duration(150).attr('fill-opacity', 1);
-        })
-        .on('mouseout', function() {
-          d3.select(this).transition().duration(150).attr('fill-opacity', 0.85);
-        })
-        .transition()
-        .duration(1000)
-        .attrTween('d', function(d) {
-          const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
-          return t => arc(interpolate(t));
-        });
-    };
-
-    // ===== GRAPHIQUE 4: Type d'axe =====
-    const updateAxeChart = (year) => {
-      const el = root.querySelector('#chart-axe');
-      el.innerHTML = '';
-
-      const axeData = d3.rollup(validData, v => d3.sum(v, d => d.tmj[year]), d => d.typeAxe);
-      const chartData = Array.from(axeData, ([label, value]) => ({
-        label,
-        value
-      })).sort((a, b) => b.value - a.value);
-
-      const w = el.clientWidth || 400, h = 300;
-      const m = { t: 20, r: 30, b: 60, l: 100 };
-
-      const svg = d3.select(el).append('svg')
-        .attr('viewBox', [0, 0, w, h])
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .style('background', 'transparent');
-
-      const x = d3.scaleLinear()
-        .domain([0, d3.max(chartData, d => d.value) || 1])
-        .range([m.l, w - m.r]);
-
-      const y = d3.scaleBand()
-        .domain(chartData.map(d => d.label.substring(0, 20)))
-        .range([m.t, h - m.b])
-        .padding(0.3);
-
-      svg.append('g')
-        .attr('transform', `translate(0,${h - m.b})`)
-        .call(d3.axisBottom(x).ticks(4))
-        .style('color', 'var(--text-secondary)');
-
-      svg.append('g')
-        .attr('transform', `translate(${m.l},0)`)
-        .call(d3.axisLeft(y).tickSize(0))
-        .style('color', 'var(--text-secondary)');
-
-      svg.append('g').selectAll('rect')
-        .data(chartData)
-        .join('rect')
-        .attr('x', x(0))
-        .attr('y', d => y(d.label.substring(0, 20)))
-        .attr('height', y.bandwidth())
-        .attr('width', 0)
-        .attr('fill', '#ffd166')
-        .attr('fill-opacity', 0.85)
-        .attr('rx', 6)
-        .transition()
-        .duration(900)
-        .delay((d, i) => i * 100)
-        .attr('width', d => x(d.value) - x(0));
-    };
-
-    // ===== TABLE: Détail des capteurs =====
-    const updateTable = (year) => {
-      const tbody = root.querySelector('#table-body');
-      tbody.innerHTML = '';
-
-      validData.forEach(d => {
-        const row = document.createElement('tr');
-        row.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
-        row.style.transition = 'background-color 0.3s';
-        row.onmouseover = () => row.style.backgroundColor = 'rgba(79,124,255,0.1)';
-        row.onmouseout = () => row.style.backgroundColor = 'transparent';
-        
-        row.innerHTML = `
-          <td style="padding: 1rem; font-weight: 600;">${d.nom}</td>
-          <td style="padding: 1rem;">${d.commune}</td>
-          <td style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary);">${d.typeAxe}</td>
-          <td style="padding: 1rem; text-align: center; font-weight: 700; color: var(--primary);">${Math.round(d.tmj[year]).toLocaleString()}</td>
+            <div class="span-6 card">
+                <h2>Véhicules en libre service disponibles</h2>
+                <div id="vehicles-status"></div>
+            </div>
+        </section>
         `;
-        tbody.appendChild(row);
-      });
-    };
 
-    updateTable(2022);
+        // --- Load CSV files
+        const rows = await loadCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
+        const bikeLanesRows = await loadCSV('./data/mobilite_douce/pistes_cyclables_des_49_communes_de_la_métropole.csv');
 
-    // ===== EVENT LISTENER: Slider =====
-    const slider = root.querySelector('#year-slider');
-    const yearDisplay = root.querySelector('#year-display');
+        // --- Parse data and filter only counters with data for all years 2019-2022
+        const data = rows
+            .filter(d => {
+                const tmj2019 = parseFloat(d.tmj_2019) || 0;
+                const tmj2020 = parseFloat(d.tmj_2020) || 0;
+                const tmj2021 = parseFloat(d.tmj_2021) || 0;
+                const tmj2022 = parseFloat(d.tmj_2022) || 0;
+                // Keep only counters with data for all years
+                return tmj2019 > 0 && tmj2020 > 0 && tmj2021 > 0 && tmj2022 > 0;
+            })
+            .map(d => ({
+                nom: d.nom_post.replace(/^\(.*?\)\s*/, ''),
+                total: {
+                    2019: parseFloat(d.tmj_2019) || 0,
+                    2020: parseFloat(d.tmj_2020) || 0,
+                    2021: parseFloat(d.tmj_2021) || 0,
+                    2022: parseFloat(d.tmj_2022) || 0
+                },
+                weekday: {
+                    2019: parseFloat(d.tmjo_2019) || 0,
+                    2020: parseFloat(d.tmjo_2020) || 0,
+                    2021: parseFloat(d.tmjo_2021) || 0,
+                    2022: parseFloat(d.tmjo_2022) || 0
+                },
+                weekend: {
+                    2019: parseFloat(d.tmjwe_2019) || 0,
+                    2020: parseFloat(d.tmjwe_2020) || 0,
+                    2021: parseFloat(d.tmjwe_2021) || 0,
+                    2022: parseFloat(d.tmjwe_2022) || 0
+                },
+                peakDay: {
+                    2019: parseFloat(d.jour_de_pointe_2019) || 0,
+                    2020: parseFloat(d.jour_de_pointe_2020) || 0,
+                    2021: parseFloat(d.jour_de_pointe_2021) || 0,
+                    2022: parseFloat(d.jour_de_pointe_2022) || 0
+                }
+            }));
 
-    const handleYearChange = () => {
-      const year = parseInt(slider.value);
-      yearDisplay.textContent = year;
-      
-      updateKPIs(year);
-      updateTop10Chart(year);
-      updateTerritoireChart(year);
-      updateAxeChart(year);
-      updateTable(year);
-    };
 
-    slider.addEventListener('input', handleYearChange);
+        const years = [2019, 2020, 2021, 2022];
+        const chartContainer = d3.select('#evolution-chart');
+        const miniChartsContainer = d3.select('#mini-charts-container');
+        
+        // State for expanded mini chart
+        let expandedCounter = null;
 
-    // Affichage initial
-    updateTop10Chart(2022);
-    updateTerritoireChart(2022);
-    updateAxeChart(2022);
+        // --- Function to update evolution chart
+        const updateEvolutionChart = () => {
+            // Calculate evolution data for weekday and weekend
+            const weekdayData = years.map(year => {
+                const totalTmj = d3.sum(data, d => d.weekday[year]);
+                return {
+                    year,
+                    value: totalTmj
+                };
+            });
 
-    return () => {
-      try { root.innerHTML = ''; } catch {}
-    };
-  }
+            const weekendData = years.map(year => {
+                const totalTmj = d3.sum(data, d => d.weekend[year]);
+                return {
+                    year,
+                    value: totalTmj
+                };
+            });
+
+            // Clear existing chart
+            chartContainer.selectAll('*').remove();
+            // Remove existing tooltip
+            d3.select('body').selectAll('.evolution-tooltip').remove();
+
+            // Create chart dimensions
+            const margin = { t: 20, r: 40, b: 60, l: 70 };
+            const evolutionContainerWidth = chartContainer.node().clientWidth || 900;
+            const width = Math.max(evolutionContainerWidth, 300);
+            const height = 350;
+
+            const evolutionSvg = chartContainer.append('svg')
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .attr('width', '100%')
+                .attr('height', height)
+                .style('display', 'block')
+                .style('max-width', '100%');
+
+            // Find max value for Y scale
+            const maxValue = d3.max([...weekdayData, ...weekendData], d => d.value);
+
+            const x = d3.scaleLinear()
+                .domain([2019, 2022])
+                .range([margin.l, width - margin.r]);
+
+            const y = d3.scaleLinear()
+                .domain([0, maxValue * 1.1])
+                .nice()
+                .range([height - margin.b, margin.t]);
+
+            // Axes
+            evolutionSvg.append('g')
+                .attr('transform', `translate(0,${height - margin.b})`)
+                .call(d3.axisBottom(x).tickValues(years).tickFormat(d => d));
+
+            evolutionSvg.append('g')
+                .attr('transform', `translate(${margin.l},0)`)
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d => d3.format('~s')(d)));
+
+            // Line generator
+            const line = d3.line()
+                .x(d => x(d.year))
+                .y(d => y(d.value))
+                .curve(d3.curveMonotoneX);
+
+            // Weekday line (blue)
+            evolutionSvg.append('path')
+                .datum(weekdayData)
+                .attr('fill', 'none')
+                .attr('stroke', 'steelblue')
+                .attr('stroke-width', 3)
+                .attr('d', line);
+
+            // Weekend line (orange)
+            evolutionSvg.append('path')
+                .datum(weekendData)
+                .attr('fill', 'none')
+                .attr('stroke', '#ff7f0e')
+                .attr('stroke-width', 3)
+                .attr('d', line);
+
+            // Create tooltip
+            const tooltip = d3.select('body').append('div')
+                .attr('class', 'evolution-tooltip')
+                .style('position', 'absolute')
+                .style('background', 'rgba(0, 0, 0, 0.85)')
+                .style('color', '#fff')
+                .style('padding', '0.5rem 0.75rem')
+                .style('border-radius', '4px')
+                .style('font-size', '0.85rem')
+                .style('pointer-events', 'none')
+                .style('opacity', 0)
+                .style('z-index', 1000);
+
+            // Weekday points
+            evolutionSvg.append('g').selectAll('circle')
+                .data(weekdayData)
+                .enter()
+                .append('circle')
+                .attr('cx', d => x(d.year))
+                .attr('cy', d => y(d.value))
+                .attr('r', 5)
+                .attr('fill', 'steelblue')
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                .style('cursor', 'pointer')
+                .on('mouseover', function(event, d) {
+                    tooltip.transition()
+                        .duration(200)
+                        .style('opacity', 1);
+                    tooltip.html(Math.round(d.value).toLocaleString())
+                        .style('left', (event.pageX + 10) + 'px')
+                        .style('top', (event.pageY - 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition()
+                        .duration(200)
+                        .style('opacity', 0);
+                });
+
+            // Weekend points
+            evolutionSvg.append('g').selectAll('circle')
+                .data(weekendData)
+                .enter()
+                .append('circle')
+                .attr('cx', d => x(d.year))
+                .attr('cy', d => y(d.value))
+                .attr('r', 5)
+                .attr('fill', '#ff7f0e')
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                .style('cursor', 'pointer')
+                .on('mouseover', function(event, d) {
+                    tooltip.transition()
+                        .duration(200)
+                        .style('opacity', 1);
+                    tooltip.html(Math.round(d.value).toLocaleString())
+                        .style('left', (event.pageX + 10) + 'px')
+                        .style('top', (event.pageY - 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition()
+                        .duration(200)
+                        .style('opacity', 0);
+                });
+
+            // Legend
+            const legend = evolutionSvg.append('g')
+                .attr('transform', `translate(${width - margin.r - 150}, ${margin.t + 10})`);
+
+            legend.append('line')
+                .attr('x1', 0)
+                .attr('x2', 20)
+                .attr('y1', 0)
+                .attr('y2', 0)
+                .attr('stroke', 'steelblue')
+                .attr('stroke-width', 3);
+
+            legend.append('text')
+                .attr('x', 25)
+                .attr('y', 0)
+                .attr('dy', '0.35em')
+                .attr('font-size', '0.85rem')
+                .attr('fill', 'var(--text-primary)')
+                .text('Semaine');
+
+            legend.append('line')
+                .attr('x1', 0)
+                .attr('x2', 20)
+                .attr('y1', 20)
+                .attr('y2', 20)
+                .attr('stroke', '#ff7f0e')
+                .attr('stroke-width', 3);
+
+            legend.append('text')
+                .attr('x', 25)
+                .attr('y', 20)
+                .attr('dy', '0.35em')
+                .attr('font-size', '0.85rem')
+                .attr('fill', 'var(--text-primary)')
+                .text('Week-end');
+
+            // Y-axis label
+            evolutionSvg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', margin.l - 40)
+                .attr('x', -height / 2)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '0.9rem')
+                .attr('fill', 'var(--text-secondary)')
+                .text('Nombre journalier moyen de cyclistes');
+        };
+
+        // --- Function to update mini charts
+        const updateMiniCharts = () => {
+            // Clear existing mini charts
+            miniChartsContainer.selectAll('*').remove();
+            // Remove existing mini chart tooltip
+            d3.select('body').selectAll('.mini-chart-tooltip').remove();
+
+            // Filter and sort: get top 8 counters by weekday traffic in 2022
+            const topCounters = [...data]
+                .sort((a, b) => b.weekday[2022] - a.weekday[2022])
+                .slice(0, 8);
+
+            // Create shared tooltip for all mini charts
+            const miniTooltip = d3.select('body').append('div')
+                .attr('class', 'mini-chart-tooltip')
+                .style('position', 'absolute')
+                .style('background', 'rgba(0, 0, 0, 0.85)')
+                .style('color', '#fff')
+                .style('padding', '0.5rem 0.75rem')
+                .style('border-radius', '4px')
+                .style('font-size', '0.75rem')
+                .style('pointer-events', 'none')
+                .style('opacity', 0)
+                .style('z-index', 1000);
+
+            // Create legend (always visible, even when expanded)
+            const legend = miniChartsContainer.append('div')
+                .style('display', 'flex')
+                .style('justify-content', 'center')
+                .style('align-items', 'center')
+                .style('gap', '2rem')
+                .style('padding', '1rem 0')
+                .style('flex-wrap', 'wrap');
+
+            // Legend item for weekday
+            const legendItem1 = legend.append('div')
+                .style('display', 'flex')
+                .style('align-items', 'center')
+                .style('gap', '0.5rem');
+            legendItem1.append('div')
+                .style('width', '30px')
+                .style('height', '3px')
+                .style('background', 'steelblue');
+            legendItem1.append('span')
+                .style('font-size', '0.85rem')
+                .style('color', 'var(--text-primary)')
+                .text('Semaine');
+
+            // Legend item for weekend
+            const legendItem2 = legend.append('div')
+                .style('display', 'flex')
+                .style('align-items', 'center')
+                .style('gap', '0.5rem');
+            legendItem2.append('div')
+                .style('width', '30px')
+                .style('height', '3px')
+                .style('background', '#ff7f0e');
+            legendItem2.append('span')
+                .style('font-size', '0.85rem')
+                .style('color', 'var(--text-primary)')
+                .text('Week-end');
+
+            // Legend item for peak day
+            const legendItem3 = legend.append('div')
+                .style('display', 'flex')
+                .style('align-items', 'center')
+                .style('gap', '0.5rem');
+            const peakDayLine = legendItem3.append('svg')
+                .attr('width', 30)
+                .attr('height', 3)
+                .style('display', 'block');
+            peakDayLine.append('line')
+                .attr('x1', 0)
+                .attr('x2', 30)
+                .attr('y1', 1.5)
+                .attr('y2', 1.5)
+                .attr('stroke', '#d73027')
+                .attr('stroke-width', 3)
+                .attr('stroke-dasharray', '5,5');
+            legendItem3.append('span')
+                .style('font-size', '0.85rem')
+                .style('color', 'var(--text-primary)')
+                .text('Jour de pointe');
+
+            // If a counter is expanded, show only the expanded chart
+            if (expandedCounter !== null) {
+                const counter = expandedCounter;
+                
+                // Get dimensions from evolution chart container for consistency
+                const evolutionContainerWidth = chartContainer.node().clientWidth || 900;
+                const expandedWidth = Math.max(evolutionContainerWidth, 300);
+                const expandedHeight = 350;
+                const expandedMargin = { t: 20, r: 40, b: 60, l: 70 };
+
+                // Create expanded chart container
+                const expandedDiv = miniChartsContainer.append('div')
+                    .style('background', 'var(--bg-secondary)')
+                    .style('border-radius', '8px')
+                    .style('padding', '1.5rem')
+                    .style('border', '2px solid steelblue')
+                    .style('width', '100%')
+                    .style('box-sizing', 'border-box')
+                    .style('cursor', 'pointer')
+                    .style('position', 'relative')
+                    .on('click', () => {
+                        expandedCounter = null;
+                        updateMiniCharts();
+                    });
+
+                // Add close indicator
+                expandedDiv.append('div')
+                    .style('position', 'absolute')
+                    .style('top', '1rem')
+                    .style('right', '1rem')
+                    .style('background', 'rgba(0, 0, 0, 0.1)')
+                    .style('padding', '0.5rem 0.75rem')
+                    .style('border-radius', '4px')
+                    .style('font-size', '0.75rem')
+                    .style('color', 'var(--text-secondary)')
+                    .text('Cliquer pour réduire');
+
+                // Add title
+                expandedDiv.append('h3')
+                    .style('margin', '0 0 1rem 0')
+                    .style('font-size', '1.2rem')
+                    .style('font-weight', '600')
+                    .style('color', 'var(--text-primary)')
+                    .style('text-align', 'center')
+                    .text(counter.nom);
+
+                // Prepare data
+                const weekdayData = years.map(year => ({
+                    year,
+                    value: counter.weekday[year]
+                }));
+                const weekendData = years.map(year => ({
+                    year,
+                    value: counter.weekend[year]
+                }));
+                const peakDayData = years.map(year => ({
+                    year,
+                    value: counter.peakDay[year]
+                }));
+
+                // Find max value for Y scale
+                const maxValue = Math.max(
+                    d3.max(weekdayData, d => d.value),
+                    d3.max(weekendData, d => d.value),
+                    d3.max(peakDayData, d => d.value)
+                );
+
+                // Create SVG
+                const svg = expandedDiv.append('svg')
+                    .attr('viewBox', `0 0 ${expandedWidth} ${expandedHeight}`)
+                .attr('width', '100%')
+                    .attr('height', expandedHeight)
+                .style('display', 'block')
+                .style('max-width', '100%');
+
+                // Scales
+                const xScale = d3.scaleLinear()
+                .domain([2019, 2022])
+                    .range([expandedMargin.l, expandedWidth - expandedMargin.r]);
+
+                const yScale = d3.scaleLinear()
+                .domain([0, maxValue * 1.1])
+                .nice()
+                    .range([expandedHeight - expandedMargin.b, expandedMargin.t]);
+
+                // X axis
+                svg.append('g')
+                    .attr('transform', `translate(0,${expandedHeight - expandedMargin.b})`)
+                    .call(d3.axisBottom(xScale).tickValues(years).tickFormat(d => d));
+
+                // Y axis
+                svg.append('g')
+                    .attr('transform', `translate(${expandedMargin.l},0)`)
+                    .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => d3.format('~s')(d)));
+
+            // Line generator
+            const line = d3.line()
+                    .x(d => xScale(d.year))
+                    .y(d => yScale(d.value))
+                    .curve(d3.curveMonotoneX);
+
+                // Weekday line
+                svg.append('path')
+                    .datum(weekdayData)
+                    .attr('fill', 'none')
+                    .attr('stroke', 'steelblue')
+                    .attr('stroke-width', 3)
+                    .attr('d', line);
+
+                // Weekend line
+                svg.append('path')
+                    .datum(weekendData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#ff7f0e')
+                    .attr('stroke-width', 3)
+                    .attr('d', line);
+
+                // Peak day line
+                svg.append('path')
+                    .datum(peakDayData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#d73027')
+                    .attr('stroke-width', 3)
+                    .attr('stroke-dasharray', '5,5')
+                    .attr('d', line);
+
+                // Weekday points
+                svg.append('g').selectAll('circle')
+                    .data(weekdayData)
+                .enter()
+                    .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 5)
+                    .attr('fill', 'steelblue')
+                    .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+
+                // Weekend points
+                svg.append('g').selectAll('circle')
+                    .data(weekendData)
+                .enter()
+                    .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 5)
+                    .attr('fill', '#ff7f0e')
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 2)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+
+                // Peak day points
+                svg.append('g').selectAll('circle')
+                    .data(peakDayData)
+                .enter()
+                .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 5)
+                    .attr('fill', '#d73027')
+                .attr('stroke', '#fff')
+                    .attr('stroke-width', 2)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+
+            // Y-axis label
+                svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                    .attr('y', expandedMargin.l - 40)
+                    .attr('x', -expandedHeight / 2)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '0.9rem')
+                .attr('fill', 'var(--text-secondary)')
+                    .text('Nombre journalier moyen de cyclistes');
+
+                return; // Exit early, don't show mini charts
+            }
+
+            // Create container for mini charts grid
+            // Calculate responsive number of columns based on container width
+            const containerWidth = miniChartsContainer.node().clientWidth || 1200;
+            let chartsPerRow;
+            if (containerWidth < 600) {
+                chartsPerRow = 1; // 1 column on very small screens
+            } else if (containerWidth < 900) {
+                chartsPerRow = 2; // 2 columns on small screens
+            } else if (containerWidth < 1200) {
+                chartsPerRow = 3; // 3 columns on medium screens
+            } else {
+                chartsPerRow = 4; // 4 columns on large screens
+            }
+            const chartHeight = 180;
+            const margin = { t: 40, r: 10, b: 40, l: 50 };
+
+            // Create a wrapper div for the grid
+            const gridWrapper = miniChartsContainer.append('div')
+                .style('display', 'grid')
+                .style('grid-template-columns', `repeat(${chartsPerRow}, 1fr)`)
+                .style('gap', '1.5rem')
+                .style('padding', '0.5rem')
+                .style('width', '100%')
+                .style('box-sizing', 'border-box');
+
+            // Find max value across top counters and all types (including peak day) for consistent Y scale
+            const maxValue = d3.max(topCounters, counter => 
+                Math.max(
+                    d3.max(years, year => counter.weekday[year]),
+                    d3.max(years, year => counter.weekend[year]),
+                    d3.max(years, year => counter.peakDay[year])
+                )
+            );
+
+            // Create a mini chart for each counter
+            topCounters.forEach(counter => {
+                // Prepare data for weekday, weekend, and peak day
+                const weekdayData = years.map(year => ({
+                    year,
+                    value: counter.weekday[year]
+                }));
+
+                const weekendData = years.map(year => ({
+                    year,
+                    value: counter.weekend[year]
+                }));
+
+                const peakDayData = years.map(year => ({
+                    year,
+                    value: counter.peakDay[year]
+                }));
+
+                // Create container for this mini chart
+                const chartDiv = gridWrapper.append('div')
+                    .style('background', 'var(--bg-secondary)')
+                    .style('border-radius', '8px')
+                    .style('padding', '0.75rem')
+                    .style('border', '1px solid var(--border-color)')
+                    .style('width', '100%')
+                    .style('box-sizing', 'border-box')
+                    .style('overflow', 'hidden')
+                    .style('min-width', '0') // Allow flex shrinking
+                    .style('cursor', 'pointer')
+                    .style('transition', 'transform 0.2s')
+                    .on('mouseenter', function() {
+                        d3.select(this)
+                            .style('transform', 'scale(1.02)');
+                    })
+                    .on('mouseleave', function() {
+                        d3.select(this)
+                            .style('transform', 'scale(1)');
+                    })
+                    .on('click', function() {
+                        if (expandedCounter === counter) {
+                            // If clicking the same chart, collapse it
+                            expandedCounter = null;
+                        } else {
+                            // Expand this chart
+                            expandedCounter = counter;
+                        }
+                        updateMiniCharts();
+                    });
+
+                // Add title
+                chartDiv.append('h3')
+                    .style('margin', '0 0 0.5rem 0')
+                    .style('font-size', '0.85rem')
+                    .style('font-weight', '600')
+                    .style('color', 'var(--text-primary)')
+                    .style('text-align', 'center')
+                    .style('white-space', 'nowrap')
+                    .style('overflow', 'hidden')
+                    .style('text-overflow', 'ellipsis')
+                    .text(counter.nom);
+
+                // Use a reference width for viewBox calculations
+                // The SVG will scale to fit the container width
+                const referenceWidth = 250;
+                const chartWidth = referenceWidth;
+
+                // Create SVG with responsive width using viewBox
+                const svg = chartDiv.append('svg')
+                    .attr('viewBox', `0 0 ${chartWidth} ${chartHeight}`)
+                    .attr('width', '100%')
+                    .attr('height', chartHeight)
+                    .attr('preserveAspectRatio', 'xMidYMid meet')
+                    .style('display', 'block')
+                    .style('max-width', '100%');
+
+                // Scales (using reference width)
+                const xScale = d3.scaleLinear()
+                    .domain([2019, 2022])
+                    .range([margin.l, chartWidth - margin.r]);
+
+                const yScale = d3.scaleLinear()
+                    .domain([0, maxValue * 1.1])
+                    .nice()
+                    .range([chartHeight - margin.b, margin.t]);
+
+                // X axis
+                svg.append('g')
+                    .attr('transform', `translate(0,${chartHeight - margin.b})`)
+                    .call(d3.axisBottom(xScale).tickValues(years).tickFormat(d => d))
+                    .selectAll('text')
+                    .attr('font-size', '0.65rem')
+                    .attr('fill', 'var(--text-secondary)');
+
+                // Y axis
+                svg.append('g')
+                    .attr('transform', `translate(${margin.l},0)`)
+                    .call(d3.axisLeft(yScale).ticks(4).tickFormat(d => d3.format('~s')(d)))
+                    .selectAll('text')
+                    .attr('font-size', '0.65rem')
+                    .attr('fill', 'var(--text-secondary)');
+
+                // Line generator
+                const line = d3.line()
+                    .x(d => xScale(d.year))
+                    .y(d => yScale(d.value))
+                    .curve(d3.curveMonotoneX);
+
+                // Weekday line (blue)
+                svg.append('path')
+                    .datum(weekdayData)
+                    .attr('fill', 'none')
+                    .attr('stroke', 'steelblue')
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+
+                // Weekend line (orange)
+                svg.append('path')
+                    .datum(weekendData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#ff7f0e')
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+
+                // Peak day line (red)
+                svg.append('path')
+                    .datum(peakDayData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#d73027')
+                    .attr('stroke-width', 2)
+                    .attr('stroke-dasharray', '5,5')
+                    .attr('d', line);
+
+                // Weekday points
+                svg.append('g').selectAll('circle')
+                    .data(weekdayData)
+                .enter()
+                    .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 3)
+                    .attr('fill', 'steelblue')
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 1.5)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+
+                // Weekend points
+                svg.append('g').selectAll('circle')
+                    .data(weekendData)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 3)
+                    .attr('fill', '#ff7f0e')
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 1.5)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+
+                // Peak day points
+                svg.append('g').selectAll('circle')
+                    .data(peakDayData)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', d => xScale(d.year))
+                    .attr('cy', d => yScale(d.value))
+                    .attr('r', 3)
+                    .attr('fill', '#d73027')
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 1.5)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 1);
+                        miniTooltip.html(Math.round(d.value).toLocaleString())
+                            .style('left', (event.pageX + 10) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    })
+                    .on('mouseout', function() {
+                        miniTooltip.transition()
+                            .duration(200)
+                            .style('opacity', 0);
+                    });
+                });
+        };
+
+        // --- Function to update overview statistics
+        const updateOverviewStats = (year) => {
+            const yearInt = parseInt(year);
+            const overviewContainer = root.querySelector('#overview-stats');
+            
+            // Count active counters (counters with data for this specific year)
+            // Use raw rows data to count all counters with data for the selected year
+            const yearColumn = `tmj_${yearInt}`;
+            const activeCounters = rows.filter(d => {
+                const value = parseFloat(d[yearColumn]) || 0;
+                return value > 0;
+            }).length;
+            
+            // Calculate average weekday traffic for this year
+            // Using only counters with data for all years 2019-2022
+            const avgWeekdayTraffic = data.length > 0 
+                ? d3.mean(data, d => d.weekday[yearInt])
+                : 0;
+            
+            // Calculate average weekend traffic for this year
+            // Using only counters with data for all years 2019-2022
+            const avgWeekendTraffic = data.length > 0 
+                ? d3.mean(data, d => d.weekend[yearInt])
+                : 0;
+            
+            // Update the overview stats display
+            overviewContainer.innerHTML = `
+                <div style="text-align: center; padding: 1.5rem; background: rgba(70, 130, 180, 0.1); border-radius: 8px; border: 2px solid rgba(70, 130, 180, 0.3);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: steelblue; margin-bottom: 0.5rem;">${activeCounters}</div>
+                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Compteurs actifs</div>
+                </div>
+                <div style="text-align: center; padding: 1.5rem; background: rgba(26, 152, 80, 0.1); border-radius: 8px; border: 2px solid rgba(26, 152, 80, 0.3);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #1a9850; margin-bottom: 0.5rem;">${Math.round(avgWeekdayTraffic).toLocaleString()}</div>
+                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en semaine</div>
+                </div>
+                <div style="text-align: center; padding: 1.5rem; background: rgba(215, 48, 39, 0.1); border-radius: 8px; border: 2px solid rgba(215, 48, 39, 0.3);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #d73027; margin-bottom: 0.5rem;">${Math.round(avgWeekendTraffic).toLocaleString()}</div>
+                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en week-end</div>
+                </div>
+            `;
+        };
+
+        // --- Initialize overview stats with default year (2022)
+        updateOverviewStats('2022');
+
+        // --- Add event listeners to year buttons and set active state
+        const yearButtons = root.querySelectorAll('.year-btn');
+        let currentActiveYear = root.querySelector('.year-btn[data-year="2022"]');
+        
+        // Set initial active state for year buttons
+        if (currentActiveYear) {
+            currentActiveYear.style.background = 'steelblue';
+            currentActiveYear.style.color = '#fff';
+            currentActiveYear.style.borderColor = 'steelblue';
+            currentActiveYear.style.boxShadow = '0 2px 8px rgba(70, 130, 180, 0.3)';
+        }
+
+        yearButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const selectedYear = e.target.getAttribute('data-year');
+                
+                // Update active state
+                if (currentActiveYear) {
+                    currentActiveYear.style.background = 'var(--bg-secondary)';
+                    currentActiveYear.style.color = 'var(--text-primary)';
+                    currentActiveYear.style.borderColor = 'var(--border-color)';
+                    currentActiveYear.style.boxShadow = 'none';
+                }
+                
+                e.target.style.background = 'steelblue';
+                e.target.style.color = '#fff';
+                e.target.style.borderColor = 'steelblue';
+                e.target.style.boxShadow = '0 2px 8px rgba(70, 130, 180, 0.3)';
+                currentActiveYear = e.target;
+                
+                // Update overview stats
+                updateOverviewStats(selectedYear);
+            });
+
+            // Add hover effect
+            button.addEventListener('mouseenter', function() {
+                if (this !== currentActiveYear) {
+                    this.style.background = 'var(--bg-primary)';
+                    this.style.borderColor = 'steelblue';
+                }
+            });
+
+            button.addEventListener('mouseleave', function() {
+                if (this !== currentActiveYear) {
+                    this.style.background = 'var(--bg-secondary)';
+                    this.style.borderColor = 'var(--border-color)';
+                }
+            });
+        });
+
+        // --- Function to create bike lanes bar chart
+        const createBikeLanesChart = () => {
+            const chartContainer = d3.select('#bike-lanes-chart');
+            chartContainer.selectAll('*').remove();
+
+            // Count bike lanes by type
+            const typeCounts = {};
+            bikeLanesRows.forEach(row => {
+                const type = row['properties/type'] || 'Inconnu';
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            });
+
+            // Convert to array and sort by count
+            const chartData = Object.entries(typeCounts)
+                .map(([type, count]) => ({ type, count }))
+                .sort((a, b) => b.count - a.count);
+
+            // Chart dimensions
+            const margin = { t: 20, r: 20, b: 80, l: 60 };
+            const containerWidth = chartContainer.node().clientWidth || 500;
+            const width = Math.max(containerWidth, 300);
+            const height = 350;
+
+            const svg = chartContainer.append('svg')
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .attr('width', '100%')
+                .attr('height', height)
+                .style('display', 'block')
+                .style('max-width', '100%');
+
+            // Scales
+            const xScale = d3.scaleBand()
+                .domain(chartData.map(d => d.type))
+                .range([margin.l, width - margin.r])
+                .padding(0.2);
+
+            const maxCount = d3.max(chartData, d => d.count);
+            const yScale = d3.scaleLinear()
+                .domain([0, maxCount * 1.1])
+                .nice()
+                .range([height - margin.b, margin.t]);
+
+            // Color scale
+            const colorScale = d3.scaleOrdinal()
+                .domain(chartData.map(d => d.type))
+                .range(d3.schemeCategory10);
+
+            // X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height - margin.b})`)
+                .call(d3.axisBottom(xScale))
+                .selectAll('text')
+                .attr('transform', 'rotate(-45)')
+                .attr('x', -10)
+                .attr('y', 10)
+                .style('text-anchor', 'end')
+                .attr('font-size', '0.75rem')
+                .attr('fill', 'var(--text-secondary)');
+
+            // Y axis
+            svg.append('g')
+                .attr('transform', `translate(${margin.l},0)`)
+                .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => d3.format('~s')(d)))
+                .selectAll('text')
+                .attr('font-size', '0.75rem')
+                .attr('fill', 'var(--text-secondary)');
+
+            // Bars
+            svg.append('g')
+                .selectAll('rect')
+                .data(chartData)
+                .enter()
+                .append('rect')
+                .attr('x', d => xScale(d.type))
+                .attr('y', d => yScale(d.count))
+                .attr('width', xScale.bandwidth())
+                .attr('height', d => height - margin.b - yScale(d.count))
+                .attr('fill', d => colorScale(d.type))
+                .attr('rx', 4)
+                .style('cursor', 'pointer')
+                .on('mouseover', function(event, d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr('opacity', 0.8);
+                })
+                .on('mouseout', function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr('opacity', 1);
+                });
+
+            // Value labels on bars
+            svg.append('g')
+                .selectAll('text')
+                .data(chartData)
+                .enter()
+                .append('text')
+                .attr('x', d => xScale(d.type) + xScale.bandwidth() / 2)
+                .attr('y', d => yScale(d.count) - 5)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '0.75rem')
+                .attr('font-weight', '600')
+                .attr('fill', 'var(--text-primary)')
+                .text(d => d.count.toLocaleString());
+
+            // Y-axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', margin.l - 40)
+                .attr('x', -height / 2)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '0.9rem')
+                .attr('fill', 'var(--text-secondary)')
+                .text('Nombre de pistes cyclables');
+        };
+
+        // --- Initialize charts
+        updateEvolutionChart();
+        updateMiniCharts();
+        createBikeLanesChart();
+
+        // --- Add resize listener to recalculate mini charts layout
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updateMiniCharts();
+            }, 250); // Debounce resize events
+        });
+
+        // --- Load vehicles data
+        const vehiclesContainer = root.querySelector('#vehicles-status');
+        try {
+            const url = "https://data.mobilites-m.fr/api/gbfs/voi_grenoble/free_bike_status";
+            const res = await fetch(url);
+            const json = await res.json();
+
+            const bikes = json.data.bikes || [];
+            let velos = 0;
+            let trotinettes = 0;
+
+            for (const v of bikes) {
+                if (v.vehicle_type_id === "voi_bike") velos++;
+                if (v.vehicle_type_id === "voi_scooter") trotinettes++;
+            }
+
+            // Display vehicles status
+            vehiclesContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin: 2rem 0; max-width: 100%; overflow-x: hidden;">
+                    <div style="text-align: center; padding: 1.5rem; background: rgba(26, 152, 80, 0.1); border-radius: 8px; border: 2px solid rgba(26, 152, 80, 0.3);">
+                        <div style="font-size: 3rem; font-weight: 700; color: #1a9850; margin-bottom: 0.5rem;">${velos}</div>
+                        <div style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">Vélos électriques</div>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: rgba(215, 48, 39, 0.1); border-radius: 8px; border: 2px solid rgba(215, 48, 39, 0.3);">
+                        <div style="font-size: 3rem; font-weight: 700; color: #d73027; margin-bottom: 0.5rem;">${trotinettes}</div>
+                        <div style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">Trottinettes électriques</div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error('Error loading vehicles data:', err);
+            vehiclesContainer.innerHTML = `
+                <p style="color: var(--text-secondary); padding: 2rem; text-align: center;">
+                    Impossible de charger les données des véhicules en libre service.
+                </p>
+            `;
+        }
+
+        // --- Cleanup
+        return () => {
+            try { root.innerHTML = ''; } catch { }
+        };
+    }
 };
