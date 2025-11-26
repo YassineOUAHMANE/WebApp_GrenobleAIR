@@ -103,34 +103,7 @@ export default {
           </div>
         </div>
 
-        <div class="span-6 card animate-fade-in" style="animation-delay:0.3s">
-            <h3 style="margin-top:0">� Explorez les données</h3>
-            <div style="display: grid; gap: 0.75rem;">
-            <a href="#/parking" style="padding: 1rem; background: linear-gradient(135deg, rgba(79,124,255,0.15), transparent); border: 1px solid rgba(79,124,255,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🅿️</span>
-                <div>
-                <div style="font-weight: 600; color: var(--primary);">Stationnement</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Répartition & disponibilité</div>
-                </div>
-            </a>
-            <a href="#/mobilite" style="padding: 1rem; background: linear-gradient(135deg, rgba(41,193,140,0.15), transparent); border: 1px solid rgba(41,193,140,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🚴</span>
-                <div>
-                <div style="font-weight: 600; color: var(--secondary);">Mobilité douce</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Vélos & piétons</div>
-                </div>
-            </a>
-            <a href="#/lignes" style="padding: 1rem; background: linear-gradient(135deg, rgba(255,209,102,0.15), transparent); border: 1px solid rgba(255,209,102,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🚌</span>
-                <div>
-                <div style="font-weight: 600; color: var(--accent);">Transport public</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Lignes TAG & arrêts</div>
-                </div>
-            </a>
-            </div>
-        </div>
-
-        <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
+        <div class="span-12 card animate-fade-in" style="animation-delay:0.3s">
             <h2 style="margin-top:0;">Vue d'ensemble</h2>
             <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
         </div>
@@ -174,7 +147,7 @@ export default {
         { label: 'Parkings', count: parkingNumber, color: '#4f7cff', icon: '🅿️' },
         { label: 'Comptages vélos', count: velosCount, color: '#29c18c', icon: '🚴' },
         { label: 'Lignes transport', count: transportCount, color: '#ffd166', icon: '🚌' },
-        // { label: 'Stations IRVE', count: irveCount, color: '#ff6b6b', icon: '⚡' }
+        { label: 'Stations IRVE', count: evData.length, color: '#ff6b6b', icon: '⚡' }
       ];
 
       const chartEl = root.querySelector('#summary-chart');

@@ -736,6 +736,6 @@ export default {
 
 //Tile fetching logic
 async function fetchTileJson(x, y, z) {
-    const path = `/data/geojson/output-${z}-${x}-${y}.geojson`;
+    const path = `./data/geojson/output-${z}-${x}-${y}.geojson`;
     return await fetchJSON(path);
 }
