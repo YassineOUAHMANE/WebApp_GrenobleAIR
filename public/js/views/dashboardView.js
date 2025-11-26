@@ -80,27 +80,22 @@ export default {
                 <div class="label">Lignes de transport</div>
                 <div class="value" id="kpi-transport">—</div>
             </div>
-            </div>
-        </div>
-
-        <div class="span-12">
-          <div class="kpis">
             <div class="kpi">
               <div class="kpi-icon">⚡</div>
-              <div class="label">Total Stations</div>
+              <div class="label">Stations IRVE</div>
               <div class="value">${evData.length}</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🔌</div>
-              <div class="label">Points de Charge</div>
+              <div class="label">Points de charge</div>
               <div class="value">${totalEVPoints}</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">📊</div>
-              <div class="label">Médiane Points de charge / Station</div>
+              <div class="label">Médiane PDC/Station</div>
               <div class="value">${medianEVPoints}</div>
             </div>
-          </div>
+            </div>
         </div>
 
         <div class="span-12 card animate-fade-in" style="animation-delay:0.3s">
