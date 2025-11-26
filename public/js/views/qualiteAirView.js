@@ -9,7 +9,6 @@ export default {
         // --- Layout
         root.innerHTML = `
         <h2 class="title">${icons.aqi} Qualité de l’air — PM2.5</h2>
-        <p>Chaque carré représente une journée. La couleur dépend de la médiane PM2.5.</p>
             
         <section class="grid">
 
@@ -20,11 +19,13 @@ export default {
             </div>
 
             <div class="span-12 card">
+                <h2>Qualité de l'air médiane en PM2.5</h2>
+                <p>Chaque carré représente une journée.</p>
                 <div id="aqi-grid"></div>
             </div>
 
             <div class="span-12 card">
-                <h2>PM2.5 Daily Median with Min/Max</h2>
+                <h2>Qualité de l'air médiane en PM2.5 avec minimum/maximum</h2>
                 <div id="pm25-linechart" style="height:300px"></div>
             </div>
         </section>
@@ -51,19 +52,19 @@ export default {
         const cellSize = 14;
         const cellPadding = 2;
 
-        // PM2.5 thresholds (µg/m³)
-        const color = d3.scaleThreshold()
-            .domain([5, 10, 15, 20, 25, 30, 40])
+        const color = d3.scaleLinear()
+            .domain([0, 5, 10, 15, 20, 25, 30, 40])
             .range([
-                '#d4f1f9', // very clean
+                '#d4f1f9',
                 '#a9e4f5',
                 '#7ad3f0',
                 '#f4d35e',
                 '#ee964b',
                 '#f95738',
                 '#d62828',
-                '#9d0208'  // very polluted
-            ]);
+                '#9d0208'
+            ])
+            .interpolate(d3.interpolateRgb); // smooth blending
 
         // --- Build one SVG per year
         years.forEach(year => {

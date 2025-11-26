@@ -7,15 +7,82 @@ import { fetchCSV } from "../utils/fetchData.js";
 import { featureCollectionFromRows } from '../utils/mapUtils.js';
 import { icons } from "../utils/icons.js";
 
+const loadData = async () => {
+    //Parking data
+    const raw = await fetchCSV('/data/parking/parking.csv');
+
+    const parkingData = raw.filter(p => parseInt(p['nb_places'] || 0) > 0)
+        .map(p => ({
+            nom: p['nom'] || '—',
+            places: parseInt(p['nb_places'] || 0) || 0,
+            gratuit: parseInt(p['gratuit']) == 1,
+            type: p['type_ouvrage'].replaceAll('_', ' ') || 'enclos en surface',
+            commune: p['commune'] || '—',
+            velo: parseInt(p['nb_velo'] || 0) || 0,
+            elec: parseInt(p['nb_voitures_electriques'] || 0) || 0,
+            pmr: parseInt(p['nb_pmr'] || 0) || 0,
+            covoit: parseInt(p['nb_covoit'] || 0) || 0,
+            coords: p.geo_point_2d?.split(',').map(parseFloat) || [0, 0]
+        }));
+
+    const zfe = await fetchCSV('./data/zfe/zfeaires.csv');
+    const ZFEPermimeter = featureCollectionFromRows(zfe);
+
+    return { parkingData, ZFEPermimeter }
+};
+
 export default {
     title: 'Stationnement',
     icon: 'parking',
     async mount(root) {
-        const d3 = window.d3;
+
+        const { parkingData, ZFEPermimeter } = await loadData();
+        // Statistiques
+        const totalPlaces = parkingData.reduce((sum, d) => sum + d.places, 0);
+        const gratuitPlaces = parkingData.filter(d => d.gratuit).reduce((sum, d) => sum + d.places, 0);
+        const payantPlaces = totalPlaces - gratuitPlaces;
+        const totalPmr = parkingData.reduce((sum, d) => sum + d.pmr, 0);
+
 
         root.innerHTML = `
         <h2 class="title" style="margin-bottom: 0.5rem;">${icons.parking} Stationnement</h2>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Top 10 parkings par capacité</p>
+
+        <section class="grid">
+            <div class="span-12 card animate-fade-in" style="animation-delay:0.1s">
+                <h2 style="margin-top:0">${icons.chart} Vue d'ensemble</h2>
+                <div class="kpis" id="kpis-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="kpi">
+                    <h3 class="kpi-icon">${icons.parking}</h3>
+                    <div class="label">Total places</div>
+                    <div class="value">${totalPlaces}</div>
+                </div>
+                <div class="kpi">
+                    <h3 class="kpi-icon">$</h3>
+                    <div class="label">Places payantes</div>
+                    <div class="value">${payantPlaces}</div>
+                </div>
+                <div class="kpi">
+                    <h3 class="kpi-icon">${icons.check}</h3>
+                    <div class="label">Places gratuites</div>
+                    <div class="value">${gratuitPlaces}</div>
+                </div>
+                <div class="kpi">
+                    <h3 class="kpi-icon">♿</h3>
+                    <div class="label">Places PMR</div>
+                    <div class="value">${totalPmr}</div>
+                </div>
+                </div>
+            </div>
+            <div class="span-6 card animate-fade-in" style="animation-delay:0.2s">
+                <h3 style="margin-top:0">$ Répartition par tarification</h3>
+                <div id="chart-tarif" class="chart" style="height:300px;"></div>
+            </div>
+
+            <div class="span-6 card animate-fade-in" style="animation-delay:0.2s">
+                <h3 style="margin-top:0">${icons.building} Répartition par structure (Surface vs Ouvrage)</h3>
+                <div id="chart-type" class="chart" style="height:300px;"></div>
+            </div>
+        </section>
         
         <section class="grid">            
             <!-- FILTRES (Colonne gauche) -->
@@ -23,7 +90,7 @@ export default {
                 <h2 style="margin-top: 0; font-size: 1.2rem; margin-bottom: 1.5rem;">Filtres</h2>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; font-size: 0.95rem;">💰 Tarif:</label>
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; font-size: 0.95rem;">Tarif:</label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; cursor: pointer; font-size: 0.9rem;">
                     <input type="checkbox" class="filter-tarif" value="gratuit" checked> Gratuit <span class="color-box" style="background-color: #1fa371"></span>
                     </label>
@@ -33,12 +100,12 @@ export default {
                 </div>
 
                 <div>
-                    <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; font-size: 0.95rem;">🛎️ Services:</label>
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; font-size: 0.95rem;">Services:</label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; cursor: pointer; font-size: 0.9rem;">
-                    <input type="checkbox" class="filter-service" value="velo"> 🚴 Vélos
+                    <input type="checkbox" class="filter-service" value="velo"> ${icons.bike} Vélos
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; cursor: pointer; font-size: 0.9rem;">
-                    <input type="checkbox" class="filter-service" value="elec"> 🔌 Voitures électriques
+                    <input type="checkbox" class="filter-service" value="elec"> ${icons.ev} Voitures électriques
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
                     <input type="checkbox" class="filter-service" value="pmr"> ♿ PMR
@@ -48,7 +115,7 @@ export default {
 
             <!-- GRAPHIQUE (Colonne droite) -->
             <div class="card" style="grid-column: span 9;">
-                <h2 style="margin-top: 0; margin-bottom: 1rem;">🏆 Top 10 Parkings</h2>
+                <h2 style="margin-top: 0; margin-bottom: 1rem;">Top 10 Parkings par capacité</h2>
                 <div id="bubble-chart" style="min-height: 400px; max-height: 570px; border: 1px solid rgba(79,124,255,0.2); border-radius: 1rem; padding: 0; overflow: hidden;"></div>
             </div>
 
@@ -71,43 +138,181 @@ export default {
         <div id="bubble-tooltip" style="position: fixed; display: none; background: white; border: 1px solid rgba(79,124,255,0.3); padding: 1rem; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); max-width: 320px; pointer-events: none; z-index: 99999; font-size: 0.95rem; top: 0; left: 0;"></div>
         `;
 
-        // The bubble graph
+        // ===== GRAPHIQUE 1: Tarification =====
+        (() => {
+            const chartData = [
+                { label: 'Payant', value: payantPlaces, color: '#4f7cff', pct: ((payantPlaces / totalPlaces) * 100).toFixed(1) },
+                { label: 'Gratuit', value: gratuitPlaces, color: '#29c18c', pct: ((gratuitPlaces / totalPlaces) * 100).toFixed(1) }
+            ];
 
-        let allData = [];
+            const el = root.querySelector('#chart-tarif');
+            const w = el.clientWidth || 400, h = 300;
+            const radius = Math.min(w, h) / 2 - 40;
+
+            const svg = d3.select(el).append('svg')
+                .attr('viewBox', [0, 0, w, h])
+                .attr('width', '100%')
+                .attr('height', '100%');
+
+            const pie = d3.pie().value(d => d.value);
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+            const g = svg.append('g')
+                .attr('transform', `translate(${w / 2},${h / 2})`);
+
+            const slices = g.selectAll('g')
+                .data(pie(chartData))
+                .join('g');
+
+            slices.append('path')
+                .attr('fill', d => d.data.color)
+                .attr('fill-opacity', 0.85)
+                .attr('d', arc)
+                .on('mouseover', function () {
+                    d3.select(this).transition().duration(150).attr('fill-opacity', 1);
+                })
+                .on('mouseout', function () {
+                    d3.select(this).transition().duration(150).attr('fill-opacity', 0.85);
+                })
+                .transition()
+                .duration(1000)
+                .attrTween('d', function (d) {
+                    const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+                    return t => arc(interpolate(t));
+                });
+
+            slices.append('text')
+                .attr('transform', d => `translate(${arc.centroid(d)})`)
+                .attr('text-anchor', 'middle')
+                .attr('dy', '0.35em')
+                .attr('font-size', '1rem')
+                .attr('font-weight', '700')
+                .attr('fill', 'white')
+                .text(d => `${d.data.pct}%`)
+                .style('opacity', 0)
+                .transition()
+                .duration(1200)
+                .delay(600)
+                .style('opacity', 1);
+
+            // Légende
+            g.selectAll('.legend')
+                .data(chartData)
+                .join('g')
+                .attr('class', 'legend')
+                .attr('transform', (d, i) => `translate(${radius + 20}, ${-radius + i * 40})`)
+                .append('rect')
+                .attr('width', 12)
+                .attr('height', 12)
+                .attr('fill', d => d.color)
+                .attr('rx', 2);
+
+            g.selectAll('.legend')
+                .append('text')
+                .attr('x', 18)
+                .attr('y', 10)
+                .attr('font-size', '0.9rem')
+                .attr('fill', 'var(--text-primary)')
+                .text(d => `${d.label}: ${d.value.toLocaleString()}`);
+        })();
+
+        // ===== GRAPHIQUE 2: Type d'ouvrage =====
+        (() => {
+            const typeData = d3.rollup(parkingData, v => d3.sum(v, d => d.places), d => d.type);
+            const chartData = Array.from(typeData, ([label, value]) => ({
+                label: label === 'enclos en surface' ? 'Surface (plein air)' : 'Ouvrage (multi-étage)',
+                value,
+                color: label === 'enclos en surface' ? '#ffd166' : '#ff6b6b'
+            }));
+
+            const el = root.querySelector('#chart-type');
+            const w = el.clientWidth || 400, h = 300;
+            const radius = Math.min(w, h) / 2 - 40;
+
+            const svg = d3.select(el).append('svg')
+                .attr('viewBox', [0, 0, w, h])
+                .attr('width', '100%')
+                .attr('height', '100%');
+
+            const pie = d3.pie().value(d => d.value);
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+            const g = svg.append('g')
+                .attr('transform', `translate(${w / 2},${h / 2})`);
+
+            const slices = g.selectAll('g')
+                .data(pie(chartData))
+                .join('g');
+
+            slices.append('path')
+                .attr('fill', d => d.data.color)
+                .attr('fill-opacity', 0.85)
+                .attr('d', arc)
+                .on('mouseover', function () {
+                    d3.select(this).transition().duration(150).attr('fill-opacity', 1);
+                })
+                .on('mouseout', function () {
+                    d3.select(this).transition().duration(150).attr('fill-opacity', 0.85);
+                })
+                .transition()
+                .duration(1000)
+                .attrTween('d', function (d) {
+                    const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+                    return t => arc(interpolate(t));
+                });
+
+            slices.append('text')
+                .attr('transform', d => `translate(${arc.centroid(d)})`)
+                .attr('text-anchor', 'middle')
+                .attr('dy', '0.35em')
+                .attr('font-size', '1rem')
+                .attr('font-weight', '700')
+                .attr('fill', 'white')
+                .text(d => `${((d.data.value / totalPlaces) * 100).toFixed(1)}%`)
+                .style('opacity', 0)
+                .transition()
+                .duration(1200)
+                .delay(600)
+                .style('opacity', 1);
+
+            // Légende détaillée
+            g.selectAll('.legend-rect')
+                .data(chartData)
+                .join('rect')
+                .attr('class', 'legend-rect')
+                .attr('x', radius + 20)
+                .attr('y', (d, i) => -radius + i * 45)
+                .attr('width', 12)
+                .attr('height', 12)
+                .attr('fill', d => d.color)
+                .attr('rx', 2);
+
+            g.selectAll('.legend-text')
+                .data(chartData)
+                .join('text')
+                .attr('class', 'legend-text')
+                .attr('x', radius + 40)
+                .attr('y', (d, i) => -radius + i * 45 + 10)
+                .attr('font-size', '0.85rem')
+                .attr('fill', 'var(--text-primary)')
+                .text(d => `${d.label}`);
+
+            g.selectAll('.legend-pct')
+                .data(chartData)
+                .join('text')
+                .attr('class', 'legend-pct')
+                .attr('x', radius + 40)
+                .attr('y', (d, i) => -radius + i * 45 + 25)
+                .attr('font-size', '0.75rem')
+                .attr('fill', 'var(--text-secondary)')
+                .text(d => `${d.value.toLocaleString()} places (${((d.value / totalPlaces) * 100).toFixed(1)}%)`);
+        })();
+
+        // The bubble graph
         let filters = { service: new Set() };
 
-        let ZFEPermimeter;
-
-        const loadData = async () => {
-
-            //Parking data
-            const raw = await fetchCSV('/data/parking/parking.csv');
-
-            allData = raw
-                .filter(p => parseInt(p['nb_places'] || 0) > 0)
-                .map(p => ({
-                    nom: p['nom'] || '—',
-                    places: parseInt(p['nb_places'] || 0) || 0,
-                    gratuit: parseInt(p['gratuit']) == 1,
-                    type: p['type_ouvrage'].replaceAll('_', ' ') || 'enclos en surface',
-                    commune: p['commune'] || '—',
-                    velo: parseInt(p['nb_velo'] || 0) || 0,
-                    elec: parseInt(p['nb_voitures_electriques'] || 0) || 0,
-                    pmr: parseInt(p['nb_pmr'] || 0) || 0,
-                    covoit: parseInt(p['nb_covoit'] || 0) || 0,
-                    coords: p.geo_point_2d?.split(',').map(parseFloat) || [0,0]
-                }));
-
-            const zfe = await fetchCSV('./data/zfe/zfeaires.csv');
-            ZFEPermimeter = featureCollectionFromRows(zfe);
-            console.log(ZFEPermimeter);
-
-            setupFilters();
-            renderBubbles();
-        };
-
         const applyFilters = () => {
-            let result = [...allData];
+            let result = [...parkingData];
 
             // Tarif: checkboxes (on peut avoir les deux)
             const tarifGratuit = root.querySelector('input.filter-tarif[value="gratuit"]').checked;
@@ -318,8 +523,8 @@ export default {
             });
         };
 
-        await loadData();
-
+        setupFilters();
+        renderBubbles();
 
         // The sankey graph
         const container = root.querySelector('#sankey-graph');
@@ -349,11 +554,11 @@ export default {
             { name: 'PMR', category: 'Special' },
             { name: 'Autres', category: 'Parkings' },
         ]
-        console.log(allData)
-        const types = new Set(allData.map(i => i.type))
+        console.log(parkingData)
+        const types = new Set(parkingData.map(i => i.type))
         types.forEach(i => data.nodes.push({ name: i, category: 'Type' })); // Get types of parkings
 
-        const biggestParkings = allData.map(i => [i.nom, i.places]).sort((a,b) => b[1] - a[1]).filter((_,k) => k < 10).map(i => i[0]);//Find the 10 biggest parkings
+        const biggestParkings = parkingData.map(i => [i.nom, i.places]).sort((a, b) => b[1] - a[1]).filter((_, k) => k < 10).map(i => i[0]);//Find the 10 biggest parkings
         console.log(biggestParkings)
 
         console.log(data.nodes)
@@ -374,7 +579,7 @@ export default {
 
             };
             types.forEach(i => {
-                links['InZFE' + i] = 0; 
+                links['InZFE' + i] = 0;
                 links['OutZFE' + i] = 0
                 links[i + 'Elec'] = 0;
                 links[i + 'Part'] = 0;
@@ -382,7 +587,7 @@ export default {
                 links[i + 'Autres'] = 0;
             }); // Get types of parkings
 
-            allData.forEach(i => {
+            parkingData.forEach(i => {
                 const inZFE = d3.geoContains(ZFEPermimeter.features[0], [i.coords[1], i.coords[0]])
                 console.log(inZFE)
                 links[i.gratuit ? 'gratuit' : 'payant'] += i.places;
@@ -394,35 +599,35 @@ export default {
                 links[i.type + 'PMR'] += i.pmr;
 
                 const isParkingCategorized = biggestParkings.includes(i.nom);
-                if(isParkingCategorized){
-                    data.nodes.push({name: i.nom, category: 'Parkings'});
+                if (isParkingCategorized) {
+                    data.nodes.push({ name: i.nom, category: 'Parkings' });
                 }
-                if(i.elec > 0){
-                    if(isParkingCategorized){
-                        data.links.push({source: 'Electrique', target: i.nom, value: i.elec});
-                    }else{
+                if (i.elec > 0) {
+                    if (isParkingCategorized) {
+                        data.links.push({ source: 'Electrique', target: i.nom, value: i.elec });
+                    } else {
                         links.elecAutres += i.elec
                     }
                 }
-                if(i.covoit > 0){
-                    if(isParkingCategorized){
-                        data.links.push({source: 'Autopartage', target: i.nom, value: i.covoit});
-                    }else{
+                if (i.covoit > 0) {
+                    if (isParkingCategorized) {
+                        data.links.push({ source: 'Autopartage', target: i.nom, value: i.covoit });
+                    } else {
                         links.partAutres += i.covoit
                     }
                 }
-                if(i.pmr > 0){
-                    if(isParkingCategorized){
-                        data.links.push({source: 'PMR', target: i.nom, value: i.pmr});
-                    }else{
+                if (i.pmr > 0) {
+                    if (isParkingCategorized) {
+                        data.links.push({ source: 'PMR', target: i.nom, value: i.pmr });
+                    } else {
                         links.PMRAutres += i.pmr
                     }
                 }
 
                 const otherSpots = i.places - i.elec - i.covoit - i.pmr;
-                if(isParkingCategorized){
-                    data.links.push({source: i.type, target: i.nom, value: otherSpots});
-                }else{
+                if (isParkingCategorized) {
+                    data.links.push({ source: i.type, target: i.nom, value: otherSpots });
+                } else {
                     links[i.type + 'Autres'] += otherSpots;
                 }
             })
@@ -437,13 +642,13 @@ export default {
             data.links.push({ source: 'Autopartage', target: 'Autres', value: links.partAutres })
             data.links.push({ source: 'Electrique', target: 'Autres', value: links.elecAutres })
             types.forEach(i => {
-                data.links.push({ source: 'Intra-ZFE', target: i, value: links['InZFE' + i]});
-                data.links.push({ source: 'Extra-ZFE', target: i, value: links['OutZFE' + i]});
-                data.links.push({ source: i, target: 'Electrique', value: links[i + 'Elec']});
-                data.links.push({ source: i, target: 'Autopartage', value: links[i + 'Part']});
-                data.links.push({ source: i, target: 'PMR', value: links[i + 'PMR']});
-                
-                data.links.push({ source: i, target: 'Autres', value: links[i + 'Autres']});
+                data.links.push({ source: 'Intra-ZFE', target: i, value: links['InZFE' + i] });
+                data.links.push({ source: 'Extra-ZFE', target: i, value: links['OutZFE' + i] });
+                data.links.push({ source: i, target: 'Electrique', value: links[i + 'Elec'] });
+                data.links.push({ source: i, target: 'Autopartage', value: links[i + 'Part'] });
+                data.links.push({ source: i, target: 'PMR', value: links[i + 'PMR'] });
+
+                data.links.push({ source: i, target: 'Autres', value: links[i + 'Autres'] });
             }); // Get types of parkings
             console.log(data.links)
 
