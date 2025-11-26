@@ -22,7 +22,7 @@ const lineColors = {
     SEM_C12: "rgb(238,125,0)",
     SEM_C13: "rgb(238,125,0)",
     SEM_C14: "rgb(238,125,0)",
-  };
+};
 
 export default {
     title: 'Carte',
@@ -317,6 +317,7 @@ export default {
             return tiles;
         }
 
+        const notFound = {}; //For debugging missing tiles
         async function draw() {
             // Compute center tile
             const [lon, lat] = currentCenter;
@@ -324,20 +325,16 @@ export default {
 
             const tilesToLoad = getTilesAround(centerTileX, centerTileY, currentZoom, 2);
 
-            // console.log(tilesToLoad)
-
-            // const notFound = [];
-
             const tilesData = await Promise.all(
                 tilesToLoad.map(async d => {
                     const layers = await fetchTileJson(d[0], d[1], d[2]);
-                    // if (!layers) {
-                    //     notFound.push(d);
-                    // }
+                    if (!layers) {
+                        notFound[`${d[0]}-${d[1]}-${d[2]}`] = d;
+                    }
                     return { x: d[0], y: d[1], z: d[2], layers };
                 })
             );
-            // console.log("Not found", notFound)
+            console.log("Not found", notFound)
 
 
             //Group water fill - to avoid artefacts on the side of tiles

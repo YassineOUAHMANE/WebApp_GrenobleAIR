@@ -8,7 +8,7 @@ const state = Object.seal({
 });
 
 function setTheme(next) {
-  console.log('Changing theme to:', next);
+//   console.log('Changing theme to:', next);
   document.documentElement.setAttribute('data-theme', next);
   document.documentElement.style.colorScheme = next;
   localStorage.setItem('theme', next);
@@ -25,7 +25,7 @@ function initThemeToggle() {
   const themeBtn = document.getElementById('themeToggle');
   if (themeBtn) {
     themeBtn.addEventListener('click', (e) => {
-      console.log('Theme button clicked!');
+    //   console.log('Theme button clicked!');
       toggleTheme();
     });
   }

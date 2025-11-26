@@ -1,8 +1,4 @@
 // A script that retrieves Protobuf buffers and parses them as GeoJSON
-// import { VectorTile } from 'd3';
-import { geoMercator } from 'd3-geo';
-import { tile } from 'd3-tile';
-
 import { VectorTile } from '@mapbox/vector-tile';
 
 import Pbf from 'pbf'

@@ -59,6 +59,7 @@ export async function fetchCSV(path){
 };
 
 export async function fetchJSON(path) {
+    if(cache.has(path)) console.log(`Returning ${path} from cache`)
     if (cache.has(path)) return cache.get(path);
     try {
         const j = await fetchGZIP(path);
