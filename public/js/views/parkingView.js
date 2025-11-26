@@ -81,7 +81,7 @@ export default {
         const loadData = async () => {
 
             //Parking data
-            const raw = await fetchCSV('/data/parking/parking.csv');
+            const raw = await fetchCSV('./data/parking/parking.csv');
 
             allData = raw
                 .filter(p => parseInt(p['nb_places'] || 0) > 0)

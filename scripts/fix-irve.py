@@ -10,7 +10,9 @@ import re
 from pathlib import Path
 
 def fix_irve_normalise():
-    filepath = Path('/home/yassine/Desktop/ChallengeOpenData/open-data/data/irve/irve_normalise_etalab.csv')
+    # Chemin relatif au script
+    script_dir = Path(__file__).parent
+    filepath = script_dir.parent / 'public' / 'data' / 'irve' / 'irve_normalise_etalab.csv'
     
     print(f" Nettoyage spécifique de {filepath.name}...")
     
