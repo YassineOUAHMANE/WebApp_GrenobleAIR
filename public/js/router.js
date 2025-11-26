@@ -6,7 +6,6 @@ const routes = {
   'parking':   () => import('./views/parkingView.js'),
   'mobilite':  () => import('./views/mobiliteView.js'),
   'qualite-air': () => import('./views/qualiteAirView.js'),
-  'lignes': () => import('./views/lignesTransportView.js'),
   'about':     () => import('./views/aboutView.js')
 };
 
