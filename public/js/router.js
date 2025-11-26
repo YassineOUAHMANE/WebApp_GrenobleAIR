@@ -4,8 +4,8 @@ const routes = {
   'map': () => import('./views/mapView.js'),
   'dashboard': () => import('./views/dashboardView.js'),
   'parking':   () => import('./views/parkingView.js'),
-  'mobilite':  () => import('./views/mobiliteView.js').catch(() => import('./views/aboutView.js')),
-  'qualite-air': () => import('./views/qualiteAirView.js').catch(() => import('./views/aboutView.js')),
+  'mobilite':  () => import('./views/mobiliteView.js'),
+  'qualite-air': () => import('./views/qualiteAirView.js'),
   'lignes': () => import('./views/lignesTransportView.js'),
   'about':     () => import('./views/aboutView.js')
 };

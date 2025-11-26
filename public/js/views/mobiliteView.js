@@ -1,4 +1,4 @@
-import { loadCSV } from '../utils/csv.js';
+import { fetchCSV } from '../utils/fetchData.js';
 
 export default {
     title: 'Mobilité Douce',
@@ -53,8 +53,8 @@ export default {
         `;
 
         // --- Load CSV files
-        const rows = await loadCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
-        const bikeLanesRows = await loadCSV('./data/mobilite_douce/pistes_cyclables_des_49_communes_de_la_métropole.csv');
+        const rows = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
+        const bikeLanesRows = await fetchCSV('./data/mobilite_douce/pistes_cyclables_des_49_communes_de_la_métropole.csv');
 
         // --- Parse data and filter only counters with data for all years 2019-2022
         const data = rows

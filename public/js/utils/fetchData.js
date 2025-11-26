@@ -46,7 +46,7 @@ export async function fetchCSV(path){
     try {
         const rawCsv = await fetchGZIP(path);
         if (!rawCsv) {
-            console.warn(`Failed to load CSV from ${path}:`, err);
+            console.warn(`Failed to load CSV from ${path}`);
             return [];
         }
         const parsed = parseCSV(rawCsv)
@@ -59,7 +59,6 @@ export async function fetchCSV(path){
 };
 
 export async function fetchJSON(path) {
-    if(cache.has(path)) console.log(`Returning ${path} from cache`)
     if (cache.has(path)) return cache.get(path);
     try {
         const j = await fetchGZIP(path);
@@ -88,7 +87,7 @@ export const fetchGZIP = async (path) => {
         const gzipRes = await fetch(gzipPath);
         if (gzipRes.ok) {
             const blob = await gzipRes.blob();
-            console.log(`Fetched ${path} as gzip`)
+            // console.log(`Fetched ${path} as gzip`)
             return await decompressGzip(blob);
         }
 
@@ -98,7 +97,7 @@ export const fetchGZIP = async (path) => {
             return await rawRes.text();
         }
 
-        console.warn(`Failed to load ${gzipPath} and ${path}`);
+        // console.warn(`Failed to load ${gzipPath} and ${path}`);
         return null;
 
     } catch (err) {
