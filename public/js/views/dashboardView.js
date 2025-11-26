@@ -51,6 +51,10 @@ export default {
   async mount(root) {
     const evData = await loadEVData();
     const totalEVPoints = evData.reduce((s, d) => s + d.pdc, 0);
+    
+    // Calculer la médiane au lieu de la moyenne
+    const sortedPDC = evData.map(d => d.pdc).sort((a, b) => a - b);
+    const medianEVPoints = sortedPDC[Math.floor(sortedPDC.length / 2)];
 
     root.innerHTML = `
         <h2 class="title">${icons.dashboard} Tableau de bord</h2>
@@ -58,7 +62,7 @@ export default {
         <section class="grid">
 
         <div class="span-12 card animate-fade-in" style="animation-delay:0.15s">
-            <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques</h2>
+            <h2 style="margin-top:0; margin-bottom: 1.5rem">Statistiques</h2>
             <div class="kpis" id="kpis-container">
             <div class="kpi">
                 <div class="kpi-icon">🅿️</div>
@@ -93,8 +97,8 @@ export default {
             </div>
             <div class="kpi">
               <div class="kpi-icon">📊</div>
-              <div class="label">Moyenne Points de charge / Station</div>
-              <div class="value">${(totalEVPoints / evData.length).toFixed(1)}</div>
+              <div class="label">Médiane Points de charge / Station</div>
+              <div class="value">${medianEVPoints}</div>
             </div>
           </div>
         </div>
@@ -127,7 +131,7 @@ export default {
         </div>
 
         <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
-            <h2 style="margin-top:0;">📈 Vue d'ensemble</h2>
+            <h2 style="margin-top:0;">Vue d'ensemble</h2>
             <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
         </div>
     </section>
