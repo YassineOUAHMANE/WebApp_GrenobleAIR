@@ -1,4 +1,5 @@
 import { fetchCSV } from '../utils/fetchData.js';
+import { icons } from '../utils/icons.js';
 
 export default {
     linkTitle: 'AQI',
@@ -7,7 +8,7 @@ export default {
     async mount(root) {
         // --- Layout
         root.innerHTML = `
-        <h2 class="title">Qualité de l’air — PM2.5</h2>
+        <h2 class="title">${icons.aqi} Qualité de l’air — PM2.5</h2>
         <p>Chaque carré représente une journée. La couleur dépend de la médiane PM2.5.</p>
             
         <section class="grid">

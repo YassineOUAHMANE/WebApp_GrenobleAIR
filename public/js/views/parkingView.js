@@ -5,6 +5,7 @@
 
 import { fetchCSV } from "../utils/fetchData.js";
 import { featureCollectionFromRows } from '../utils/mapUtils.js';
+import { icons } from "../utils/icons.js";
 
 export default {
     title: 'Stationnement',
@@ -13,21 +14,21 @@ export default {
         const d3 = window.d3;
 
         root.innerHTML = `
-        <h2 class="title" style="margin-bottom: 0.5rem;">🅿️ Stationnement</h2>
+        <h2 class="title" style="margin-bottom: 0.5rem;">${icons.parking} Stationnement</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Top 10 parkings par capacité</p>
         
         <section class="grid">            
             <!-- FILTRES (Colonne gauche) -->
             <div class="card" style="height: fit-content; grid-column: span 3;">
-                <h2 style="margin-top: 0; font-size: 1.2rem; margin-bottom: 1.5rem;">🔍 Filtres</h2>
+                <h2 style="margin-top: 0; font-size: 1.2rem; margin-bottom: 1.5rem;">Filtres</h2>
 
                 <div style="margin-bottom: 1.5rem;">
                     <label style="font-weight: 600; display: block; margin-bottom: 0.8rem; font-size: 0.95rem;">💰 Tarif:</label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; cursor: pointer; font-size: 0.9rem;">
-                    <input type="checkbox" class="filter-tarif" value="gratuit"> ✅ Gratuit
+                    <input type="checkbox" class="filter-tarif" value="gratuit" checked> Gratuit <span class="color-box" style="background-color: #1fa371"></span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
-                    <input type="checkbox" class="filter-tarif" value="payant"> 💳 Payant
+                    <input type="checkbox" class="filter-tarif" value="payant" checked> Payant <span class="color-box" style="background-color: #3551d5"></span>
                     </label>
                 </div>
 
@@ -48,7 +49,7 @@ export default {
             <!-- GRAPHIQUE (Colonne droite) -->
             <div class="card" style="grid-column: span 9;">
                 <h2 style="margin-top: 0; margin-bottom: 1rem;">🏆 Top 10 Parkings</h2>
-                <div id="bubble-chart" style="min-height: 400px; max-height: 570px; border: 1px solid rgba(79,124,255,0.2); border-radius: 8px; padding: 0; overflow: hidden;"></div>
+                <div id="bubble-chart" style="min-height: 400px; max-height: 570px; border: 1px solid rgba(79,124,255,0.2); border-radius: 1rem; padding: 0; overflow: hidden;"></div>
             </div>
 
             <!-- SANKEY -->
@@ -167,10 +168,9 @@ export default {
                 .join('circle')
                 .attr('cx', -50)
                 .attr('cy', h / 2)
-                .attr('r', d => Math.max(15, Math.min(60, (d.places / maxPlaces) * 60)))
-                .attr('fill', d => d.gratuit ? '#29c18c' : '#ffd166')
-                .attr('opacity', 0.8)
-                .attr('stroke', 'white')
+                .attr('r', d => Math.max(15, Math.min(60, Math.sqrt(d.places / maxPlaces) * 60)))
+                .attr('fill', d => d.gratuit ? "#29c18c" : "#4f7cff")
+                .attr('stroke', d => d.gratuit ? "#1fa371" : "#3551d5")
                 .attr('stroke-width', 3)
                 .style('cursor', 'pointer');
 
@@ -257,7 +257,7 @@ export default {
             };
 
             bubbles.on('mouseenter', function (event, d) {
-                const bubbleRadius = Math.max(15, Math.min(60, (d.places / maxPlaces) * 60));
+                const bubbleRadius = Math.max(15, Math.min(60, Math.sqrt(d.places / maxPlaces) * 60));
                 d3.select(this)
                     .transition().duration(150)
                     .attr('r', bubbleRadius * 1.2)
@@ -487,7 +487,6 @@ export default {
             .selectAll()
             .data(links)
             .join("g")
-            .style("mix-blend-mode", "multiply");
 
         function uid(d) {
             const source = d.source.name.replaceAll(' ', '_').replaceAll('\'', '')
@@ -524,6 +523,7 @@ export default {
             .attr("y", d => (d.y1 + d.y0) / 2)
             .attr("dy", "0.35em")
             .attr("font-size", ".5rem")
+            .attr("fill", "var(--text-1)")
             .attr("text-anchor", d => d.x0 < w / 2 ? "start" : "end")
             .text(d => d.name);
 

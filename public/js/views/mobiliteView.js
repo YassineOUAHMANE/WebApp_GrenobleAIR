@@ -4,7 +4,7 @@
 */
 
 import { fetchCSV } from "../utils/fetchData.js";
-
+import { icons } from "../utils/icons.js";
 export default {
   title: 'Mobilité Douce',
   icon: 'bike',
@@ -12,7 +12,7 @@ export default {
     const d3 = window.d3;
     
     root.innerHTML = `
-    <h2 class="title">🚴 Mobilité Douce - Comptages Vélo</h2>
+    <h2 class="title">${icons.bike} Mobilité Douce - Comptages Vélo</h2>
     <p>Évolution des comptages cyclistes 2019-2022 - 24 capteurs permanents</p>
         
     <section class="grid">

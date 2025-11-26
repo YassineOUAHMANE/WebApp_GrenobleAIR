@@ -5,8 +5,6 @@ const routes = {
   'dashboard': () => import('./views/dashboardView.js'),
   'parking':   () => import('./views/parkingView.js'),
   'mobilite':  () => import('./views/mobiliteView.js').catch(() => import('./views/aboutView.js')),
-  'zfe':       () => import('./views/zfeView.js').catch(() => import('./views/aboutView.js')),
-  'irve':      () => import('./views/irveView.js').catch(() => import('./views/aboutView.js')),
   'qualite-air': () => import('./views/qualiteAirView.js').catch(() => import('./views/aboutView.js')),
   'lignes': () => import('./views/lignesTransportView.js'),
   'about':     () => import('./views/aboutView.js')
@@ -44,7 +42,6 @@ export function createRouter(mountEl, ctx) {
       mountEl.innerHTML = ''; // clear
       const section = document.createElement('section');
       section.style.height = '100%';
-    //   section.className = 'grid';
       mountEl.appendChild(section);
 
       const maybeCleanup = await view.mount(section, { ...ctx, params });

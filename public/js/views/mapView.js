@@ -99,13 +99,6 @@ export default {
                 .layer-selector label input:not(:checked) ~ .color-box {
                     display: none; 
                 }
-            
-                .color-box {
-                    width: 1rem;
-                    height: 1rem; padding: .125rem;
-                    border-radius: 4px;
-                    flex-shrink: 0;
-                }
 
                 .tram-bus-colors {
                     display: flex;

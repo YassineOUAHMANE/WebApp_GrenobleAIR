@@ -3,6 +3,7 @@
  * Statistiques clés, animations entrantes, données en temps réel
  */
 import { fetchCSV } from '../utils/fetchData.js';
+import { icons } from '../utils/icons.js';
 
 const animateCounter = (element, finalValue, duration = 1000) => {
   let currentValue = 0;
@@ -17,17 +18,47 @@ const animateCounter = (element, finalValue, duration = 1000) => {
   }, 30);
 };
 
+async function loadEVData() {
+    const files = [
+    //   './data/irve/irve_metropole.csv',
+    //   './data/irve/irve_gresivaudan.csv',
+      './data/irve/irve_smmag.csv',
+    //   './data/irve/irve_pays_voironnais.csv'
+    ];
+    const all = [];
+    await Promise.all(files.map(async file => {
+      const data = await fetchCSV(file);
+      console.log(data)
+      if(data.length > 0){
+          all.push(...data);
+      }
+    }))
+    return all.filter(d => {
+      const lat = parseFloat(d.consolidated_latitude);
+      const lon = parseFloat(d.consolidated_longitude);
+      return !isNaN(lat) && !isNaN(lon);
+    }).map(d => ({
+      nom: d.nom_enseigne || d.nom_station || 'Station',
+      lat: parseFloat(d.consolidated_latitude),
+      lon: parseFloat(d.consolidated_longitude),
+      pdc: parseInt(d.nbre_pdc) || 0
+    }));
+  }
+
 export default {
   title: 'Tableau de bord',
   icon: 'dashboard',
   async mount(root) {
+    const evData = await loadEVData();
+    const totalEVPoints = evData.reduce((s, d) => s + d.pdc, 0);
+
     root.innerHTML = `
-        <h2 class="title">📊 Tableau de bord</h2>
+        <h2 class="title">${icons.dashboard} Tableau de bord</h2>
         <p>Mobilité & Environnement Grenoble-Alpes Métropole</p>
         <section class="grid">
 
         <div class="span-12 card animate-fade-in" style="animation-delay:0.15s">
-            <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques en direct</h2>
+            <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques</h2>
             <div class="kpis" id="kpis-container">
             <div class="kpi">
                 <div class="kpi-icon">🅿️</div>
@@ -45,12 +76,27 @@ export default {
                 <div class="label">Lignes de transport</div>
                 <div class="value" id="kpi-transport">—</div>
             </div>
+            </div>
+        </div>
+
+        <div class="span-12">
+          <div class="kpis">
             <div class="kpi">
-                <div class="kpi-icon">⚡</div>
-                <div class="label">Stations de recharge</div>
-                <div class="value" id="kpi-irve">—</div>
+              <div class="kpi-icon">⚡</div>
+              <div class="label">Total Stations</div>
+              <div class="value">${evData.length}</div>
             </div>
+            <div class="kpi">
+              <div class="kpi-icon">🔌</div>
+              <div class="label">Points de Charge</div>
+              <div class="value">${totalEVPoints}</div>
             </div>
+            <div class="kpi">
+              <div class="kpi-icon">📊</div>
+              <div class="label">Moyenne Points de charge / Station</div>
+              <div class="value">${(totalEVPoints / evData.length).toFixed(1)}</div>
+            </div>
+          </div>
         </div>
 
         <div class="span-6 card animate-fade-in" style="animation-delay:0.3s">
@@ -92,11 +138,10 @@ export default {
 
     // Charger les données et remplir les KPIs
     try {
-      const [parking, velos, transport, irve] = await Promise.all([
+      const [parking, velos, transport] = await Promise.all([
         fetchCSV('./data/parking/parking.csv'),
         fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv'),
         fetchCSV('./data/transport_public/lignes_du_transport_du_réseaux_Tag.csv'),
-        fetchCSV('./data/irve/irve_normalise_etalab.csv')
       ]);
 
       // Calculer les statistiques
@@ -109,7 +154,7 @@ export default {
 
       const velosCount = velos.length;
       const transportCount = transport.length;
-      const irveCount = irve.length;
+    //   const irveCount = irve.length;
 
       // Animer les KPIs
       setTimeout(() => {
@@ -117,7 +162,7 @@ export default {
         root.querySelector('#kpi-parking-sub').textContent = `${parkingNumber} parkings`;
         animateCounter(root.querySelector('#kpi-velos'), velosCount, 1200);
         animateCounter(root.querySelector('#kpi-transport'), transportCount, 1200);
-        animateCounter(root.querySelector('#kpi-irve'), irveCount, 1200);
+        // animateCounter(root.querySelector('#kpi-irve'), irveCount, 1200);
       }, 200);
 
       // Créer le graphique résumé
@@ -125,7 +170,7 @@ export default {
         { label: 'Parkings', count: parkingNumber, color: '#4f7cff', icon: '🅿️' },
         { label: 'Comptages vélos', count: velosCount, color: '#29c18c', icon: '🚴' },
         { label: 'Lignes transport', count: transportCount, color: '#ffd166', icon: '🚌' },
-        { label: 'Stations IRVE', count: irveCount, color: '#ff6b6b', icon: '⚡' }
+        // { label: 'Stations IRVE', count: irveCount, color: '#ff6b6b', icon: '⚡' }
       ];
 
       const chartEl = root.querySelector('#summary-chart');
