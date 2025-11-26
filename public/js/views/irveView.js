@@ -1,4 +1,4 @@
-import { loadCSV, parseCSV } from '../utils/csv.js';
+import { fetchCSV } from '../utils/fetchData.js';
 
 async function loadData() {
   const files = [
@@ -9,7 +9,7 @@ async function loadData() {
   ];
   const all = [];
   await Promise.all(files.map(async file => {
-    const data = await loadCSV(file);
+    const data = await fetchCSV(file);
     console.log(data)
     if(data.length > 0){
         all.push(...data);

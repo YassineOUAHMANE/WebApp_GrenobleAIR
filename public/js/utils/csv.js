@@ -28,7 +28,7 @@ export const parseCSVLine = (line) => {
 };
 
 export const parseCSV = (text) => {
-    const lines = text.trim().split('\n').filter(i => !i.startsWith('#')); // Filter out comments
+    const lines = text.trim().split('\n');
     const headers = parseCSVLine(lines[0]);
     return lines.slice(1).map(line => {
         const values = parseCSVLine(line);

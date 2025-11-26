@@ -1,5 +1,3 @@
-import { fetchCSV } from '../utils/fetchData.js';
-import { lineChart, simpleTable } from '../utils/chartUtils.js';
 
 export default {
   title: 'À propos',
@@ -20,25 +18,5 @@ export default {
       </div>
     </section>
     `;
-
-    const cleanups = [];
-
-    try {
-      const time = await fetchCSV('./data/parking/disponibilité_parking.csv'); // {date, taux}
-      const chartEl = root.querySelector('#chart-occup');
-      cleanups.push(lineChart(chartEl, time, {
-        x: d => new Date(d.date),
-        y: d => Number(d.taux),
-        xLabel: 'Date', yLabel: 'Taux %', formatY: v => `${v}%`
-      }));
-    } catch {}
-
-    try {
-      const last = await fetchCSV('./data/parking/disponibilité_parking.csv'); // {nom, taux, date}
-      const latest = last.sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0, 12);
-      cleanups.push(simpleTable(root.querySelector('#table-last'), latest, { columns: ['date','nom','taux'] }));
-    } catch {}
-
-    return () => cleanups.forEach(fn => { try { fn(); } catch {} });
   }
 };

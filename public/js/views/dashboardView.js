@@ -2,7 +2,7 @@
  * dashboardView.js — Vue d'accueil avec KPIs animés
  * Statistiques clés, animations entrantes, données en temps réel
  */
-import { loadCSV } from '../utils/csv.js';
+import { fetchCSV } from '../utils/fetchData.js';
 
 const animateCounter = (element, finalValue, duration = 1000) => {
   let currentValue = 0;
@@ -80,24 +80,6 @@ export default {
             </div>
         </div>
 
-        <div class="span-6 card animate-fade-in" style="animation-delay:0.45s">
-            <h3 style="margin-top:0">✨ Caractéristiques</h3>
-            <div style="display: grid; gap: 1rem;">
-            <div style="padding-left: 0.75rem; border-left: 4px solid var(--primary);">
-                <div style="font-weight: 600; color: var(--primary);">⚡ Temps réel</div>
-                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Données actualisées automatiquement</div>
-            </div>
-            <div style="padding-left: 0.75rem; border-left: 4px solid var(--secondary);">
-                <div style="font-weight: 600; color: var(--secondary);">📊 Visualisations</div>
-                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Graphiques animés et interactifs</div>
-            </div>
-            <div style="padding-left: 0.75rem; border-left: 4px solid var(--accent);">
-                <div style="font-weight: 600; color: var(--accent);">🎨 Design moderne</div>
-                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Interface élégante et responsive</div>
-            </div>
-            </div>
-        </div>
-
         <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
             <h2 style="margin-top:0;">📈 Vue d'ensemble</h2>
             <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
@@ -111,10 +93,10 @@ export default {
     // Charger les données et remplir les KPIs
     try {
       const [parking, velos, transport, irve] = await Promise.all([
-        loadCSV('./data/parking/parking.csv'),
-        loadCSV('./data/mobilite_douce/comptages_velos_permanents.csv'),
-        loadCSV('./data/transport_public/lignes_du_transport_du_réseaux_Tag.csv'),
-        loadCSV('./data/irve/irve_normalise_etalab.csv')
+        fetchCSV('./data/parking/parking.csv'),
+        fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv'),
+        fetchCSV('./data/transport_public/lignes_du_transport_du_réseaux_Tag.csv'),
+        fetchCSV('./data/irve/irve_normalise_etalab.csv')
       ]);
 
       // Calculer les statistiques

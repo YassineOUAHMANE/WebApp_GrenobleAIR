@@ -1,4 +1,4 @@
-import { loadCSV } from '../utils/csv.js';
+import { fetchCSV } from '../utils/fetchData.js';
 
 export default {
     linkTitle: 'AQI',
@@ -32,7 +32,7 @@ export default {
         const container = root.querySelector('#aqi-grid');
 
         // --- Load CSV (supports comments starting with '#')
-        const rows = await loadCSV('./data/air/pm25.csv', { comment: '#' });
+        const rows = await fetchCSV('./data/air/pm25.csv', { comment: '#' });
 
         // The CSV headers: date,min,max,median,q1,q3,stdev,count
         const parsed = rows.map(r => ({

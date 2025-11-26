@@ -11,6 +11,8 @@ html[data-theme="dark"] {
     /* Main text */
     --text-1: #e0e0e0; /* readable on dark bg */
 
+    --water: #087976;
+
     --primary: #4f7cff;
     --secondary: #29c18c;
     --accent: #ffd166;
@@ -34,6 +36,8 @@ html[data-theme="light"] {
     --fg-1: #a49f9b;
 
     --text-1: #444443;
+
+    --water: #34ebe5;
 
     --primary: #2b5cff;
     --secondary: #15a874;
