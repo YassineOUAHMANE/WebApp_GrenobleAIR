@@ -4,6 +4,7 @@
  */
 
 import { fetchCSV } from "../utils/fetchData.js";
+import { featureCollectionFromRows } from '../utils/mapUtils.js';
 
 export default {
     title: 'Stationnement',
@@ -46,18 +47,39 @@ export default {
 
             <!-- GRAPHIQUE (Colonne droite) -->
             <div class="card" style="grid-column: span 9;">
-            <h2 style="margin-top: 0; margin-bottom: 1rem;">🏆 Top 10 Parkings</h2>
-            <div id="bubble-chart" style="min-height: 400px; max-height: 570px; border: 1px solid rgba(79,124,255,0.2); border-radius: 8px; background: linear-gradient(135deg, rgba(79,124,255,0.05), rgba(41,193,140,0.05)); padding: 0; overflow: hidden;"></div>
+                <h2 style="margin-top: 0; margin-bottom: 1rem;">🏆 Top 10 Parkings</h2>
+                <div id="bubble-chart" style="min-height: 400px; max-height: 570px; border: 1px solid rgba(79,124,255,0.2); border-radius: 8px; padding: 0; overflow: hidden;"></div>
+            </div>
+
+            <!-- SANKEY -->
+            <div class="span-12 card">
+                <h2>Diagramme de Sankey </h2>
+                <p>Ce diagramme de Sankey représente la répartition des places de stationnement selon différents critères.
+                    Les flux montrent :
+                    <ul style="padding-left: 1rem">
+                        <li>La distinction entre stationnements gratuits et payants.</li>
+                        <li>La localisation par rapport à la Zone à Faibles Émissions (ZFE), avec les flux "Intra-ZFE" et "Extra-ZFE".</li>
+                        <li>Les types de parkings (ouvrages ou enclos en surface), et la répartition des places dédiées à l'électrique, à l'autopartage et aux PMR.</li>
+                        <li>Les 10 plus grands parkings de la métropole grenobloise, les flux restants sont regroupés sous "Autres".</li>
+                    </ul>
+                </p>
+                <div id="sankey-graph" style="min-height: 400px; max-height: 570px; padding: 0; overflow: hidden;"></div>
             </div>
         </section>
 
         <div id="bubble-tooltip" style="position: fixed; display: none; background: white; border: 1px solid rgba(79,124,255,0.3); padding: 1rem; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); max-width: 320px; pointer-events: none; z-index: 99999; font-size: 0.95rem; top: 0; left: 0;"></div>
         `;
 
+        // The bubble graph
+
         let allData = [];
         let filters = { service: new Set() };
 
+        let ZFEPermimeter;
+
         const loadData = async () => {
+
+            //Parking data
             const raw = await fetchCSV('/data/parking/parking.csv');
 
             allData = raw
@@ -65,14 +87,19 @@ export default {
                 .map(p => ({
                     nom: p['nom'] || '—',
                     places: parseInt(p['nb_places'] || 0) || 0,
-                    gratuit: p['gratuit'] === '1' || p['gratuit'] === '1.0',
-                    type: p['type_ouvrage'] || 'enclos_en_surface',
+                    gratuit: parseInt(p['gratuit']) == 1,
+                    type: p['type_ouvrage'].replaceAll('_', ' ') || 'enclos en surface',
                     commune: p['commune'] || '—',
                     velo: parseInt(p['nb_velo'] || 0) || 0,
                     elec: parseInt(p['nb_voitures_electriques'] || 0) || 0,
                     pmr: parseInt(p['nb_pmr'] || 0) || 0,
                     covoit: parseInt(p['nb_covoit'] || 0) || 0,
+                    coords: p.geo_point_2d?.split(',').map(parseFloat) || [0,0]
                 }));
+
+            const zfe = await fetchCSV('./data/zfe/zfeaires.csv');
+            ZFEPermimeter = featureCollectionFromRows(zfe);
+            console.log(ZFEPermimeter);
 
             setupFilters();
             renderBubbles();
@@ -245,7 +272,7 @@ export default {
             <div style="border-top: 1px solid #eee; padding-top: 0.6rem; margin-bottom: 0.6rem; color: #555;">
               <div style="margin: 0.3rem 0;">🅿️ <strong>${d.places} places</strong></div>
               <div style="margin: 0.3rem 0;">${d.gratuit ? '✓ Gratuit' : '💳 Payant'}</div>
-              <div style="margin: 0.3rem 0;">🏗️ ${d.type === 'enclos_en_surface' ? 'Surface' : 'Ouvrage'}</div>
+              <div style="margin: 0.3rem 0;">🏗️ ${d.type === 'enclos en surface' ? 'Surface' : 'Ouvrage'}</div>
             </div>
             <div style="font-size: 0.9rem; color: #666;">
               <div style="margin: 0.2rem 0;">🚴 Vélos: <strong>${d.velo}</strong></div>
@@ -292,6 +319,213 @@ export default {
         };
 
         await loadData();
+
+
+        // The sankey graph
+        const container = root.querySelector('#sankey-graph');
+        // if (!container) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+
+        const svg = d3.select(container).append('svg').attr('width', w).attr('height', h);
+
+        const sankey = d3.sankey()
+            .nodeId(d => d.name)
+            .nodeAlign(d3.sankeyJustify) // d3.sankeyLeft, etc.
+            .nodeWidth(15)
+            .nodePadding(10)
+            .extent([[1, 5], [w - 1, h - 5]]);
+
+        //Nodes : the vertices of the sankey graph
+        const data = {}
+        data.nodes = [
+            { name: 'Total', category: 'Total' },
+            { name: 'Gratuit', category: 'Gratuit/Payant' },
+            { name: 'Payant', category: 'Gratuit/Payant' },
+            { name: 'Intra-ZFE', category: 'ZFE' },
+            { name: 'Extra-ZFE', category: 'ZFE' },
+            { name: 'Electrique', category: 'Special' },
+            { name: 'Autopartage', category: 'Special' },
+            { name: 'PMR', category: 'Special' },
+            { name: 'Autres', category: 'Parkings' },
+        ]
+        console.log(allData)
+        const types = new Set(allData.map(i => i.type))
+        types.forEach(i => data.nodes.push({ name: i, category: 'Type' })); // Get types of parkings
+
+        const biggestParkings = allData.map(i => [i.nom, i.places]).sort((a,b) => b[1] - a[1]).filter((_,k) => k < 10).map(i => i[0]);//Find the 10 biggest parkings
+        console.log(biggestParkings)
+
+        console.log(data.nodes)
+
+        //Links
+        data.links = [];
+        function setupLinks() {
+            let links = {
+                gratuit: 0,
+                payant: 0,
+                gratuitInZFE: 0,
+                payantInZFE: 0,
+                gratuitOutZFE: 0,
+                payantOutZFE: 0,
+                elecAutres: 0,
+                partAutres: 0,
+                PMRAutres: 0,
+
+            };
+            types.forEach(i => {
+                links['InZFE' + i] = 0; 
+                links['OutZFE' + i] = 0
+                links[i + 'Elec'] = 0;
+                links[i + 'Part'] = 0;
+                links[i + 'PMR'] = 0;
+                links[i + 'Autres'] = 0;
+            }); // Get types of parkings
+
+            allData.forEach(i => {
+                const inZFE = d3.geoContains(ZFEPermimeter.features[0], [i.coords[1], i.coords[0]])
+                console.log(inZFE)
+                links[i.gratuit ? 'gratuit' : 'payant'] += i.places;
+                links[(i.gratuit ? 'gratuit' : 'payant') + (inZFE ? 'InZFE' : 'OutZFE')] += i.places;
+                links[(inZFE ? 'InZFE' : 'OutZFE') + i.type] += i.places;
+
+                links[i.type + 'Elec'] += i.elec;
+                links[i.type + 'Part'] += i.covoit;
+                links[i.type + 'PMR'] += i.pmr;
+
+                const isParkingCategorized = biggestParkings.includes(i.nom);
+                if(isParkingCategorized){
+                    data.nodes.push({name: i.nom, category: 'Parkings'});
+                }
+                if(i.elec > 0){
+                    if(isParkingCategorized){
+                        data.links.push({source: 'Electrique', target: i.nom, value: i.elec});
+                    }else{
+                        links.elecAutres += i.elec
+                    }
+                }
+                if(i.covoit > 0){
+                    if(isParkingCategorized){
+                        data.links.push({source: 'Autopartage', target: i.nom, value: i.covoit});
+                    }else{
+                        links.partAutres += i.covoit
+                    }
+                }
+                if(i.pmr > 0){
+                    if(isParkingCategorized){
+                        data.links.push({source: 'PMR', target: i.nom, value: i.pmr});
+                    }else{
+                        links.PMRAutres += i.pmr
+                    }
+                }
+
+                const otherSpots = i.places - i.elec - i.covoit - i.pmr;
+                if(isParkingCategorized){
+                    data.links.push({source: i.type, target: i.nom, value: otherSpots});
+                }else{
+                    links[i.type + 'Autres'] += otherSpots;
+                }
+            })
+            console.log(links)
+            data.links.push({ source: 'Total', target: 'Gratuit', value: links.gratuit })
+            data.links.push({ source: 'Total', target: 'Payant', value: links.payant })
+            data.links.push({ source: 'Gratuit', target: 'Intra-ZFE', value: links.gratuitInZFE })
+            data.links.push({ source: 'Gratuit', target: 'Extra-ZFE', value: links.gratuitOutZFE })
+            data.links.push({ source: 'Payant', target: 'Intra-ZFE', value: links.payantInZFE })
+            data.links.push({ source: 'Payant', target: 'Extra-ZFE', value: links.payantOutZFE })
+            data.links.push({ source: 'PMR', target: 'Autres', value: links.PMRAutres })
+            data.links.push({ source: 'Autopartage', target: 'Autres', value: links.partAutres })
+            data.links.push({ source: 'Electrique', target: 'Autres', value: links.elecAutres })
+            types.forEach(i => {
+                data.links.push({ source: 'Intra-ZFE', target: i, value: links['InZFE' + i]});
+                data.links.push({ source: 'Extra-ZFE', target: i, value: links['OutZFE' + i]});
+                data.links.push({ source: i, target: 'Electrique', value: links[i + 'Elec']});
+                data.links.push({ source: i, target: 'Autopartage', value: links[i + 'Part']});
+                data.links.push({ source: i, target: 'PMR', value: links[i + 'PMR']});
+                
+                data.links.push({ source: i, target: 'Autres', value: links[i + 'Autres']});
+            }); // Get types of parkings
+            console.log(data.links)
+
+        }
+        setupLinks();
+
+        console.log({
+            nodes: data.nodes.map(d => Object.assign({}, d)),
+            links: data.links.map(d => Object.assign({}, d))
+        })
+
+
+        const { nodes, links } = sankey({
+            nodes: data.nodes.map(d => Object.assign({}, d)),
+            links: data.links.map(d => Object.assign({}, d))
+        });
+
+        // Defines a color scale.
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // Creates the rects that represent the nodes.
+        const rect = svg.append("g")
+            .attr("stroke", "#000")
+            .selectAll()
+            .data(nodes)
+            .join("rect")
+            .attr("x", d => d.x0)
+            .attr("y", d => d.y0)
+            .attr("height", d => d.y1 - d.y0)
+            .attr("width", d => d.x1 - d.x0)
+            .attr("fill", d => color(d.category));
+
+        // Adds a title on the nodes.
+        rect.append("title")
+            .text(d => `${d.name}\n${d.value}`);
+
+        // Creates the paths that represent the links.
+        const link = svg.append("g")
+            .attr("fill", "none")
+            .attr("stroke-opacity", 0.5)
+            .selectAll()
+            .data(links)
+            .join("g")
+            .style("mix-blend-mode", "multiply");
+
+        function uid(d) {
+            const source = d.source.name.replaceAll(' ', '_').replaceAll('\'', '')
+            const target = d.target.name.replaceAll(' ', '_').replaceAll('\'', '')
+            return `link-${source}-${target}`;
+        }
+
+        const gradient = link.append("linearGradient")
+            .attr("id", d => d.uid = uid(d))
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", d => d.source.x1)
+            .attr("x2", d => d.target.x0);
+        gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", d => color(d.source.category));
+        gradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", d => color(d.target.category));
+
+        link.append("path")
+            .attr("d", d3.sankeyLinkHorizontal())
+            .attr("stroke", d => `url(#${d.uid})`)
+            .attr("stroke-width", d => Math.max(1, d.width));
+
+        link.append("title")
+            .text(d => `${d.source.name} → ${d.target.name}\n${d.value}`);
+
+        // Adds labels on the nodes.
+        svg.append("g")
+            .selectAll()
+            .data(nodes)
+            .join("text")
+            .attr("x", d => d.x0 < w / 2 ? d.x1 + 6 : d.x0 - 6)
+            .attr("y", d => (d.y1 + d.y0) / 2)
+            .attr("dy", "0.35em")
+            .attr("font-size", ".5rem")
+            .attr("text-anchor", d => d.x0 < w / 2 ? "start" : "end")
+            .text(d => d.name);
 
 
         return () => {

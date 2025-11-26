@@ -87,6 +87,9 @@ export default {
                     margin: 0.4rem 0;
                     font-size: 0.95rem;
                 }
+                .layer-selector label svg {
+                    width: 1.25em; height: 1.25em;
+                }
             
                 .layer-selector label input {
                     transform: scale(1.2);
@@ -94,7 +97,7 @@ export default {
 
                 .layer-selector label input:not(:checked) ~ .color-box,
                 .layer-selector label input:not(:checked) ~ .color-box {
-                    background: var(--fg-1) !important;
+                    display: none; 
                 }
             
                 .color-box {
@@ -129,15 +132,15 @@ export default {
             <div style="display: flex; width: 100%; height: 100%; position: relative;">
                 <div class="layer-selector" id="sidebar">
                     <div class="layer-title">
-                        Couches de données
+                        Légende
                         <span class="layer-close" id="closeSidebar">×</span>
                     </div>
 
-                    <label><input type="checkbox" id="toggleParking"> <span class="color-box" style="background: #1fa371;"></span><span class="color-box" style="background: #3551d5;"></span> Parkings</label>
-                    <label><input type="checkbox" id="toggleBike"> <span class="color-box" style="background: #e8d400"></span> Compteurs de Vélos</label>
-                    <label><input type="checkbox" id="toggleZFE" checked> <span class="color-box" style="background: rgb(190, 3, 252)"></span> ZFE</label>
-                    <label><input type="checkbox" id="toggleTramBus" checked> Transports en commun</label>
-                    <label><input type="checkbox" id="toggleEV"> <span class="color-box" style="background: green;"></span> Bornes de recharge VE</label>
+                    <label><input type="checkbox" id="toggleParking"> ${icons.parking} Parkings <span class="color-box" style="background: #1fa371;"></span><span class="color-box" style="background: #3551d5;"></span></label>
+                    <label><input type="checkbox" id="toggleBike"> ${icons.bike} Compteurs de Vélos <span class="color-box" style="background: #e8d400"></span></label>
+                    <label><input type="checkbox" id="toggleZFE" checked> ${icons.car} ZFE <span class="color-box" style="background: rgb(190, 3, 252)"></span></label>
+                    <label><input type="checkbox" id="toggleTramBus" checked> ${icons.publicTransport} Transports en commun</label>
+                    <label><input type="checkbox" id="toggleEV"> ${icons.ev} Bornes de recharge VE <span class="color-box" style="background: green;"></span></label>
                     <div class="tram-bus-colors">
                         ${Object.entries(lineColors).map(i => `<span class="color-box" style="background: ${i[1]}; display: inline-block;">${i[0].replace('SEM_', '')}</span>`).join('')}
                     </div>
