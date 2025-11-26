@@ -660,9 +660,9 @@ export default {
         async function fetchTramBusData(){
             const raw = await fetchJSON('./data/transport_public/lignes_tag.geojson');
 
-            //Separate each line
+            //Separate each line - filter only lines that are in lineColors
             tramBusLayer.selectAll("path")
-                .data(raw.features)
+                .data(raw.features.filter(f => f.properties.CODE in lineColors))
                 .enter()
                 .append("path")
                 .attr("d", d => path({
