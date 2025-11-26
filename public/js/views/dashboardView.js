@@ -147,7 +147,7 @@ export default {
         { label: 'Parkings', count: parkingNumber, color: '#4f7cff', icon: '🅿️' },
         { label: 'Comptages vélos', count: velosCount, color: '#29c18c', icon: '🚴' },
         { label: 'Lignes transport', count: transportCount, color: '#ffd166', icon: '🚌' },
-        // { label: 'Stations IRVE', count: irveCount, color: '#ff6b6b', icon: '⚡' }
+        { label: 'Stations IRVE', count: evData.length, color: '#ff6b6b', icon: '⚡' }
       ];
 
       const chartEl = root.querySelector('#summary-chart');
