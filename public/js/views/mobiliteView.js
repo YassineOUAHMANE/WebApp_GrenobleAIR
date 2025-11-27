@@ -9,52 +9,82 @@ export default {
         <h2 class="title">Mobilité Douce — Comptages Vélo</h2>
             
         <section class="grid">
-            <div class="span-6 card" style="margin-bottom: 1rem;">
+            <!-- Vue d'ensemble - toute la largeur -->
+            <div class="span-12 card" style="margin-bottom: 1rem;">
                 <h2 style="margin-bottom: 1.5rem;">Vue d'ensemble</h2>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: center; margin-bottom: 2rem;">
-                    <button class="year-btn" data-year="2019" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                        2019
-                    </button>
-                    <button class="year-btn" data-year="2020" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                        2020
-                    </button>
-                    <button class="year-btn" data-year="2021" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                        2021
-                    </button>
-                    <button class="year-btn" data-year="2022" style="flex: 1; min-width: 80px; padding: 0.75rem 1.5rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                        2022
-                    </button>
-                </div>
-                <div id="overview-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                    <!-- Stats will be populated here -->
+                
+                <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                    <!-- Section Comptage -->
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <h3 style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin: 0;">Flux vélos</h3>
+                            <div style="display: flex; gap: 0.25rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.125rem; background: var(--bg-secondary);">
+                                <button class="year-btn" data-year="2019" style="padding: 0.35rem 0.75rem; border: none; border-radius: 3px; background: transparent; color: var(--text-primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                                    2019
+                                </button>
+                                <button class="year-btn" data-year="2020" style="padding: 0.35rem 0.75rem; border: none; border-radius: 3px; background: transparent; color: var(--text-primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                                    2020
+                                </button>
+                                <button class="year-btn" data-year="2021" style="padding: 0.35rem 0.75rem; border: none; border-radius: 3px; background: transparent; color: var(--text-primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                                    2021
+                                </button>
+                                <button class="year-btn" data-year="2022" style="padding: 0.35rem 0.75rem; border: none; border-radius: 3px; background: transparent; color: var(--text-primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+                                    2022
+                                </button>
+                            </div>
+                        </div>
+                        <div id="traffic-stats" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Traffic stats will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Séparateur vertical -->
+                    <div style="width: 1px; background: var(--border-color); align-self: stretch; margin: 0 0.5rem;"></div>
+                    
+                    <!-- Section Pistes Cyclables -->
+                    <div style="flex: 1;">
+                        <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);">Pistes Cyclables</h3>
+                        <div id="bike-lanes-stats">
+                            <!-- Bike lanes stats will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Séparateur vertical -->
+                    <div style="width: 1px; background: var(--border-color); align-self: stretch; margin: 0 0.5rem;"></div>
+                    
+                    <!-- Section Vélo / Trotinettes libre service -->
+                    <div style="flex: 1;">
+                        <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);">Vélos et trotinettes électriques en libre service disponibles en temps réel</h3>
+                        <div id="vehicles-stats">
+                            <!-- Vehicles stats will be populated here -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="span-6 card" style="margin-bottom: 1rem;">
-                        <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes recensés par les compteurs</h2>
-                        <div id="evolution-chart"></div>
-                    </div>
-
+            <!-- Évolution par compteur - toute la largeur -->
             <div class="span-12 card" style="margin-bottom: 1rem;">
-                        <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes par compteur</h2>
+                <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes par compteur</h2>
                 <div id="mini-charts-container"></div>
             </div>
 
+            <!-- Évolution globale - à gauche -->
+            <div class="span-6 card" style="margin-bottom: 1rem;">
+                <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes recensés par les compteurs</h2>
+                <div id="evolution-chart"></div>
+            </div>
+
+            <!-- Répartition pistes cyclables - à droite -->
             <div class="span-6 card" style="margin-bottom: 1rem;">
                 <h2 style="margin-bottom: 1rem;">Répartition des pistes cyclables par type d'axe</h2>
                 <div id="bike-lanes-chart"></div>
-            </div>
-
-            <div class="span-6 card">
-                <h2>Véhicules en libre service disponibles</h2>
-                <div id="vehicles-status"></div>
             </div>
         </section>
         `;
 
         // --- Load CSV files
         const rows = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
-        const bikeLanesRows = await fetchCSV('./data/mobilite_douce/pistes_cyclables_des_49_communes_de_la_métropole.csv');
+        const bikeLanesLengthsRows = await fetchCSV('./data/mobilite_douce/pistes_cyclables_lengths.csv');
 
         // --- Parse data and filter only counters with data for all years 2019-2022
         const data = rows
@@ -246,6 +276,44 @@ export default {
                         .duration(200)
                         .style('opacity', 0);
                 });
+
+            // Calculate and display percentage changes for weekday (from 2020)
+            weekdayData.forEach((d, i) => {
+                if (i > 0 && d.year >= 2020) {
+                    const prevValue = weekdayData[i - 1].value;
+                    const change = prevValue > 0 ? ((d.value - prevValue) / prevValue) * 100 : 0;
+                    const sign = change >= 0 ? '+' : '';
+                    const color = change >= 0 ? '#1a9850' : '#d73027';
+                    
+                    evolutionSvg.append('text')
+                        .attr('x', x(d.year))
+                        .attr('y', y(d.value) - 20)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', '0.75rem')
+                        .attr('font-weight', '600')
+                        .attr('fill', color)
+                        .text(`${sign}${change.toFixed(1)}%`);
+                }
+            });
+
+            // Calculate and display percentage changes for weekend (from 2020)
+            weekendData.forEach((d, i) => {
+                if (i > 0 && d.year >= 2020) {
+                    const prevValue = weekendData[i - 1].value;
+                    const change = prevValue > 0 ? ((d.value - prevValue) / prevValue) * 100 : 0;
+                    const sign = change >= 0 ? '+' : '';
+                    const color = change >= 0 ? '#1a9850' : '#d73027';
+                    
+                    evolutionSvg.append('text')
+                        .attr('x', x(d.year))
+                        .attr('y', y(d.value) - 20)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', '0.75rem')
+                        .attr('font-weight', '600')
+                        .attr('fill', color)
+                        .text(`${sign}${change.toFixed(1)}%`);
+                }
+            });
 
             // Legend
             const legend = evolutionSvg.append('g')
@@ -582,6 +650,44 @@ export default {
                             .style('opacity', 0);
                     });
 
+                // Calculate and display percentage changes for weekday (from 2020)
+                weekdayData.forEach((d, i) => {
+                    if (i > 0 && d.year >= 2020) {
+                        const prevValue = weekdayData[i - 1].value;
+                        const change = prevValue > 0 ? ((d.value - prevValue) / prevValue) * 100 : 0;
+                        const sign = change >= 0 ? '+' : '';
+                        const color = change >= 0 ? '#1a9850' : '#d73027';
+                        
+                        svg.append('text')
+                            .attr('x', xScale(d.year))
+                            .attr('y', yScale(d.value) - 20)
+                            .attr('text-anchor', 'middle')
+                            .attr('font-size', '0.75rem')
+                            .attr('font-weight', '600')
+                            .attr('fill', color)
+                            .text(`${sign}${change.toFixed(1)}%`);
+                    }
+                });
+
+                // Calculate and display percentage changes for weekend (from 2020)
+                weekendData.forEach((d, i) => {
+                    if (i > 0 && d.year >= 2020) {
+                        const prevValue = weekendData[i - 1].value;
+                        const change = prevValue > 0 ? ((d.value - prevValue) / prevValue) * 100 : 0;
+                        const sign = change >= 0 ? '+' : '';
+                        const color = change >= 0 ? '#1a9850' : '#d73027';
+                        
+                        svg.append('text')
+                            .attr('x', xScale(d.year))
+                            .attr('y', yScale(d.value) - 20)
+                            .attr('text-anchor', 'middle')
+                            .attr('font-size', '0.75rem')
+                            .attr('font-weight', '600')
+                            .attr('fill', color)
+                            .text(`${sign}${change.toFixed(1)}%`);
+                    }
+                });
+
             // Y-axis label
                 svg.append('text')
                 .attr('transform', 'rotate(-90)')
@@ -661,7 +767,7 @@ export default {
                     .style('transition', 'transform 0.2s')
                     .on('mouseenter', function() {
                         d3.select(this)
-                            .style('transform', 'scale(1.02)');
+                            .style('transform', 'scale(1.06)');
                     })
                     .on('mouseleave', function() {
                         d3.select(this)
@@ -841,50 +947,92 @@ export default {
                 });
         };
 
-        // --- Function to update overview statistics
-        const updateOverviewStats = (year) => {
+        // Store vehicles data globally
+        let vehiclesData = { velos: 0, trotinettes: 0 };
+
+        // Calculate total bike lanes length in kilometers
+        const calculateTotalBikeLanesLength = () => {
+            let totalMeters = 0;
+            bikeLanesLengthsRows.forEach(row => {
+                const longueur = parseFloat(row.longueur) || 0;
+                totalMeters += longueur;
+            });
+            return totalMeters / 1000; // Convert to kilometers
+        };
+
+        // --- Function to update traffic statistics
+        const updateTrafficStats = (year) => {
             const yearInt = parseInt(year);
-            const overviewContainer = root.querySelector('#overview-stats');
+            const trafficContainer = root.querySelector('#traffic-stats');
             
-            // Count active counters (counters with data for this specific year)
-            // Use raw rows data to count all counters with data for the selected year
+            // Count active counters
             const yearColumn = `tmj_${yearInt}`;
             const activeCounters = rows.filter(d => {
                 const value = parseFloat(d[yearColumn]) || 0;
                 return value > 0;
             }).length;
             
-            // Calculate average weekday traffic for this year
-            // Using only counters with data for all years 2019-2022
+            // Calculate average weekday traffic
             const avgWeekdayTraffic = data.length > 0 
                 ? d3.mean(data, d => d.weekday[yearInt])
                 : 0;
             
-            // Calculate average weekend traffic for this year
-            // Using only counters with data for all years 2019-2022
+            // Calculate average weekend traffic
             const avgWeekendTraffic = data.length > 0 
                 ? d3.mean(data, d => d.weekend[yearInt])
                 : 0;
             
-            // Update the overview stats display
-            overviewContainer.innerHTML = `
-                <div style="text-align: center; padding: 1.5rem; background: rgba(70, 130, 180, 0.1); border-radius: 8px; border: 2px solid rgba(70, 130, 180, 0.3);">
-                    <div style="font-size: 2.5rem; font-weight: 700; color: steelblue; margin-bottom: 0.5rem;">${activeCounters}</div>
-                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Compteurs actifs</div>
+            trafficContainer.innerHTML = `
+                <div style="text-align: left;">
+                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${activeCounters}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Compteurs actifs</div>
                 </div>
-                <div style="text-align: center; padding: 1.5rem; background: rgba(26, 152, 80, 0.1); border-radius: 8px; border: 2px solid rgba(26, 152, 80, 0.3);">
-                    <div style="font-size: 2.5rem; font-weight: 700; color: #1a9850; margin-bottom: 0.5rem;">${Math.round(avgWeekdayTraffic).toLocaleString()}</div>
-                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en semaine</div>
+                <div style="text-align: left;">
+                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${Math.round(avgWeekdayTraffic).toLocaleString()}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Trafic en semaine</div>
                 </div>
-                <div style="text-align: center; padding: 1.5rem; background: rgba(215, 48, 39, 0.1); border-radius: 8px; border: 2px solid rgba(215, 48, 39, 0.3);">
-                    <div style="font-size: 2.5rem; font-weight: 700; color: #d73027; margin-bottom: 0.5rem;">${Math.round(avgWeekendTraffic).toLocaleString()}</div>
-                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en week-end</div>
+                <div style="text-align: left;">
+                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${Math.round(avgWeekendTraffic).toLocaleString()}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Trafic en week-end</div>
                 </div>
             `;
         };
 
-        // --- Initialize overview stats with default year (2022)
-        updateOverviewStats('2022');
+        // --- Function to update bike lanes statistics
+        const updateBikeLanesStats = () => {
+            const bikeLanesContainer = root.querySelector('#bike-lanes-stats');
+            const totalBikeLanesKm = calculateTotalBikeLanesLength();
+            
+            bikeLanesContainer.innerHTML = `
+                <div style="text-align: left;">
+                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${totalBikeLanesKm.toFixed(1)} km</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Kilomètres totaux</div>
+                </div>
+            `;
+        };
+
+        // --- Function to update vehicles statistics
+        const updateVehiclesStats = () => {
+            const vehiclesContainer = root.querySelector('#vehicles-stats');
+            
+            vehiclesContainer.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${vehiclesData.velos}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Vélos électriques</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${vehiclesData.trotinettes}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Trottinettes électriques</div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // --- Initialize stats
+        updateTrafficStats('2022');
+        updateBikeLanesStats();
+        updateVehiclesStats();
 
         // --- Add event listeners to year buttons and set active state
         const yearButtons = root.querySelectorAll('.year-btn');
@@ -894,8 +1042,6 @@ export default {
         if (currentActiveYear) {
             currentActiveYear.style.background = 'steelblue';
             currentActiveYear.style.color = '#fff';
-            currentActiveYear.style.borderColor = 'steelblue';
-            currentActiveYear.style.boxShadow = '0 2px 8px rgba(70, 130, 180, 0.3)';
         }
 
         yearButtons.forEach(button => {
@@ -904,34 +1050,28 @@ export default {
                 
                 // Update active state
                 if (currentActiveYear) {
-                    currentActiveYear.style.background = 'var(--bg-secondary)';
+                    currentActiveYear.style.background = 'transparent';
                     currentActiveYear.style.color = 'var(--text-primary)';
-                    currentActiveYear.style.borderColor = 'var(--border-color)';
-                    currentActiveYear.style.boxShadow = 'none';
                 }
                 
                 e.target.style.background = 'steelblue';
                 e.target.style.color = '#fff';
-                e.target.style.borderColor = 'steelblue';
-                e.target.style.boxShadow = '0 2px 8px rgba(70, 130, 180, 0.3)';
                 currentActiveYear = e.target;
                 
-                // Update overview stats
-                updateOverviewStats(selectedYear);
+                // Update traffic stats
+                updateTrafficStats(selectedYear);
             });
 
             // Add hover effect
             button.addEventListener('mouseenter', function() {
                 if (this !== currentActiveYear) {
-                    this.style.background = 'var(--bg-primary)';
-                    this.style.borderColor = 'steelblue';
+                    this.style.background = 'rgba(70, 130, 180, 0.1)';
                 }
             });
 
             button.addEventListener('mouseleave', function() {
                 if (this !== currentActiveYear) {
-                    this.style.background = 'var(--bg-secondary)';
-                    this.style.borderColor = 'var(--border-color)';
+                    this.style.background = 'transparent';
                 }
             });
         });
@@ -941,23 +1081,48 @@ export default {
             const chartContainer = d3.select('#bike-lanes-chart');
             chartContainer.selectAll('*').remove();
 
-            // Count bike lanes by type
-            const typeCounts = {};
-            bikeLanesRows.forEach(row => {
-                const type = row['properties/type'] || 'Inconnu';
-                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            // Define order and display names
+            const typeOrder = ['chronovelo', 'voieverte', 'veloamenage', 'velononamenage', 'velodifficile'];
+            const typeDisplayNames = {
+                'chronovelo': 'Chronovélo',
+                'voieverte': 'Voie verte',
+                'veloamenage': 'Chaussée aménagée',
+                'velononamenage': 'Chaussée non aménagée',
+                'velodifficile': 'Voie difficile'
+            };
+
+            // Define colors (from best to worst)
+            const typeColors = {
+                'chronovelo': 'rgb(246,211,75)',
+                'voieverte': 'rgb(65,159,60)',
+                'veloamenage': 'rgb(70,130,180)',       // Bleu (steelblue)
+                'velononamenage': 'rgb(150,170,200)',   // Bleu moins saturé
+                'velodifficile': 'rgb(200,100,100)'     // Rouge clair
+            };
+
+            // Sum lengths by type (convert from meters to kilometers)
+            const typeLengths = {};
+            bikeLanesLengthsRows.forEach(row => {
+                const type = row.type || 'Inconnu';
+                const longueur = parseFloat(row.longueur) || 0;
+                typeLengths[type] = (typeLengths[type] || 0) + longueur;
             });
 
-            // Convert to array and sort by count
-            const chartData = Object.entries(typeCounts)
-                .map(([type, count]) => ({ type, count }))
-                .sort((a, b) => b.count - a.count);
+            // Convert to array, convert to kilometers, and sort by predefined order
+            const chartData = typeOrder
+                .filter(type => typeLengths[type] !== undefined)
+                .map(type => ({ 
+                    type,
+                    displayName: typeDisplayNames[type] || type,
+                    lengthKm: typeLengths[type] / 1000,
+                    color: typeColors[type] || '#999'
+                }));
 
             // Chart dimensions
-            const margin = { t: 20, r: 20, b: 80, l: 60 };
+            const margin = { t: 20, r: 20, b: 100, l: 60 };
             const containerWidth = chartContainer.node().clientWidth || 500;
             const width = Math.max(containerWidth, 300);
-            const height = 350;
+            const height = 380;
 
             const svg = chartContainer.append('svg')
                 .attr('viewBox', `0 0 ${width} ${height}`)
@@ -968,37 +1133,53 @@ export default {
 
             // Scales
             const xScale = d3.scaleBand()
-                .domain(chartData.map(d => d.type))
+                .domain(chartData.map(d => d.displayName))
                 .range([margin.l, width - margin.r])
                 .padding(0.2);
 
-            const maxCount = d3.max(chartData, d => d.count);
+            const maxLength = d3.max(chartData, d => d.lengthKm);
             const yScale = d3.scaleLinear()
-                .domain([0, maxCount * 1.1])
+                .domain([0, maxLength * 1.1])
                 .nice()
                 .range([height - margin.b, margin.t]);
-
-            // Color scale
-            const colorScale = d3.scaleOrdinal()
-                .domain(chartData.map(d => d.type))
-                .range(d3.schemeCategory10);
 
             // X axis
             svg.append('g')
                 .attr('transform', `translate(0,${height - margin.b})`)
                 .call(d3.axisBottom(xScale))
                 .selectAll('text')
-                .attr('transform', 'rotate(-45)')
-                .attr('x', -10)
-                .attr('y', 10)
-                .style('text-anchor', 'end')
+                .attr('x', 0)
+                .attr('y', 15)
+                .attr('dy', '0.35em')
+                .style('text-anchor', 'middle')
                 .attr('font-size', '0.75rem')
-                .attr('fill', 'var(--text-secondary)');
+                .attr('fill', 'var(--text-secondary)')
+                .each(function(d) {
+                    const text = d3.select(this);
+                    const words = d.split(' ');
+                    const lineHeight = 1.3;
+                    const y = text.attr('y');
+                    const x = text.attr('x');
+                    
+                    text.text(null);
+                    
+                    let tspan = text.append('tspan')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .text(words[0]);
+                    
+                    for (let i = 1; i < words.length; i++) {
+                        tspan = text.append('tspan')
+                            .attr('x', x)
+                            .attr('y', parseFloat(y) + (i * lineHeight * 14))
+                            .text(words[i]);
+                    }
+                });
 
             // Y axis
             svg.append('g')
                 .attr('transform', `translate(${margin.l},0)`)
-                .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => d3.format('~s')(d)))
+                .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => d3.format('.1f')(d)))
                 .selectAll('text')
                 .attr('font-size', '0.75rem')
                 .attr('fill', 'var(--text-secondary)');
@@ -1009,11 +1190,11 @@ export default {
                 .data(chartData)
                 .enter()
                 .append('rect')
-                .attr('x', d => xScale(d.type))
-                .attr('y', d => yScale(d.count))
+                .attr('x', d => xScale(d.displayName))
+                .attr('y', d => yScale(d.lengthKm))
                 .attr('width', xScale.bandwidth())
-                .attr('height', d => height - margin.b - yScale(d.count))
-                .attr('fill', d => colorScale(d.type))
+                .attr('height', d => height - margin.b - yScale(d.lengthKm))
+                .attr('fill', d => d.color)
                 .attr('rx', 4)
                 .style('cursor', 'pointer')
                 .on('mouseover', function(event, d) {
@@ -1035,13 +1216,13 @@ export default {
                 .data(chartData)
                 .enter()
                 .append('text')
-                .attr('x', d => xScale(d.type) + xScale.bandwidth() / 2)
-                .attr('y', d => yScale(d.count) - 5)
+                .attr('x', d => xScale(d.displayName) + xScale.bandwidth() / 2)
+                .attr('y', d => yScale(d.lengthKm) - 5)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '0.75rem')
                 .attr('font-weight', '600')
                 .attr('fill', 'var(--text-primary)')
-                .text(d => d.count.toLocaleString());
+                .text(d => d.lengthKm.toFixed(1) + ' km');
 
             // Y-axis label
             svg.append('text')
@@ -1051,7 +1232,7 @@ export default {
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '0.9rem')
                 .attr('fill', 'var(--text-secondary)')
-                .text('Nombre de pistes cyclables');
+                .text('Longueur totale (km)');
         };
 
         // --- Initialize charts
@@ -1069,41 +1250,26 @@ export default {
         });
 
         // --- Load vehicles data
-        const vehiclesContainer = root.querySelector('#vehicles-status');
         try {
             const url = "https://data.mobilites-m.fr/api/gbfs/voi_grenoble/free_bike_status";
             const res = await fetch(url);
             const json = await res.json();
 
             const bikes = json.data.bikes || [];
-            let velos = 0;
-            let trotinettes = 0;
+            vehiclesData.velos = 0;
+            vehiclesData.trotinettes = 0;
 
             for (const v of bikes) {
-                if (v.vehicle_type_id === "voi_bike") velos++;
-                if (v.vehicle_type_id === "voi_scooter") trotinettes++;
+                if (v.vehicle_type_id === "voi_bike") vehiclesData.velos++;
+                if (v.vehicle_type_id === "voi_scooter") vehiclesData.trotinettes++;
             }
 
-            // Display vehicles status
-            vehiclesContainer.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin: 2rem 0; max-width: 100%; overflow-x: hidden;">
-                    <div style="text-align: center; padding: 1.5rem; background: rgba(26, 152, 80, 0.1); border-radius: 8px; border: 2px solid rgba(26, 152, 80, 0.3);">
-                        <div style="font-size: 3rem; font-weight: 700; color: #1a9850; margin-bottom: 0.5rem;">${velos}</div>
-                        <div style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">Vélos électriques</div>
-                    </div>
-                    <div style="text-align: center; padding: 1.5rem; background: rgba(215, 48, 39, 0.1); border-radius: 8px; border: 2px solid rgba(215, 48, 39, 0.3);">
-                        <div style="font-size: 3rem; font-weight: 700; color: #d73027; margin-bottom: 0.5rem;">${trotinettes}</div>
-                        <div style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">Trottinettes électriques</div>
-                    </div>
-                </div>
-            `;
+            // Update vehicles stats
+            updateVehiclesStats();
         } catch (err) {
             console.error('Error loading vehicles data:', err);
-            vehiclesContainer.innerHTML = `
-                <p style="color: var(--text-secondary); padding: 2rem; text-align: center;">
-                    Impossible de charger les données des véhicules en libre service.
-                </p>
-            `;
+            // Keep default values (0) and update anyway
+            updateVehiclesStats();
         }
 
         // --- Cleanup
