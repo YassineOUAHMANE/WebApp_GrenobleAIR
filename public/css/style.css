@@ -503,46 +503,6 @@ footer {
     }
 }
 
-/* ===== Leaflet Map Styles ===== */
-.leaflet-container {
-    background-color: var(--bg-secondary, #1a1e2e);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.leaflet-control-zoom a,
-.leaflet-control-layers-toggle {
-    background-color: var(--bg-card);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-.leaflet-control-zoom a:hover {
-    background-color: var(--primary);
-    color: white;
-}
-
-.leaflet-popup-content-wrapper {
-    background-color: var(--bg-card);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.leaflet-popup-content {
-    color: var(--text-primary);
-    font-size: 0.9rem;
-}
-
-.leaflet-popup-tip-container {
-    visibility: visible;
-}
-
-.leaflet-popup-tip {
-    background-color: var(--bg-card);
-    border: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
 .parking-marker {
     transition: all 0.2s ease;
 }

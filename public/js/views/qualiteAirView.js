@@ -20,7 +20,7 @@ export default {
 
             <div class="span-12 card">
                 <h2>Qualité de l'air médiane en PM2.5</h2>
-                <p>Chaque carré représente une journée.</p>
+                <p>Chaque carré représente la qualité médiane d'une journée sur la métropole grenobloise. </p>
                 <div id="aqi-grid"></div>
             </div>
 

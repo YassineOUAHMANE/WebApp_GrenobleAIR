@@ -874,11 +874,11 @@ export default {
                 </div>
                 <div style="text-align: center; padding: 1.5rem; background: rgba(26, 152, 80, 0.1); border-radius: 8px; border: 2px solid rgba(26, 152, 80, 0.3);">
                     <div style="font-size: 2.5rem; font-weight: 700; color: #1a9850; margin-bottom: 0.5rem;">${Math.round(avgWeekdayTraffic).toLocaleString()}</div>
-                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en semaine</div>
+                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Cyclistes / jour en semaine</div>
                 </div>
                 <div style="text-align: center; padding: 1.5rem; background: rgba(215, 48, 39, 0.1); border-radius: 8px; border: 2px solid rgba(215, 48, 39, 0.3);">
                     <div style="font-size: 2.5rem; font-weight: 700; color: #d73027; margin-bottom: 0.5rem;">${Math.round(avgWeekendTraffic).toLocaleString()}</div>
-                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Trafic en week-end</div>
+                    <div style="font-size: 1rem; color: var(--text-secondary); font-weight: 600;">Cyclistes / jour en week-end</div>
                 </div>
             `;
         };

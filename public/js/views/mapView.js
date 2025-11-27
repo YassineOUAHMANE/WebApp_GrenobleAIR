@@ -1,28 +1,6 @@
 import { fetchCSV, fetchJSON } from "../utils/fetchData.js";
-import { featureCollectionFromRows } from '../utils/mapUtils.js';
+import { featureCollectionFromRows, lineColors } from '../utils/mapUtils.js';
 import { icons } from '../utils/icons.js'
-
-const lineColors = {
-    SEM_A: "rgb(37,106,196)",
-    SEM_B: "rgb(65,159,60)",
-    SEM_C: "rgb(208,1,120)",
-    SEM_D: "rgb(214,138,31)",
-    SEM_E: "rgb(110,56,213)",
-    SEM_C1: "rgb(246,211,75)",
-    SEM_C2: "rgb(246,211,75)",
-    SEM_C3: "rgb(246,211,75)",
-    SEM_C4: "rgb(246,211,75)",
-    SEM_C5: "rgb(246,211,75)",
-    SEM_C6: "rgb(246,211,75)",
-    SEM_C6N: "rgb(246,211,75)",
-    SEM_C7: "rgb(246,211,75)",
-    SEM_C8: "rgb(246,211,75)",
-    SEM_C10: "rgb(238,125,0)",
-    SEM_C11: "rgb(238,125,0)",
-    SEM_C12: "rgb(238,125,0)",
-    SEM_C13: "rgb(238,125,0)",
-    SEM_C14: "rgb(238,125,0)",
-};
 
 export default {
     title: 'Carte',
@@ -41,8 +19,7 @@ export default {
                 }
             
                 .layer-selector.closed {
-                    // transform: translateX(-100%);
-                    width: 0; padding: 0;
+                    display: none; 
                     overflow: hidden;
                 }
             
@@ -73,6 +50,7 @@ export default {
                     cursor: pointer;
                     color: var(--text-1);
                     display: none;
+                    z-index: 2;
                 }
             
                 .layer-selector.closed + .layer-open {
@@ -121,6 +99,10 @@ export default {
                     line-height: 1.2;
                     font-size: 0.9rem;
                 }
+
+                #heatmap {
+                    position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;
+                }
             </style>
             <div style="display: flex; width: 100%; height: 100%; position: relative;">
                 <div class="layer-selector" id="sidebar">
@@ -135,12 +117,15 @@ export default {
                     <label><input type="checkbox" id="toggleZFE" checked> ${icons.car} ZFE <span class="color-box" style="background: rgb(190, 3, 252)"></span></label>
                     <label><input type="checkbox" id="toggleTramBus" checked> ${icons.publicTransport} Transports en commun</label>
                     <label><input type="checkbox" id="toggleEV"> ${icons.ev} Bornes de recharge VE <span class="color-box" style="background: green;"></span></label>
+                    <label><input type="checkbox" id="toggleHeatMap"> ${icons.aqi} Qualité de l'air (PM2.5)</label>
                     <div class="tram-bus-colors">
                         ${Object.entries(lineColors).map(i => `<span class="color-box" style="background: ${i[1]}; display: inline-block;">${i[0].replace('SEM_', '')}</span>`).join('')}
                     </div>
                 </div>
                 <div class="layer-open" id="openSidebar">☰</div>
-                <div id='map' style="flex: 1; overflow: hidden;"></div>
+                <div id='map' style="position: relative; flex: 1; overflow: hidden;">
+                    <canvas id="heatmap"></canvas>
+                </div>
             </div>
         `
 
@@ -169,11 +154,14 @@ export default {
 
         // Observe map size changes
         const resizeObserver = new ResizeObserver(() => {
-            // console.log("Resized", elem.clientWidth, elem.clientHeight)
+            console.log("Resized", elem.clientWidth, elem.clientHeight)
             width = elem.clientWidth;
             height = elem.clientHeight;
             setupMap();
-            draw()
+            draw();
+            if(heatmapPoints && heatmapColor){
+                renderHeat();
+            }
         });
         resizeObserver.observe(document.getElementById('map'));
 
@@ -205,7 +193,7 @@ export default {
         // Zoom behavior
         let zoom;
 
-        function setupMap(){
+        function setupMap() {
             svg.attr("width", width).attr("height", height)
             zoom = d3.zoom()
                 .scaleExtent([1, 8.5]) // Limit zooming
@@ -215,30 +203,28 @@ export default {
 
         }
         setupMap();
-        
+
         const transformLayer = svg.append("g")
 
         const mapLayer = transformLayer.append("g"); // To hold the map tiles
-        const waterFillLayer = mapLayer.append("g"); 
+        const waterFillLayer = mapLayer.append("g");
 
-        // ZFE layer
+        // ZFE layer - show at the beginning
         const zfeLayer = transformLayer.append("g")
             .attr("class", "zfe-layer")
-            // .style("display", "none");
+        // .style("display", "none");
 
         document.getElementById("toggleZFE").addEventListener("change", (e) => {
             zfeLayer.style("display", e.target.checked ? null : "none");
         });
-        
-        // Tram/Bus layer
+
+        // Tram/Bus layer - show at the beginning
         const tramBusLayer = transformLayer.append("g")
             .attr("class", "public-transport-layer")
-            // .style("display", "none");
-        // document.querySelector('.tram-bus-colors').style.display = "none";
 
         document.getElementById("toggleTramBus").addEventListener("change", (e) => {
             tramBusLayer.style("display", e.target.checked ? null : "none");
-            document.querySelector('.tram-bus-colors').style.display =  e.target.checked ? null : "none";
+            document.querySelector('.tram-bus-colors').style.display = e.target.checked ? null : "none";
         });
 
         // PARKING layer
@@ -258,7 +244,7 @@ export default {
         document.getElementById("toggleBike").addEventListener("change", (e) => {
             bikeLayer.style("display", e.target.checked ? null : "none");
         });
-        
+
         // EV layer
         const evLayer = transformLayer.append("g")
             .attr("class", "ev-layer")
@@ -267,7 +253,7 @@ export default {
         document.getElementById("toggleEV").addEventListener("change", (e) => {
             evLayer.style("display", e.target.checked ? null : "none");
         });
-        
+
         // Bike parking layer
         const bikeParkingLayer = transformLayer.append("g")
             .attr("class", "bike-parking-layer")
@@ -277,6 +263,12 @@ export default {
             bikeParkingLayer.style("display", e.target.checked ? null : "none");
         });
         
+        // Heatmap layer
+        document.getElementById("heatmap").style.display = "none";
+        document.getElementById("toggleHeatMap").addEventListener("change", (e) => {
+            document.getElementById("heatmap").style.display = e.target.checked ? null : "none";
+        });
+
 
         // Projection in screen pixels
         const projection = d3.geoMercator()
@@ -289,6 +281,9 @@ export default {
         function zoomed(event) {
             const transform = event.transform;
             transformLayer.attr("transform", transform); // Apply transform to layer
+            d3.select("#heatmap")
+                .style("transform-origin", "0 0")
+                .style("transform", `matrix(${transform.k}, 0, 0, ${transform.k}, ${transform.x}, ${transform.y})`);
 
             // ---- 1. Convert current screen center back to lon/lat ----
             const screenCenter = [width / 2, height / 2];
@@ -365,7 +360,7 @@ export default {
                     allWater.push(f);
                 }
             });
-            const mergedFC = { type:"FeatureCollection", features: allWater };
+            const mergedFC = { type: "FeatureCollection", features: allWater };
             waterFillLayer.selectAll("path").remove();
             waterFillLayer.append("path")
                 .attr("fill", "var(--water)")
@@ -401,16 +396,16 @@ export default {
 
             map.exit().remove();
 
-            
-            if(typeof parkingData != 'undefined'){ //Reset parking layer
+
+            if (typeof parkingData != 'undefined') { //Reset parking layer
                 parkingLayer.selectAll("circle").remove();
                 parkingData.forEach(addParkingD3);
             }
-            if(typeof bikeData != 'undefined'){ //Reset bike layer
+            if (typeof bikeData != 'undefined') { //Reset bike layer
                 bikeLayer.selectAll("circle").remove();
                 bikeData.forEach(addBikeD3);
             }
-            if(typeof evData != 'undefined'){ //Reset EV layer
+            if (typeof evData != 'undefined') { //Reset EV layer
                 evLayer.selectAll("circle").remove();
                 evData.forEach(addEvD3);
             }
@@ -426,57 +421,57 @@ export default {
         function addCircleMarker(layer, item, options) {
             const [lat, lon] = item.coords;
             if (!lat || !lon) return;
-        
+
             const { color, radius, tooltipHTML, popupText, strokeWidth } = options;
-        
+
             const scale = 1 + currentZoom - minZoom;
             const strokeWidthScaled = 1 / scale;
-        
+
             const marker = layer.append("circle")
                 .attr("r", radius * strokeWidthScaled)
                 .attr("fill", color)
                 .attr("stroke", options.stroke || color)
-                .attr("stroke-width", (typeof strokeWidth != 'undefined' ? strokeWidth : 0) * strokeWidthScaled)
+                .attr("stroke-width", (typeof strokeWidth != 'undefined' ? strokeWidth : 2.5) * strokeWidthScaled)
                 .attr("opacity", 0.85)
                 .attr("fill-opacity", 0.75)
                 .datum(item);
-        
+
             // Position on screen
             const [x, y] = projection([lon, lat]);
             marker.attr("cx", x).attr("cy", y);
-        
+
             // Hover
-            if(tooltipHTML){
+            if (tooltipHTML) {
                 marker.on("mouseenter", (event, d) => {
                     marker.transition()
                         .attr("r", Math.min(radius * 1.2, 24) * strokeWidthScaled)
                         .attr("opacity", 1)
                         .attr("fill-opacity", 0.9)
-                        .attr("stroke-width", 3 * strokeWidthScaled);
-            
+                        .attr("stroke-width", (typeof strokeWidth != 'undefined' ? strokeWidth : 2.5) * 1.2 * strokeWidthScaled);
+
                     showTooltip(event, tooltipHTML(item), color);
                 });
-        
+
                 marker.on("mouseleave", () => {
                     marker.transition()
                         .attr("r", radius * strokeWidthScaled)
                         .attr("opacity", 0.85)
                         .attr("fill-opacity", 0.75)
-                        .attr("stroke-width", 2.5 * strokeWidthScaled);
-            
+                        .attr("stroke-width", (typeof strokeWidth != 'undefined' ? strokeWidth : 2.5) * strokeWidthScaled);
+
                     hideTooltip();
                 });
             }
-            if(popupText)
+            if (popupText)
                 marker.on("click", () => alert(popupText(item)));
-        }   
-        
+        }
+
         function addParkingD3(p) {
             addCircleMarker(parkingLayer, p, {
                 color: p.gratuit ? "#29c18c" : "#4f7cff",
                 stroke: p.gratuit ? "#1fa371" : "#3551d5",
                 radius: Math.min(Math.sqrt(p.places) * 0.7, 20),
-        
+
                 tooltipHTML: (d) => {
                     const services = [];
                     if (d.velo) services.push(`🚲 ${d.velo}`);
@@ -484,7 +479,7 @@ export default {
                     if (d.elec) services.push(`⚡ ${d.elec}`);
                     if (d.autopartage) services.push("🚗");
                     if (d.pmr) services.push(`♿ ${d.pmr}`);
-        
+
                     return `
                         <div style="font-weight:600; margin-bottom:0.4rem; color:white;">${icons.parking} ${d.nom}</div>
                         <div style="margin-bottom:0.4rem;">
@@ -497,7 +492,7 @@ export default {
                         ${services.length ? `<div style="margin-top:0.4rem; font-size:0.75rem;">${services.join(" ")}</div>` : ""}
                     `;
                 },
-        
+
                 popupText: (d) => `${d.nom}\n${d.places} places\n${d.commune}`
             });
         }
@@ -506,7 +501,7 @@ export default {
             addCircleMarker(bikeLayer, b, {
                 color: "#e8d400",
                 radius: Math.sqrt(b.avg) * 0.15,
-        
+
                 tooltipHTML: (d) => `
                     <div style="font-weight:600; margin-bottom:0.4rem; color:white;">${icons.bike} ${d.nom}</div>
                     <div style="margin-bottom:0.4rem; opacity:0.85;">
@@ -515,23 +510,23 @@ export default {
                     </div>
                     <div style="opacity:0.7; font-size:0.75rem;">${d.commune}</div>
                 `,
-        
+
                 popupText: (d) => `${d.nom}\n${Math.round(d.avg)} passages/jour`
             });
         }
-        
+
         function addEvD3(b) {
             addCircleMarker(evLayer, b, {
                 color: "green",
                 radius: Math.sqrt(b.pdc) * 3,
-        
+
                 tooltipHTML: (d) => `
                     <div style="font-weight:600; margin-bottom:0.4rem; color:white;">${icons.ev}${d.nom}</div>
                     <div style="margin-bottom:0.4rem; opacity:0.85;">
                         <strong>${d.pdc}</strong> places
                     </div>
                 `,
-        
+
                 popupText: (d) => `${d.nom}\n${d.pdc} places`
             });
         }
@@ -540,11 +535,11 @@ export default {
 
         function showTooltip(event, html, color) {
             hideTooltip();
-        
+
             tooltipDiv = document.createElement("div");
             tooltipDiv.className = "map-marker-tooltip";
             tooltipDiv.innerHTML = html;
-        
+
             Object.assign(tooltipDiv.style, {
                 position: "fixed",
                 background: "linear-gradient(135deg, rgba(15, 16, 25, 0.99), rgba(26,30,45,0.99))",
@@ -561,24 +556,24 @@ export default {
                 top: event.clientY - 100 + "px",
                 maxWidth: "260px",
             });
-        
+
             document.body.appendChild(tooltipDiv);
         }
-        
+
         function hideTooltip() { if (tooltipDiv) tooltipDiv.remove(); }
 
         let parkingData = [];
         let bikeData = [];
         let evData = [];
 
-        async function fetchParkingData(){
+        async function fetchParkingData() {
             console.log("Fetching parking data")
             const rawParkingData = await fetchCSV('./data/parking/parking.csv');
 
             parkingData = rawParkingData.filter(d => d.nb_places && parseInt(d.nb_places) > 0)
                 .map(d => {
                     // Vérifier si le parking est gratuit (valeur 1 ou 1.0 dans colonne gratuit)
-                    const gratuitValue = (d.gratuit || '').trim();
+                    const gratuitValue = ('' + d.gratuit || '').trim();
                     const isGratuit = gratuitValue === '1' || gratuitValue === '1.0' || parseFloat(gratuitValue) === 1;
                     return {
                         nom: d.nom,
@@ -592,13 +587,13 @@ export default {
                         type_ouvrage: d.type_ouvrage || 'unknown',
                         gratuit: isGratuit,
                         commune: d.commune,
-                        coords: d.geo_point_2d?.split(',').map(parseFloat) || [0,0]
+                        coords: d.geo_point_2d?.split(',').map(parseFloat) || [0, 0]
                     };
                 });
             parkingData.forEach(p => addParkingD3(p));
         }
 
-        async function fetchBikeData(){
+        async function fetchBikeData() {
             console.log("Fetching bike data")
             const raw = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
 
@@ -607,7 +602,7 @@ export default {
             bikeData = raw
                 .filter(d => d.geo_point_2d)
                 .map(d => {
-                    const years = ["tmj_2019","tmj_2020","tmj_2021","tmj_2022"];
+                    const years = ["tmj_2019", "tmj_2020", "tmj_2021", "tmj_2022"];
                     const vals = years.map(y => parseFloat(d[y])).filter(v => !isNaN(v));
                     const avg = d3.mean(vals);
 
@@ -615,7 +610,7 @@ export default {
                         nom: d.nom_post?.replace(/^\(.*?\)\s*/, ""),
                         commune: d.nom_comm,
                         typeAxe: d.type_axe || "unknown",
-                        coords: d.geo_point_2d.split(",").map(parseFloat) || [0,0],
+                        coords: d.geo_point_2d.split(",").map(parseFloat) || [0, 0],
                         avg
                     };
                 });
@@ -623,7 +618,7 @@ export default {
             bikeData.forEach(addBikeD3);
         }
 
-        async function fetchZFEData(){
+        async function fetchZFEData() {
             console.log("Fetching ZFE data")
             const raw = await fetchCSV('./data/zfe/zfeaires.csv');
 
@@ -636,11 +631,11 @@ export default {
                 .attr("d", path(ZFEPermimeter));
         }
 
-        function tramBusStrokeWidth(d){ // Changes the stroke of a public transport line whether it's a tram or a bus
+        function tramBusStrokeWidth(d) { // Changes the stroke of a public transport line whether it's a tram or a bus
             const scale = 1 + currentZoom - minZoom;
             const strokeWidth = 1 / scale;
             const code = d.properties.CODE;
-        
+
             if (/^SEM_[A-Z]$/.test(code)) {
                 // SEM_A (single letter) - tram
                 return 3 * strokeWidth;
@@ -657,7 +652,7 @@ export default {
             return 1;
         }
 
-        async function fetchTramBusData(){
+        async function fetchTramBusData() {
             const raw = await fetchJSON('./data/transport_public/lignes_tag.geojson');
 
             //Separate each line - filter only lines that are in lineColors
@@ -668,16 +663,16 @@ export default {
                 .attr("d", d => path({
                     type: "Feature",
                     geometry: {
-                    type: "MultiLineString",
-                    coordinates: d.geometry.coordinates
+                        type: "MultiLineString",
+                        coordinates: d.geometry.coordinates
                     }
                 }))
                 .attr("fill", "none")
-                .attr("stroke", d => lineColors[d.properties.CODE] || "rgb(31,114,184)")
+                .attr("stroke", d => lineColors[d.properties.CODE] || lineColors.default)
                 .attr("stroke-width", tramBusStrokeWidth)
         }
 
-        async function fetchEVData(){
+        async function fetchEVData() {
             const files = [
                 // './data/irve/irve_metropole.csv',
                 // './data/irve/irve_gresivaudan.csv',
@@ -688,7 +683,7 @@ export default {
             await Promise.all(files.map(async file => {
                 const data = await fetchCSV(file);
                 console.log(data)
-                if(data.length > 0){
+                if (data.length > 0) {
                     raw.push(...data);
                 }
             }))
@@ -708,30 +703,124 @@ export default {
 
         }
 
-        async function fetchBikeParkingData(){
+        async function fetchBikeParkingData() {
             console.log("Fetching Bike Parking data")
             const raw = await fetchCSV('./data/mobilite_douce/arceaux.csv');
 
             raw.map(d => ({
-                coords: d.geo_point_2d.split(",").map(parseFloat) || [0,0],
+                coords: d.geo_point_2d.split(",").map(parseFloat) || [0, 0],
             })).map(d => addCircleMarker(bikeParkingLayer, d, {
                 color: "red",
                 radius: 2,
                 strokeWidth: 0
             }))
-
-            // const ZFEPermimeter = featureCollectionFromRows(raw);
-
-            // zfeLayer.append("path")
-            //     .attr("fill", "rgba(190, 3, 252,0.1)")
-            //     .attr("stroke", "rgb(190, 3, 252)")
-            //     .attr("stroke-width", 2)
-            //     .attr("d", path(ZFEPermimeter));
             console.log(raw)
         }
 
-        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFEData(), fetchTramBusData(), fetchEVData(), fetchBikeParkingData()]);
+        let heatmapPoints = [];
+        let heatmapColor;
+        async function fetchAirData() {
+            console.log("Fetching Air data")
+            const raw = await fetchCSV('./data/air/pm25_neighborhoods.csv');
+            const locations = await fetchCSV('./data/air/sensor_neighborhood_locations.csv');
+
+            const computed = locations.map(({ long, lat, sensorid }) => ({ long, lat, median: Math.max(0.05, d3.median(raw.map(i => i[sensorid]))) }))
+
+            heatmapPoints = computed.map(s => {
+                const [x, y] = projection([s.long, s.lat]);
+                return { x, y, value: s.median };
+            });
+
+            heatmapColor = d3.scaleLinear()
+            .domain(linspace(Math.min(...heatmapPoints.map(i => i.value)), Math.max(...heatmapPoints.map(i => i.value)), 8))
+            .range([
+                '#d4f1f9',
+                '#a9e4f5',
+                '#7ad3f0',
+                '#f4d35e',
+                '#ee964b',
+                '#f95738',
+                '#d62828',
+                '#9d0208'
+            ])
+            .interpolate(d3.interpolateRgb); // smooth blending
+
+            
+            renderHeat();
+
+        }
+
+        function renderHeat() {
+            const canvas = document.getElementById("heatmap");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+
+            const gridData = interpolateGrid(heatmapPoints, width, height, 4);
+            drawHeatmap(ctx, gridData.grid, gridData.cols, gridData.rows, heatmapColor, width, height);
+        }
+
+        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFEData(), fetchTramBusData(), fetchEVData(), fetchBikeParkingData(), fetchAirData()]);
     }
+}
+
+// Grid interpolation for heatmap
+function linspace(min, max, n) {
+    if (n === 1) return [min];
+    const step = (max - min) / (n - 1);
+    return Array.from({ length: n }, (_, i) => min + i * step);
+}
+
+function drawHeatmap(ctx, grid, cols, rows, color, width, height) {
+    const image = ctx.createImageData(cols, rows);
+
+    for (let i = 0; i < grid.length; i++) {
+        const c = d3.color(color(grid[i]));
+        image.data[i * 4 + 0] = c.r;
+        image.data[i * 4 + 1] = c.g;
+        image.data[i * 4 + 2] = c.b;
+        image.data[i * 4 + 3] = 180; // alpha
+    }
+
+    // offscreen then scale up
+    const off = document.createElement("canvas");
+    off.width = cols;
+    off.height = rows;
+    off.getContext("2d").putImageData(image, 0, 0);
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(off, 0, 0, width, height);
+}
+
+function interpolateGrid(points, width, height, resolution = 4) {
+    const cols = Math.ceil(width / resolution);
+    const rows = Math.ceil(height / resolution);
+    const grid = new Float32Array(cols * rows);
+
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+            const gx = x * resolution;
+            const gy = y * resolution;
+
+            let sum = 0;
+            let weight = 0;
+
+            for (const p of points) {
+                const dx = gx - p.x;
+                const dy = gy - p.y;
+                const d = Math.sqrt(dx * dx + dy * dy) || 1;
+                const w = 1 / (d * d);
+
+                sum += w * p.value;
+                weight += w;
+            }
+
+            grid[y * cols + x] = sum / weight;
+        }
+    }
+
+    return { grid, cols, rows };
 }
 
 //Tile fetching logic
