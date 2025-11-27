@@ -29,17 +29,33 @@ export const parseCSVLine = (line) => {
 };
 
 export const parseCSV = (text) => {
-    const lines = text.trim().split('\n').filter(i => !i.startsWith('#')); // Filter out comments
+    const lines = text.trim().split('\n').filter(i => !i.startsWith('#')); // Ignore comments
     const headers = parseCSVLine(lines[0]);
+  
     return lines.slice(1).map(line => {
-        const values = parseCSVLine(line);
-        const obj = {};
-        headers.forEach((h, i) => {
-            obj[h] = values[i]?.trim() || '';
+      const values = parseCSVLine(line);
+      const obj = {};
+  
+      headers.forEach((header, i) => {
+        const value = values[i]?.trim() ?? '';
+  
+        const path = header.split('/');   // Detect nested properties
+        let current = obj;
+  
+        path.forEach((key, idx) => {
+          if (idx === path.length - 1) {
+            // auto-cast number if possible
+            current[key] = isNaN(value) ? value : Number(value);
+          } else {
+            if (!current[key]) current[key] = {};
+            current = current[key];
+          }
         });
-        return obj;
+      });
+  
+      return obj;
     });
-};
+  };
 
 export async function fetchCSV(path){
     if (cache.has(path)) return cache.get(path);

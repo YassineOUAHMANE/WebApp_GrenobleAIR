@@ -56,3 +56,27 @@ export function addCircleMarkersFromPointCol(map, rows, {
   }
   return () => { try { map.removeLayer(layer); } catch {} };
 }
+
+
+export const lineColors = {
+    SEM_A: "rgb(37,106,196)",
+    SEM_B: "rgb(65,159,60)",
+    SEM_C: "rgb(208,1,120)",
+    SEM_D: "rgb(214,138,31)",
+    SEM_E: "rgb(110,56,213)",
+    SEM_C1: "rgb(246,211,75)",
+    SEM_C2: "rgb(246,211,75)",
+    SEM_C3: "rgb(246,211,75)",
+    SEM_C4: "rgb(246,211,75)",
+    SEM_C5: "rgb(246,211,75)",
+    SEM_C6: "rgb(246,211,75)",
+    SEM_C6N: "rgb(246,211,75)",
+    SEM_C7: "rgb(246,211,75)",
+    SEM_C8: "rgb(246,211,75)",
+    SEM_C10: "rgb(238,125,0)",
+    SEM_C11: "rgb(238,125,0)",
+    SEM_C12: "rgb(238,125,0)",
+    SEM_C13: "rgb(238,125,0)",
+    SEM_C14: "rgb(238,125,0)",
+    default: "rgb(31,114,184)"
+};
