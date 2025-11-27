@@ -91,12 +91,12 @@ export default {
 
 
         //Other data
-        const [velos, rawTransport, stops, arceaux, rawPistesCyclables] = await Promise.all([
+        const [velos, rawTransport, stops, arceaux, bikeLanesLengthsRows] = await Promise.all([
             fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv'),
             fetchJSON('./data/transport_public/lignes_tag.geojson'),
             fetchCSV('./data/transport_public/zones_arrets_metropole.csv'),
             fetchCSV('./data/mobilite_douce/arceaux.csv'),
-            fetchCSV('./data/mobilite_douce/pistes_cyclables_des_49_communes_de_la_métropole.csv')
+            fetchCSV('./data/mobilite_douce/longueurs_pistes_cyclables.csv')
         ]);
 
         let totalTransportLength = 0;
@@ -108,16 +108,10 @@ export default {
         });
         console.log(transport)
 
-        let totalPistesCyclablesLength = 0;
-        const pistesCyclables = rawPistesCyclables.map(i => {
-            const coordinates = Object.values(i.geometry.coordinates).map(i => Object.values(i)).filter(i => i[0] != 0 || i[1] != 0)
-            const geometry = { ...i.geometry, coordinates }
-
-            const length = d3.geoLength(geometry) * EARTH_RADIUS_KM;;
-            totalPistesCyclablesLength += length;
-            return { ...i, geometry, length }
-        })
-        console.log(pistesCyclables, totalPistesCyclablesLength)
+        const totalPistesCyclablesLength = bikeLanesLengthsRows.reduce((sum, row) => {
+            const longueur = parseFloat(row.longueur) || 0;
+            return sum + longueur;
+        }, 0) / 1000;
 
 
         const velosCount = velos.length;
@@ -172,7 +166,7 @@ export default {
                 <div class="kpi">
                     <h2 class="kpi-icon">${icons.bikePath}</h2>
                     <div class="label">Km de pistes cyclables</div>
-                    <div class="value">${totalPistesCyclablesLength.toFixed(2)}</div>
+                    <div class="value">${Math.round(totalPistesCyclablesLength)}</div>
                 </div>
             </div>
         </div>

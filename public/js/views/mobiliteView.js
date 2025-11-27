@@ -1,4 +1,5 @@
 import { fetchCSV } from '../utils/fetchData.js';
+import { icons } from '../utils/icons.js';
 
 export default {
     title: 'Mobilité Douce',
@@ -10,12 +11,15 @@ export default {
             
         <section class="grid">
             <!-- Vue d'ensemble - toute la largeur -->
-            <div class="span-12 card" style="margin-bottom: 1rem;">
-                <h2 style="margin-bottom: 1.5rem;">Vue d'ensemble</h2>
+            <div class="span-12 card">
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                    ${icons.chart}
+                    <span>Vue d'ensemble</span>
+                </h2>
                 
-                <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                <div class="kpis" style="align-items: stretch; gap: 0; margin-bottom: 0;">
                     <!-- Section Comptage -->
-                    <div style="flex: 1;">
+                    <div class="kpi" style="padding: 0 1.5rem 0 0;">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                             <h3 style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin: 0;">Flux vélos</h3>
                             <div style="display: flex; gap: 0.25rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.125rem; background: var(--bg-secondary);">
@@ -37,24 +41,24 @@ export default {
                             <!-- Traffic stats will be populated here -->
                         </div>
                     </div>
-                    
-                    <!-- Séparateur vertical -->
-                    <div style="width: 1px; background: var(--border-color); align-self: stretch; margin: 0 0.5rem;"></div>
-                    
+
                     <!-- Section Pistes Cyclables -->
-                    <div style="flex: 1;">
-                        <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);">Pistes Cyclables</h3>
+                    <div class="kpi" style="padding: 0 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
+                            ${icons.bikePath}
+                            <span>Pistes Cyclables</span>
+                        </h3>
                         <div id="bike-lanes-stats">
                             <!-- Bike lanes stats will be populated here -->
                         </div>
                     </div>
-                    
-                    <!-- Séparateur vertical -->
-                    <div style="width: 1px; background: var(--border-color); align-self: stretch; margin: 0 0.5rem;"></div>
-                    
+
                     <!-- Section Vélo / Trotinettes libre service -->
-                    <div style="flex: 1;">
-                        <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);">Vélos et trotinettes électriques en libre service disponibles en temps réel</h3>
+                    <div class="kpi" style="padding: 0 0 0 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
+                            ${icons.bike}
+                            <span>Vélos et trottinettes en libre-service</span>
+                        </h3>
                         <div id="vehicles-stats">
                             <!-- Vehicles stats will be populated here -->
                         </div>
@@ -63,20 +67,20 @@ export default {
             </div>
 
             <!-- Évolution par compteur - toute la largeur -->
-            <div class="span-12 card" style="margin-bottom: 1rem;">
-                <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes par compteur</h2>
+            <div class="span-12 card">
+                <h2 style="margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600;">Évolution du nombre journalier de cyclistes par compteur</h2>
                 <div id="mini-charts-container"></div>
             </div>
 
             <!-- Évolution globale - à gauche -->
-            <div class="span-6 card" style="margin-bottom: 1rem;">
-                <h2 style="margin-bottom: 1rem;">Évolution du nombre journalier de cyclistes recensés par les compteurs</h2>
+            <div class="span-6 card">
+                <h2 style="margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600;">Évolution du nombre journalier de cyclistes recensés par les compteurs</h2>
                 <div id="evolution-chart"></div>
             </div>
 
             <!-- Répartition pistes cyclables - à droite -->
-            <div class="span-6 card" style="margin-bottom: 1rem;">
-                <h2 style="margin-bottom: 1rem;">Répartition des pistes cyclables par type d'axe</h2>
+            <div class="span-6 card">
+                <h2 style="margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600;">Répartition des pistes cyclables par type d'axe</h2>
                 <div id="bike-lanes-chart"></div>
             </div>
         </section>
@@ -1001,11 +1005,11 @@ export default {
         // --- Function to update bike lanes statistics
         const updateBikeLanesStats = () => {
             const bikeLanesContainer = root.querySelector('#bike-lanes-stats');
-            const totalBikeLanesKm = calculateTotalBikeLanesLength();
+            const totalBikeLanesKm = Math.round(calculateTotalBikeLanesLength());
             
             bikeLanesContainer.innerHTML = `
                 <div style="text-align: left;">
-                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${totalBikeLanesKm.toFixed(1)} km</div>
+                    <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${totalBikeLanesKm} km</div>
                     <div style="font-size: 0.8rem; color: var(--text-secondary);">Kilomètres totaux</div>
                 </div>
             `;
