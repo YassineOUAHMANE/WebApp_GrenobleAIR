@@ -515,6 +515,7 @@ footer {
     border-radius: 4px;
     flex-shrink: 0;
 }
+.color-box.wide {width: 2rem;}
 
 p svg, h2 svg, h3 svg, label svg {width: 1em; height: 1em; vertical-align: baseline; margin-bottom: -.1em; }
 

@@ -10,23 +10,23 @@ export default {
     <section class="grid">
       <!-- ${icons.user} Équipe -->
       <div class="span-12 card">
-        <h2>Équipe du Projet</h2>
+        <h2>Équipe</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
           
           <div style="padding: 1rem; background: rgba(79, 124, 255, 0.05); border-radius: 8px; border-left: 3px solid #4f7cff;">
-            <h3 style="margin: 0; font-size: 1.1rem;">${icons.user} Yassine OUAHMANE</h3>
+            <h3 style="margin: 0; font-size: 1.1rem;">${icons.person} Yassine OUAHMANE</h3>
           </div>
 
           <div style="padding: 1rem; background: rgba(41, 193, 140, 0.05); border-radius: 8px; border-left: 3px solid #29c18c;">
-            <h3 style="margin: 0; font-size: 1.1rem;">${icons.user} Lisa BANIHACHEMI</h3>
+            <h3 style="margin: 0; font-size: 1.1rem;">${icons.person} Lisa BANIHACHEMI</h3>
           </div>
 
           <div style="padding: 1rem; background: rgba(255, 209, 102, 0.05); border-radius: 8px; border-left: 3px solid #ffd166;">
-            <h3 style="margin: 0; font-size: 1.1rem;">${icons.user} Felix RUNQUIST</h3>
+            <h3 style="margin: 0; font-size: 1.1rem;">${icons.person} Felix RUNQUIST</h3>
           </div>
 
           <div style="padding: 1rem; background: rgba(236, 72, 153, 0.05); border-radius: 8px; border-left: 3px solid #ec4899;">
-            <h3 style="margin: 0; font-size: 1.1rem;">${icons.user} Baptiste CONTENT</h3>
+            <h3 style="margin: 0; font-size: 1.1rem;">${icons.person} Baptiste CONTENT</h3>
           </div>
 
         </div>
@@ -97,7 +97,7 @@ export default {
           <h4>Données ponctuelles : parkings, compteurs vélos, arceaux vélo, bornes de recharge, flux voiture et vélo</h4>
           <p>Les bornes et les différents équipements sont localisés sur des points précis dans Grenoble. Nous allons donc les représenter par des cercles de différentes couleurs et diamètre, en fonction de leur capacité. Cela permet à l'utilisateur de notre application une identification simple et quasi-immédiate tout en conservant la lisiblité de la carte.
               L'utilisateur peut cliquer sur ces points pour obtenir plus d'informations, comme le nombre de places disponibles dans un parking ou le nombre de vélos disponibles à une station M'Velo.</p>
-        </div
+        </div>
       </div>
 
       <! -- Qualité de l'air -->
@@ -105,15 +105,21 @@ export default {
         <h2>Qualité de l'Air à Grenoble</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
           <p> L'indice ATMO est une donnéee quantitative, que l'on va représenter par l'ajout de variation de couleurs (du bleu - vert au rouge) sur notre carte. En effet, en utilisant différentes teintes pour représenter ces mesures, l'utilisateur va pouvoir facilement et simplement analyser les variations de la qualité de l'air à Grenoble.
-
+        </div>
+      </div>
 
 
 
       <!-- URL données -->
       <div class="span-12 card">
         <h2>Sources des Données Utilisées</h2>
+        <p>Afin de réaliser ce projet, nous avons utilisé bases de données.</p>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
           <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Qualité de l'air: <a href="https://aqicn.org/" target="_blank">AQIcn</a>, <a href="https://sensor.community/en/" target="_blank">sensor.community</a></li>
+            <li>Lignes de transport: <a href="https://data.mobilites-m.fr/" target="_blank">data.mobilites-m.fr</a></li>
+            <li>Icones SVG: <a href="https://react-icons.github.io/react-icons/" target="_blank">React icons</a></li>
+
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/lignes-de-transport-du-reseau-tag" target="_blank" rel="noopener">Lignes tram/bus</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/pcm" target="_blank" rel="noopener">Pistes cyclables</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/bornes-de-recharge-pour-vehicules-electriques" target="_blank" rel="noopener">Bornes recharge VE</a></li>
@@ -132,7 +138,6 @@ export default {
           </ul>
         </div>
       </div>
-    
 
     </section>
     `;

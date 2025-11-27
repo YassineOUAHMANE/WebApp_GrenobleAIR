@@ -57,7 +57,6 @@ export function addCircleMarkersFromPointCol(map, rows, {
   return () => { try { map.removeLayer(layer); } catch {} };
 }
 
-
 export const lineColors = {
     SEM_A: "rgb(37,106,196)",
     SEM_B: "rgb(65,159,60)",
