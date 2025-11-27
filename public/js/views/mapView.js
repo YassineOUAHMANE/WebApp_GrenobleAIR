@@ -115,6 +115,7 @@ export default {
                     <label><input type="checkbox" id="toggleBike"> ${icons.bike} Compteurs de Vélos <span class="color-box" style="background: #e8d400"></span></label>
                     <label><input type="checkbox" id="toggleBikeParking"> ${icons.bike} Arceaux Vélo <span class="color-box" style="background: red"></span></label>
                     <label><input type="checkbox" id="toggleZFE" checked> ${icons.car} ZFE <span class="color-box" style="background: rgb(190, 3, 252)"></span></label>
+                    <label><input type="checkbox" id="toggleNeighborhoods"> ${icons.building} Quartiers de Grenoble <span class="color-box" style="background: rgb(235, 131, 52)"></span></label>
                     <label><input type="checkbox" id="toggleTramBus" checked> ${icons.publicTransport} Transports en commun</label>
                     <label><input type="checkbox" id="toggleEV"> ${icons.ev} Bornes de recharge VE <span class="color-box" style="background: green;"></span></label>
                     <label><input type="checkbox" id="toggleHeatMap"> ${icons.aqi} Qualité de l'air (PM2.5) <span class="color-box wide" style="background: linear-gradient(to right, #d4f1f9, #a9e4f5, #7ad3f0, #f4d35e, #ee964b, #f95738, #d62828, #9d0208);"></span></label>
@@ -217,6 +218,15 @@ export default {
 
         document.getElementById("toggleZFE").addEventListener("change", (e) => {
             zfeLayer.style("display", e.target.checked ? null : "none");
+        });
+        
+        // Neighborhood layer
+        const neigborhoodLayer = transformLayer.append("g")
+            .attr("class", "zfe-layer")
+            .style("display", "none");
+
+        document.getElementById("toggleNeighborhoods").addEventListener("change", (e) => {
+            neigborhoodLayer.style("display", e.target.checked ? null : "none");
         });
 
         // Tram/Bus layer - show at the beginning
@@ -342,8 +352,6 @@ export default {
 
             // Compute radius based on current width/height
             const radius = computeTileRadius(width, height, currentZoom);
-            console.log("Radius ", radius)
-
             const tilesToLoad = getTilesAround(centerTileX, centerTileY, currentZoom, radius);
 
             const tilesData = await Promise.all(
@@ -355,7 +363,7 @@ export default {
                     return { x: d[0], y: d[1], z: d[2], layers };
                 })
             );
-            console.log("Not found", notFound)
+            console.log("Tiles not found", notFound)
 
 
             //Group water fill - to avoid artefacts on the side of tiles
@@ -388,7 +396,7 @@ export default {
 
             enter.append("path") // roads
                 .attr("fill", "none")
-                .attr("stroke", "var(--fg-1)")
+                .attr("stroke", "var(--fg-2)")
                 .attr("stroke-width", 1 / scale)
                 .attr("d", d => d.layers?.roads ? path({ type: "FeatureCollection", features: d.layers.roads }) : null);
 
@@ -414,6 +422,7 @@ export default {
                 evData.forEach(addEvD3);
             }
             zfeLayer.selectAll("path").attr("stroke-width", 2 / scale)
+            neigborhoodLayer.selectAll("path").attr("stroke-width", 2 / scale)
             tramBusLayer.selectAll("path").attr("stroke-width", tramBusStrokeWidth)
             bikeParkingLayer.selectAll("circle").attr("r", 2 / scale)
 
@@ -603,8 +612,6 @@ export default {
             console.log("Fetching bike data")
             const raw = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
 
-            // console.log(raw)
-
             bikeData = raw
                 .filter(d => d.geo_point_2d)
                 .map(d => {
@@ -624,8 +631,8 @@ export default {
             bikeData.forEach(addBikeD3);
         }
 
-        async function fetchZFEData() {
-            console.log("Fetching ZFE data")
+        async function fetchZFENeighborhoodData() {
+            console.log("Fetching ZFE and neighborhood data")
             const raw = await fetchCSV('./data/zfe/zfeaires.csv');
 
             const ZFEPermimeter = featureCollectionFromRows(raw);
@@ -635,6 +642,15 @@ export default {
                 .attr("stroke", "rgb(190, 3, 252)")
                 .attr("stroke-width", 2)
                 .attr("d", path(ZFEPermimeter));
+
+		    const quartiersRows = await fetchCSV('./data/quartiers/unions_de_quartier_epsg4326.csv');
+            const quartiersFC = featureCollectionFromRows(quartiersRows, { shapeCol: 'geo_shape' });
+            quartiersFC.features.forEach(i => i.geometry.coordinates[0].reverse())
+            neigborhoodLayer.append("path")
+                .attr("fill", "rgba(235, 131, 52, 0.1)")
+                .attr("stroke", "rgb(235, 131, 52)")
+                .attr("stroke-width", 2)
+                .attr("d", path(quartiersFC));
         }
 
         function tramBusStrokeWidth(d) { // Changes the stroke of a public transport line whether it's a tram or a bus
@@ -673,6 +689,7 @@ export default {
                         coordinates: d.geometry.coordinates
                     }
                 }))
+                .attr("opacity","0.8")
                 .attr("fill", "none")
                 .attr("stroke", d => lineColors[d.properties.CODE] || lineColors.default)
                 .attr("stroke-width", tramBusStrokeWidth)
@@ -688,7 +705,6 @@ export default {
             const raw = [];
             await Promise.all(files.map(async file => {
                 const data = await fetchCSV(file);
-                console.log(data)
                 if (data.length > 0) {
                     raw.push(...data);
                 }
@@ -702,8 +718,6 @@ export default {
                 coords: [parseFloat(d.consolidated_latitude), parseFloat(d.consolidated_longitude)],
                 pdc: parseInt(d.nbre_pdc) || 0
             }));
-
-            console.log(evData)
 
             evData.forEach(addEvD3);
 
@@ -720,7 +734,6 @@ export default {
                 radius: 2,
                 strokeWidth: 0
             }))
-            console.log(raw)
         }
 
         let heatmapPoints = [];
@@ -804,7 +817,7 @@ export default {
             
         }
 
-        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFEData(), fetchTramBusData(), fetchEVData(), fetchBikeParkingData(), fetchAirData(), fetchStationData()]);
+        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFENeighborhoodData(), fetchTramBusData(), fetchEVData(), fetchBikeParkingData(), fetchAirData(), fetchStationData()]);
     }
 }
 
