@@ -495,13 +495,13 @@ export default {
                 .on('mouseleave', function () {
                     clearTimeout(tooltipTimeout);
                     d3.select(this).transition().duration(150)
-                        .attr('r', dd => Math.max(15, Math.min(60, (dd.places / maxPlaces) * 60)))
+                        .attr('r', dd => Math.max(15, Math.min(60, Math.sqrt(dd.places / maxPlaces) * 60)))
                         .attr('opacity', 0.8)
                         .attr('stroke-width', 3);
                     tooltip.style.display = 'none';
                 })
                 .on('mousemove', function (event, d) {
-                    const bubbleRadius = Math.max(15, Math.min(60, (d.places / maxPlaces) * 60));
+                    const bubbleRadius = Math.max(15, Math.min(60, Math.sqrt(d.places / maxPlaces) * 60));
                     // Seulement repositionner le tooltip, ne pas changer le contenu
                     if (tooltip.style.display === 'block') {
                         positionTooltip(event.clientX + 15, event.clientY + 15, bubbleRadius);
