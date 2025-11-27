@@ -84,7 +84,7 @@ export default {
 
         // --- Load CSV files
         const rows = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
-        const bikeLanesLengthsRows = await fetchCSV('./data/mobilite_douce/pistes_cyclables_lengths.csv');
+        const bikeLanesLengthsRows = await fetchCSV('./data/mobilite_douce/longueurs_pistes_cyclables.csv');
 
         // --- Parse data and filter only counters with data for all years 2019-2022
         const data = rows
