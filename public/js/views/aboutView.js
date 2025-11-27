@@ -36,17 +36,16 @@ export default {
       <div class="span-12 card">
         <h2><strong>MOBIL'AIR</strong> Grenoble</h2>
         <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          L'objectif de notre projet est de proposer une application interactive, permettant aux Grenoblois, touristes, ainsi qu'aux décideurs locaux (mairie, métropole, ...) de mieux comprendre comment ils peuvent se déplacer à Grenoble, comment sont équipées les différentes zones de la ville, et quels impacts les différentes mobilitées peuvent avoir.
-          Pour réaliser notre projet, nous allons donc utiliser une carte avec différents réseaux et des icônes clicables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.
-          De plus, notre application est responsive, donc elle s'adapte à la fenêtre utilisateur, et il peut choisir de passer la page en dark mode.
-        </p>
+        <p>L'objectif de notre projet est de proposer une application interactive, permettant aux Grenoblois, touristes, ainsi qu'aux décideurs locaux (mairie, métropole, ...) de mieux comprendre comment ils peuvent se déplacer à Grenoble, comment sont équipées les différentes zones de la ville, et quels impacts les différentes mobilitées peuvent avoir. </p>
+        <p>Pour réaliser notre projet, nous allons donc utiliser une carte avec différents réseaux et des zones clicables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents dans le détail des données. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.</p>
+        <p>De plus, notre application est responsive, donc elle s'adapte à la fenêtre utilisateur, et il peut choisir de passer la page en dark mode. </p>
       </div>
 
       <!-- Traitement des Données -->
       <div class="span-12 card">
         <h2>Traitement des Données</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Sources de données:</h3>
+          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Sources de données :</h3>
           <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
             <li><strong>Stationnement:</strong> Données de disponibilité temps réel, capacités, tarification</li>
             <li><strong>Transport public:</strong> Lignes de transport en commun (TAG), itinéraires</li>
@@ -56,7 +55,7 @@ export default {
             <li><strong>Qualité de l'air:</strong> Données de qualité atmosphérique et pollution</li>
           </ul>
           
-          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Pipeline de traitement:</h3>
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Pipeline de traitement :</h3>
           <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
             <li><strong>Nettoyage:</strong> Normalisation des formats CSV, suppression des doublons</li>
             <li><strong>Validation:</strong> Vérification de la cohérence et de la complétude des données</li>
@@ -87,10 +86,10 @@ export default {
       <div class="span-12 card">
         <h2>Choix de Visualisations</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Carte Interactive:</h3>
-          <p> Les données que nous voulons afficher sont géolocalisées, comme les lignes de transport, les pistes cyclables ou encore les stations M'Velo. Nous avons donc opté pour une carte sur la page principale de notre application.
-              La position géographique permet une lecture simple et claire pour les différents utilisateurs, en leur apportant directement la vision "où" et l'analyse simple de la structure des mobilitées à Grenoble.
-              Notre application ayant pour contrainte une taille de 10Mo max imposés, le choix d'utiliser une carte nous a paru le plus juste pour afficher un grand nombre de données sans surcharger la page, tout en conservant une bonne lisibilité de la carte. Les vecteurs permettent un rendu net sur plusieurs niveaux de zooms.</p>
+          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Carte Interactive : </h3>
+          <p> Les données que nous voulons afficher sont géolocalisées, comme les lignes de transport, les pistes cyclables ou encore les stations M'Velo. Nous avons donc opté pour une carte sur la page principale de notre application. </p>
+          <p> La position géographique permet une lecture simple et claire pour les différents utilisateurs, en leur apportant directement la vision "où" et l'analyse simple de la structure des mobilitées à Grenoble. </p>
+          <p> Notre application ayant pour contrainte une taille de 10Mo max imposés, le choix d'utiliser une carte nous a paru le plus juste pour afficher un grand nombre de données sans surcharger la page, tout en conservant une bonne lisibilité de la carte. Les vecteurs permettent un rendu net sur plusieurs niveaux de zooms.</p>
           <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Représentation des données sur la carte:</h3>
           <h4>Données linéaires : bus et tram </h4>
           <p>Pour les lignes de transport en commun, nous avons choisi d'afficher les lignes de bus et tram sous forme de lignes colorées sur la carte. Chaque ligne est représentée par une couleur distincte, facilitant ainsi l'identification des différentes routes.
