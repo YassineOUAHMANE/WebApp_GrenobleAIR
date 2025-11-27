@@ -7,10 +7,10 @@ import { icons } from '../utils/icons.js';
 export default {
 	linkTitle: 'Quartiers',
 	title: 'Quartiers',
-	icon: 'chart',
+	icon: 'star',
 	async mount(root) {
 		root.innerHTML = `
-			<h2 class="title">${icons.chart} Quartiers — Diagramme en étoile</h2>
+			<h2 class="title">${icons.star} Quartiers — Diagramme en étoile</h2>
 			<div class="card">
 				<p>Choisissez un quartier pour afficher un diagramme en étoile comparant plusieurs dimensions (arceaux, parkings, bornes VE, trafic vélo, pollution).</p>
 				<div style="display:flex; gap:1rem; align-items:flex-start;">
