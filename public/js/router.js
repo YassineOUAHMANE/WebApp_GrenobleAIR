@@ -7,6 +7,7 @@ const routes = {
   'mobilite':  () => import('./views/mobiliteView.js').catch(() => import('./views/aboutView.js')),
   'qualite-air': () => import('./views/qualiteAirView.js').catch(() => import('./views/aboutView.js')),
   'lignes': () => import('./views/lignesTransportView.js'),
+  'quartiers': () => import('./views/quartiers.js'),
   'about':     () => import('./views/aboutView.js')
 };
 
