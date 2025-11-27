@@ -37,8 +37,8 @@ export default {
         <h2><strong>MOBIL'AIR</strong> Grenoble</h2>
         <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
         <p>L'objectif de notre projet est de proposer une application interactive, permettant aux Grenoblois, touristes, ainsi qu'aux décideurs locaux (mairie, métropole, ...) de mieux comprendre comment ils peuvent se déplacer à Grenoble, comment sont équipées les différentes zones de la ville, et quels impacts les différentes mobilitées peuvent avoir. </p>
-        <p>Pour réaliser notre projet, nous allons donc utiliser une carte avec différents réseaux et des zones clicables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents dans le détail des données. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.</p>
-        <p>De plus, notre application est responsive, donc elle s'adapte à la fenêtre utilisateur, et il peut choisir de passer la page en dark mode. </p>
+        <p>Pour réaliser notre projet, nous allons donc utiliser une carte avec différents réseaux et des zones cliquables. De plus, nous allons rajouter une temporalitée et laisser la possibilité à l'utilisateur de sélectoinner des mois différents dans le détail des données. Nous allons aussi laisser la possibilité à l'utilisateur de selectionner certains types de données par exemple, pour rendre la carte le plus interractive et personnalisée à l'utilisateur.</p>
+        <p>De plus, notre application est responsive, donc elle s'adapte à la fenêtre utilisateur et il peut choisir de passer la page en dark mode. </p>
       </div>
 
       <!-- Traitement des Données -->
@@ -86,28 +86,49 @@ export default {
       <div class="span-12 card">
         <h2>Choix de Visualisations</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Carte Interactive : </h3>
+          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">1. Carte Interactive : </h3>
           <p> Les données que nous voulons afficher sont géolocalisées, comme les lignes de transport, les pistes cyclables ou encore les stations M'Velo. Nous avons donc opté pour une carte sur la page principale de notre application. </p>
           <p> La position géographique permet une lecture simple et claire pour les différents utilisateurs, en leur apportant directement la vision "où" et l'analyse simple de la structure des mobilitées à Grenoble. </p>
           <p> Notre application ayant pour contrainte une taille de 10Mo max imposés, le choix d'utiliser une carte nous a paru le plus juste pour afficher un grand nombre de données sans surcharger la page, tout en conservant une bonne lisibilité de la carte. Les vecteurs permettent un rendu net sur plusieurs niveaux de zooms.</p>
-          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Représentation des données sur la carte:</h3>
-          <h4>Données linéaires : bus et tram </h4>
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">2. Représentation des données sur la carte :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Données linéaires : bus et tram </h4></li>
+          </ul>
           <p>Pour les lignes de transport en commun, nous avons choisi d'afficher les lignes de bus et tram sous forme de lignes colorées sur la carte. Chaque ligne est représentée par une couleur distincte, facilitant ainsi l'identification des différentes routes.
               Cette représentation linéaire permet aux utilisateurs de comprendre rapidement le réseau de transport en commun et d'identifier les connexions entre les différentes lignes.</p>
-          <h4>Données ponctuelles : parkings, compteurs vélos, arceaux vélo, bornes de recharge, flux voiture et vélo</h4>
-          <p>Les bornes et les différents équipements sont localisés sur des points précis dans Grenoble. Nous allons donc les représenter par des cercles de différentes couleurs et diamètre, en fonction de leur capacité. Cela permet à l'utilisateur de notre application une identification simple et quasi-immédiate tout en conservant la lisiblité de la carte.
-              L'utilisateur peut cliquer sur ces points pour obtenir plus d'informations, comme le nombre de places disponibles dans un parking ou le nombre de vélos disponibles à une station M'Velo.</p>
-        </div
-      </div>
-
-      <! -- Qualité de l'air -->
-      <div class="span-12 card">
-        <h2>Qualité de l'Air à Grenoble</h2>
-        <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Données ponctuelles : parkings, compteurs vélos, arceaux vélo, bornes de recharge, flux voiture et vélo</h4></li>
+          </ul>
+          <p>Les bornes et les différents équipements sont localisés sur des points précis dans Grenoble. Nous allons donc les représenter par des cercles de différentes couleurs et diamètre, en fonction de leur capacité. Cela permet à l'utilisateur de notre application une identification simple et quasi-immédiate tout en conservant la lisiblité de la carte.</p>
+          <p>L'utilisateur peut cliquer sur ces points pour obtenir plus d'informations, comme le nombre de places disponibles dans un parking ou le nombre de vélos disponibles à une station M'Velo.</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Qualité de l'Air à Grenoble</h4></li>
+          </ul>
           <p> L'indice ATMO est une donnéee quantitative, que l'on va représenter par l'ajout de variation de couleurs (du bleu - vert au rouge) sur notre carte. En effet, en utilisant différentes teintes pour représenter ces mesures, l'utilisateur va pouvoir facilement et simplement analyser les variations de la qualité de l'air à Grenoble.
-
-
-
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Interactions Carte</h4></li>
+          </ul>
+          <p>Nous avons intégré plusieurs types d'interactions sur notre carte. L'utilisateur peut activer ou désactiver différentes couches, zoomer sur une zone en particulier et accéder à des info-bulles en cliquant sur les éléments. Pour obtenir davantage d'informations, il peut également ouvrir un onglet dédié qui détaille les données et donne accès à d'autres graphiques.</p>
+          <p>Ces interactions nous permettent d'avoir une carte plus lisible, informative, et adaptée à des utilisateurs différents.</p>
+        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">3. Choix des diagrammes :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Histogramme : </h4></li>
+          </ul>
+          <p></p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Graphiques linéaires :</h4></li>
+          </ul>
+          <p></p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Nuage de points :</h4></li>
+          </ul>
+          <p></p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><h4>Diagramme en étoile</h4></li>
+          </ul>
+          <p></p>
+          </div>
+      </div>       
 
       <!-- URL données -->
       <div class="span-12 card">
@@ -123,12 +144,13 @@ export default {
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/trottinettes-en-libre-service" target="_blank" rel="noopener">Disponibilité trottinettes</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/velos-en-libre-service" target="_blank" rel="noopener">Disponibilité vélos</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/les_arceaux_a_velo_sur_le_territoire_de_grenoble" target="_blank" rel="noopener">Arceaux vélo</a></li>
-            <li><a href="https://aqicn.org/city/france/rhonealpes/isere/grenoble-les-frenes/" target="_blank" rel="noopener">Qualité de l'air (AQICN)</a></li>
-            <li><a href="https://www.data.gouv.fr/datasets/indice-atmo" target="_blank" rel="noopener">Indice ATMO (data.gouv)</a></li>
-            <li><a href="https://www.atmo-auvergnerhonealpes.fr" target="_blank" rel="noopener">ATMO Auvergne-Rhône-Alpes</a></li>
+            <li><a href="https://aqicn.org/" target="_blank" rel="noopener">AQIcn</a></li>
+            <li><a href="https://sensor.community/en/" target="_blank" rel="noopener">Qualité de l'air</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/places-disponibles-en-temps-reel-des-parkings-relais-p-r" target="_blank" rel="noopener">Parkings relais (disponibilités)</a></li>
             <li><a href="https://grenoble-backoffice.data4citizen.com/dataset/resultats_de_l_observatoire_des_comptages_de_mobilite" target="_blank" rel="noopener">Comptages passages voiture/vélo</a></li>
             <li><a href="https://data.metropolegrenoble.fr/visualisation/table/?id=les-unions-de-quartier" target="_blank" rel="noopener">Quartiers de Grenoble</a></li>
+            <li><a href="https://data.mobilites-m.fr/" target="_blank" rel="noopener">Lignes de transports</a></li>
+            <li><a href="https://react-icons.github.io/react-icons/" target="_blank" rel="noopener">Icones SVG</a></li>
           </ul>
         </div>
       </div>
