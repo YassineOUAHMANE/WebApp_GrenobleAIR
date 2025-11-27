@@ -51,6 +51,10 @@ export default {
   async mount(root) {
     const evData = await loadEVData();
     const totalEVPoints = evData.reduce((s, d) => s + d.pdc, 0);
+    
+    // Calculer la médiane au lieu de la moyenne
+    const sortedPDC = evData.map(d => d.pdc).sort((a, b) => a - b);
+    const medianEVPoints = sortedPDC[Math.floor(sortedPDC.length / 2)];
 
     root.innerHTML = `
         <h2 class="title">${icons.dashboard} Tableau de bord</h2>
@@ -58,7 +62,7 @@ export default {
         <section class="grid">
 
         <div class="span-12 card animate-fade-in" style="animation-delay:0.15s">
-            <h2 style="margin-top:0; margin-bottom: 1.5rem">🎯 Statistiques</h2>
+            <h2 style="margin-top:0; margin-bottom: 1.5rem">Statistiques</h2>
             <div class="kpis" id="kpis-container">
             <div class="kpi">
                 <div class="kpi-icon">🅿️</div>
@@ -76,58 +80,26 @@ export default {
                 <div class="label">Lignes de transport</div>
                 <div class="value" id="kpi-transport">—</div>
             </div>
-            </div>
-        </div>
-
-        <div class="span-12">
-          <div class="kpis">
             <div class="kpi">
               <div class="kpi-icon">⚡</div>
-              <div class="label">Total Stations</div>
+              <div class="label">Stations IRVE</div>
               <div class="value">${evData.length}</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🔌</div>
-              <div class="label">Points de Charge</div>
+              <div class="label">Points de charge</div>
               <div class="value">${totalEVPoints}</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">📊</div>
-              <div class="label">Moyenne Points de charge / Station</div>
-              <div class="value">${(totalEVPoints / evData.length).toFixed(1)}</div>
+              <div class="label">Médiane PDC/Station</div>
+              <div class="value">${medianEVPoints}</div>
             </div>
-          </div>
-        </div>
-
-        <div class="span-6 card animate-fade-in" style="animation-delay:0.3s">
-            <h3 style="margin-top:0">� Explorez les données</h3>
-            <div style="display: grid; gap: 0.75rem;">
-            <a href="#/parking" style="padding: 1rem; background: linear-gradient(135deg, rgba(79,124,255,0.15), transparent); border: 1px solid rgba(79,124,255,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🅿️</span>
-                <div>
-                <div style="font-weight: 600; color: var(--primary);">Stationnement</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Répartition & disponibilité</div>
-                </div>
-            </a>
-            <a href="#/mobilite" style="padding: 1rem; background: linear-gradient(135deg, rgba(41,193,140,0.15), transparent); border: 1px solid rgba(41,193,140,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🚴</span>
-                <div>
-                <div style="font-weight: 600; color: var(--secondary);">Mobilité douce</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Vélos & piétons</div>
-                </div>
-            </a>
-            <a href="#/lignes" style="padding: 1rem; background: linear-gradient(135deg, rgba(255,209,102,0.15), transparent); border: 1px solid rgba(255,209,102,0.3); border-radius: 12px; color: inherit; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                <span style="font-size: 2rem;">🚌</span>
-                <div>
-                <div style="font-weight: 600; color: var(--accent);">Transport public</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Lignes TAG & arrêts</div>
-                </div>
-            </a>
             </div>
         </div>
 
-        <div class="span-12 card animate-fade-in" style="animation-delay:0.6s">
-            <h2 style="margin-top:0;">📈 Vue d'ensemble</h2>
+        <div class="span-12 card animate-fade-in" style="animation-delay:0.3s">
+            <h2 style="margin-top:0;">Vue d'ensemble</h2>
             <div id="summary-chart" class="chart" style="height:360px; min-height: 360px;"></div>
         </div>
     </section>
@@ -170,7 +142,7 @@ export default {
         { label: 'Parkings', count: parkingNumber, color: '#4f7cff', icon: '🅿️' },
         { label: 'Comptages vélos', count: velosCount, color: '#29c18c', icon: '🚴' },
         { label: 'Lignes transport', count: transportCount, color: '#ffd166', icon: '🚌' },
-        // { label: 'Stations IRVE', count: irveCount, color: '#ff6b6b', icon: '⚡' }
+        { label: 'Stations IRVE', count: evData.length, color: '#ff6b6b', icon: '⚡' }
       ];
 
       const chartEl = root.querySelector('#summary-chart');

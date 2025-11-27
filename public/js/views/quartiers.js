@@ -86,44 +86,120 @@ export default {
 		}));
 
 		// Arceaux: stationnement_cyclable has columns 'lon','lat' and 'capacite'
+		const arceaux_matched = [];
+		const arceaux_unmatched = [];
+		let arceaux_total_rows = 0;
 		for(const r of arceauxRows){
-			const lon = r.lon || r.xlong || r.longitude;
-			const lat = r.lat || r.ylat || r.latitude;
+			arceaux_total_rows++;
+			const lonRaw = r.lon || r.xlong || r.longitude;
+			const latRaw = r.lat || r.ylat || r.latitude;
 			const cap = parseFloat(r.capacite) || 0;
-			if(!lon || !lat) continue;
-			for(const s of stats){ if(inside(quartiers[s.id].feature, lon, lat)){ s.arceaux += cap; break } }
+			if(!lonRaw || !latRaw) { arceaux_unmatched.push({ reason: 'no-lonlat', row: r }); continue; }
+			const lon = parseFloat(lonRaw), lat = parseFloat(latRaw);
+			if(!Number.isFinite(lon) || !Number.isFinite(lat)) { arceaux_unmatched.push({ reason: 'parse-fail', lonRaw, latRaw, row: r }); continue; }
+			let matched = false;
+			for(const s of stats){
+				if(inside(quartiers[s.id].feature, lon, lat)){
+					s.arceaux += cap;
+					matched = true;
+					if(arceaux_matched.length < 50) arceaux_matched.push({ lon, lat, qid: s.id, qname: quartiers[s.id].name, cap });
+					break;
+				}
+			}
+			if(!matched){ if(arceaux_unmatched.length < 50) arceaux_unmatched.push({ lon, lat, row: r }); }
 		}
 
 		// Parking places: parking.csv has geo_point_2d as "lat,lon" and nb_places
+		const parking_matched = [];
+		const parking_unmatched = [];
+		let parking_total_rows = 0;
 		for(const r of parkingRows){
-			const p = (r.geo_point_2d || r.geo_point || '').split(',').map(s => s.trim());
-			if(p.length < 2) continue;
+			parking_total_rows++;
+			const p = (r.geo_point_2d || r.geo_point || '').replace(/"/g,'').split(',').map(s => s.trim());
+			if(p.length < 2) { parking_unmatched.push({ reason: 'no-geo', row: r }); continue; }
 			const lat = parseFloat(p[0]), lon = parseFloat(p[1]);
+			if(!Number.isFinite(lon) || !Number.isFinite(lat)) { parking_unmatched.push({ reason: 'parse-fail', p, row: r }); continue; }
 			const places = parseFloat(r.nb_places) || 0;
-			for(const s of stats){ if(inside(quartiers[s.id].feature, lon, lat)){ s.parking_places += places; break } }
+			let matched = false;
+			for(const s of stats){
+				if(inside(quartiers[s.id].feature, lon, lat)){
+					s.parking_places += places;
+					matched = true;
+					if(parking_matched.length < 50) parking_matched.push({ lon, lat, qid: s.id, qname: quartiers[s.id].name, places });
+					break;
+				}
+			}
+			if(!matched){ if(parking_unmatched.length < 50) parking_unmatched.push({ lon, lat, row: r }); }
 		}
 
 		// EV: irve file has coordonneesxy as "lon,lat" and nbre_pdc
+		const ev_matched = [];
+		const ev_unmatched = [];
+		let ev_total_rows = 0;
 		for(const r of evRows){
-			const c = (r.coordonneesxy || r.coordonnees || r.coordonneesxy || '').replace(/"/g,'').split(',').map(s=>s.trim());
-			if(c.length < 2) continue;
+			ev_total_rows++;
+			const cstr = (r.coordonneesxy || r.coordonnees || '').replace(/"/g,'');
+			const c = cstr.split(',').map(s=>s.trim());
+			if(c.length < 2) { ev_unmatched.push({ reason: 'no-coord', row: r }); continue; }
 			const lon = parseFloat(c[0]), lat = parseFloat(c[1]);
+			if(!Number.isFinite(lon) || !Number.isFinite(lat)) { ev_unmatched.push({ reason: 'parse-fail', c, row: r }); continue; }
 			const n = parseFloat(r.nbre_pdc) || parseFloat(r.nb_pdc) || 0;
-			for(const s of stats){ if(inside(quartiers[s.id].feature, lon, lat)){ s.ev_count += n; break } }
+			let matched = false;
+			for(const s of stats){
+				if(inside(quartiers[s.id].feature, lon, lat)){
+					s.ev_count += n;
+					matched = true;
+					if(ev_matched.length < 50) ev_matched.push({ lon, lat, qid: s.id, qname: quartiers[s.id].name, n });
+					break;
+				}
+			}
+			if(!matched){ if(ev_unmatched.length < 50) ev_unmatched.push({ lon, lat, row: r }); }
 		}
 
 		// Bike counters: use tmj_2022 (fallback tmj_2021/2019) and geo_point_2d "lat, lon"
+		const bike_matched = [];
+		const bike_unmatched = [];
+		let bike_total_rows = 0;
 		for(const r of bikeRows){
+			bike_total_rows++;
 			const p = (r.geo_point_2d || '').replace(/"/g,'').split(',').map(s => s.trim());
-			if(p.length < 2) continue;
+			if(p.length < 2) { bike_unmatched.push({ reason: 'no-geo', row: r }); continue; }
 			const lat = parseFloat(p[0]);
 			const lon = parseFloat(p[1]);
+			if(!Number.isFinite(lon) || !Number.isFinite(lat)) { bike_unmatched.push({ reason: 'parse-fail', p, row: r }); continue; }
 			const tmj = parseFloat(r.tmj_2022) || parseFloat(r.tmj_2021) || parseFloat(r.tmj_2019) || 0;
-			for(const s of stats){ if(inside(quartiers[s.id].feature, lon, lat)){ s.bike_tmj += tmj; s.bike_count += 1; break } }
+			let matched = false;
+			for(const s of stats){
+				if(inside(quartiers[s.id].feature, lon, lat)){
+					s.bike_tmj += tmj;
+					s.bike_count += 1;
+					matched = true;
+					if(bike_matched.length < 50) bike_matched.push({ lon, lat, qid: s.id, qname: quartiers[s.id].name, tmj });
+					break;
+				}
+			}
+			if(!matched){ if(bike_unmatched.length < 50) bike_unmatched.push({ lon, lat, row: r }); }
 		}
 
 		// Finalize bike average
 		stats.forEach(s => { s.bike_avg = s.bike_count ? s.bike_tmj / s.bike_count : 0; s.pollution = pollutionGlobal; });
+
+		// Debug: print per-dataset matching summaries and sample points
+		try{
+			console.log('--- Debug: per-dataset mapping summary ---');
+			console.log('Arceaux: rows', arceaux_total_rows, 'matched samples', arceaux_matched.length, 'unmatched samples', arceaux_unmatched.length);
+			console.log('Parking: rows', parking_total_rows, 'matched samples', parking_matched.length, 'unmatched samples', parking_unmatched.length);
+			console.log('EV: rows', ev_total_rows, 'matched samples', ev_matched.length, 'unmatched samples', ev_unmatched.length);
+			console.log('Bike: rows', bike_total_rows, 'matched samples', bike_matched.length, 'unmatched samples', bike_unmatched.length);
+			console.log('Sample matched arceaux (first 20):', arceaux_matched.slice(0,20));
+			console.log('Sample unmatched arceaux (first 20):', arceaux_unmatched.slice(0,20));
+			console.log('Sample matched parking (first 20):', parking_matched.slice(0,20));
+			console.log('Sample unmatched parking (first 20):', parking_unmatched.slice(0,20));
+			console.log('Sample matched ev (first 20):', ev_matched.slice(0,20));
+			console.log('Sample unmatched ev (first 20):', ev_unmatched.slice(0,20));
+			console.log('Sample matched bike (first 20):', bike_matched.slice(0,20));
+			console.log('Sample unmatched bike (first 20):', bike_unmatched.slice(0,20));
+		} catch(e){ console.warn('Debug print failed', e); }
 
 		// Prepare select options (alphabetical order by name)
 		const select = root.querySelector('#quartier-select');

@@ -131,6 +131,7 @@ export default {
 
                     <label><input type="checkbox" id="toggleParking"> ${icons.parking} Parkings <span class="color-box" style="background: #1fa371;"></span><span class="color-box" style="background: #3551d5;"></span></label>
                     <label><input type="checkbox" id="toggleBike"> ${icons.bike} Compteurs de Vélos <span class="color-box" style="background: #e8d400"></span></label>
+                    <label><input type="checkbox" id="toggleBikeParking"> ${icons.bike} Arceaux Vélo <span class="color-box" style="background: red"></span></label>
                     <label><input type="checkbox" id="toggleZFE" checked> ${icons.car} ZFE <span class="color-box" style="background: rgb(190, 3, 252)"></span></label>
                     <label><input type="checkbox" id="toggleTramBus" checked> ${icons.publicTransport} Transports en commun</label>
                     <label><input type="checkbox" id="toggleEV"> ${icons.ev} Bornes de recharge VE <span class="color-box" style="background: green;"></span></label>
@@ -168,7 +169,7 @@ export default {
 
         // Observe map size changes
         const resizeObserver = new ResizeObserver(() => {
-            console.log("Resized", elem.clientWidth, elem.clientHeight)
+            // console.log("Resized", elem.clientWidth, elem.clientHeight)
             width = elem.clientWidth;
             height = elem.clientHeight;
             setupMap();
@@ -186,6 +187,16 @@ export default {
             return [x, y];
         }
 
+        const TILE_SIZE = 256;
+
+        function computeTileRadius(width, height, zoom) {
+            // Number of tiles that fit half the screen in each direction
+            const scale = Math.pow(2, zoom);
+            const radiusX = Math.ceil(width / TILE_SIZE / 2) + 1;  // +1 to cover edges
+            const radiusY = Math.ceil(height / TILE_SIZE / 2) + 1;
+            return Math.max(radiusX, radiusY);
+        }
+
         // Create SVG
         const svg = d3.select("#map")
             .append("svg")
@@ -197,7 +208,7 @@ export default {
         function setupMap(){
             svg.attr("width", width).attr("height", height)
             zoom = d3.zoom()
-                .scaleExtent([1, 8]) // Limit zooming
+                .scaleExtent([1, 8.5]) // Limit zooming
                 .translateExtent([[0, 0], [width, height]]) // Limit panning
                 .on("zoom", zoomed);
             svg.call(zoom);
@@ -250,11 +261,20 @@ export default {
         
         // EV layer
         const evLayer = transformLayer.append("g")
-            .attr("class", "bike-layer")
+            .attr("class", "ev-layer")
             .style("display", "none");
 
         document.getElementById("toggleEV").addEventListener("change", (e) => {
             evLayer.style("display", e.target.checked ? null : "none");
+        });
+        
+        // Bike parking layer
+        const bikeParkingLayer = transformLayer.append("g")
+            .attr("class", "bike-parking-layer")
+            .style("display", "none");
+
+        document.getElementById("toggleBikeParking").addEventListener("change", (e) => {
+            bikeParkingLayer.style("display", e.target.checked ? null : "none");
         });
         
 
@@ -273,7 +293,7 @@ export default {
             // ---- 1. Convert current screen center back to lon/lat ----
             const screenCenter = [width / 2, height / 2];
             const mapCenter = transform.invert(screenCenter); // undo pan/zoom
-            const [lon, lat] = projection.invert(mapCenter);   // geo coords
+            let [lon, lat] = projection.invert(mapCenter);   // geo coords
 
             currentCenter = [lon, lat];
 
@@ -319,7 +339,11 @@ export default {
             const [lon, lat] = currentCenter;
             const [centerTileX, centerTileY] = lonLatToTile(lon, lat, currentZoom);
 
-            const tilesToLoad = getTilesAround(centerTileX, centerTileY, currentZoom, 2);
+            // Compute radius based on current width/height
+            const radius = computeTileRadius(width, height, currentZoom);
+            console.log("Radius ", radius)
+
+            const tilesToLoad = getTilesAround(centerTileX, centerTileY, currentZoom, radius);
 
             const tilesData = await Promise.all(
                 tilesToLoad.map(async d => {
@@ -392,6 +416,7 @@ export default {
             }
             zfeLayer.selectAll("path").attr("stroke-width", 2 * strokeWidth)
             tramBusLayer.selectAll("path").attr("stroke-width", tramBusStrokeWidth)
+            bikeParkingLayer.selectAll("circle").attr("r", 2 * strokeWidth)
         }
 
         // Initial draw
@@ -402,16 +427,16 @@ export default {
             const [lat, lon] = item.coords;
             if (!lat || !lon) return;
         
-            const { color, radius, tooltipHTML, popupText } = options;
+            const { color, radius, tooltipHTML, popupText, strokeWidth } = options;
         
             const scale = 1 + currentZoom - minZoom;
-            const strokeWidth = 1 / scale;
+            const strokeWidthScaled = 1 / scale;
         
             const marker = layer.append("circle")
-                .attr("r", radius * strokeWidth)
+                .attr("r", radius * strokeWidthScaled)
                 .attr("fill", color)
                 .attr("stroke", options.stroke || color)
-                .attr("stroke-width", 2.5 * strokeWidth)
+                .attr("stroke-width", (typeof strokeWidth != 'undefined' ? strokeWidth : 0) * strokeWidthScaled)
                 .attr("opacity", 0.85)
                 .attr("fill-opacity", 0.75)
                 .datum(item);
@@ -421,27 +446,29 @@ export default {
             marker.attr("cx", x).attr("cy", y);
         
             // Hover
-            marker.on("mouseenter", (event, d) => {
-                marker.transition()
-                    .attr("r", Math.min(radius * 1.2, 24) * strokeWidth)
-                    .attr("opacity", 1)
-                    .attr("fill-opacity", 0.9)
-                    .attr("stroke-width", 3 * strokeWidth);
+            if(tooltipHTML){
+                marker.on("mouseenter", (event, d) => {
+                    marker.transition()
+                        .attr("r", Math.min(radius * 1.2, 24) * strokeWidthScaled)
+                        .attr("opacity", 1)
+                        .attr("fill-opacity", 0.9)
+                        .attr("stroke-width", 3 * strokeWidthScaled);
+            
+                    showTooltip(event, tooltipHTML(item), color);
+                });
         
-                showTooltip(event, tooltipHTML(item), color);
-            });
-        
-            marker.on("mouseleave", () => {
-                marker.transition()
-                    .attr("r", radius * strokeWidth)
-                    .attr("opacity", 0.85)
-                    .attr("fill-opacity", 0.75)
-                    .attr("stroke-width", 2.5 * strokeWidth);
-        
-                hideTooltip();
-            });
-        
-            marker.on("click", () => alert(popupText(item)));
+                marker.on("mouseleave", () => {
+                    marker.transition()
+                        .attr("r", radius * strokeWidthScaled)
+                        .attr("opacity", 0.85)
+                        .attr("fill-opacity", 0.75)
+                        .attr("stroke-width", 2.5 * strokeWidthScaled);
+            
+                    hideTooltip();
+                });
+            }
+            if(popupText)
+                marker.on("click", () => alert(popupText(item)));
         }   
         
         function addParkingD3(p) {
@@ -575,6 +602,8 @@ export default {
             console.log("Fetching bike data")
             const raw = await fetchCSV('./data/mobilite_douce/comptages_velos_permanents.csv');
 
+            // console.log(raw)
+
             bikeData = raw
                 .filter(d => d.geo_point_2d)
                 .map(d => {
@@ -624,7 +653,6 @@ export default {
                 // SEM_1, SEM_12 (digits only) - bus
                 return 1.5 * strokeWidth;
             }
-        
             // fallback
             return 1;
         }
@@ -632,11 +660,9 @@ export default {
         async function fetchTramBusData(){
             const raw = await fetchJSON('./data/transport_public/lignes_tag.geojson');
 
-            
-
-            //Separate each line
+            //Separate each line - filter only lines that are in lineColors
             tramBusLayer.selectAll("path")
-                .data(raw.features)
+                .data(raw.features.filter(f => f.properties.CODE in lineColors))
                 .enter()
                 .append("path")
                 .attr("d", d => path({
@@ -653,10 +679,10 @@ export default {
 
         async function fetchEVData(){
             const files = [
-                './data/irve/irve_metropole.csv',
-                './data/irve/irve_gresivaudan.csv',
+                // './data/irve/irve_metropole.csv',
+                // './data/irve/irve_gresivaudan.csv',
                 './data/irve/irve_smmag.csv',
-                './data/irve/irve_pays_voironnais.csv'
+                // './data/irve/irve_pays_voironnais.csv'
             ];
             const raw = [];
             await Promise.all(files.map(async file => {
@@ -682,14 +708,34 @@ export default {
 
         }
 
+        async function fetchBikeParkingData(){
+            console.log("Fetching Bike Parking data")
+            const raw = await fetchCSV('./data/mobilite_douce/arceaux.csv');
 
+            raw.map(d => ({
+                coords: d.geo_point_2d.split(",").map(parseFloat) || [0,0],
+            })).map(d => addCircleMarker(bikeParkingLayer, d, {
+                color: "red",
+                radius: 2,
+                strokeWidth: 0
+            }))
 
-        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFEData(), fetchTramBusData(), fetchEVData()]);
+            // const ZFEPermimeter = featureCollectionFromRows(raw);
+
+            // zfeLayer.append("path")
+            //     .attr("fill", "rgba(190, 3, 252,0.1)")
+            //     .attr("stroke", "rgb(190, 3, 252)")
+            //     .attr("stroke-width", 2)
+            //     .attr("d", path(ZFEPermimeter));
+            console.log(raw)
+        }
+
+        await Promise.all([fetchParkingData(), fetchBikeData(), fetchZFEData(), fetchTramBusData(), fetchEVData(), fetchBikeParkingData()]);
     }
 }
 
 //Tile fetching logic
 async function fetchTileJson(x, y, z) {
-    const path = `/data/geojson/output-${z}-${x}-${y}.geojson`;
+    const path = `./data/geojson/output-${z}-${x}-${y}.geojson`;
     return await fetchJSON(path);
 }
