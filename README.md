@@ -10,42 +10,38 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
 
 ## Data Processing Pipeline
 
-<div align="center">
-
 ```
-┌─────────────────────┐
-│   CSV Data Files    │
-│  (Parking,Transport,│
-│   ZFE, Air Quality) │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Data Cleaning &    │
-│    Normalization    │
-│  - Remove Duplicates│
-│  - Format CSV→JSON  │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Compression &      │
-│    Validation       │
-│  - GZIP (77% red.)  │
-│  - Schema Verify    │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Interactive Display │
-│  - Bubble Charts    │
-│  - Sankey Flows     │
-│  - KPI Cards        │
-│  - Interactive Maps │
-└─────────────────────┘
+                    ┌─────────────────────┐
+                    │   CSV Data Files    │
+                    │  (Parking,Transport,│
+                    │   ZFE, Air Quality) │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │  Data Cleaning &    │
+                    │    Normalization    │
+                    │  - Remove Duplicates│
+                    │  - Format CSV→JSON  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │  Compression &      │
+                    │    Validation       │
+                    │  - GZIP (77% red.)  │
+                    │  - Schema Verify    │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Interactive Display │
+                    │  - Bubble Charts    │
+                    │  - Sankey Flows     │
+                    │  - KPI Cards        │
+                    │  - Interactive Maps │
+                    └─────────────────────┘
 ```
-
-</div>
 
 ## Key Visualizations
 ![Carte Interactive](./public/assets/images/carte.png)
