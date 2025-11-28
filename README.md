@@ -1,15 +1,61 @@
-MOBIL'AIR Grenoble — Interactive Mobility Dashboard
+# MOBIL'AIR Grenoble — Interactive Mobility Dashboard
 
-![MOBIL'AIR Grenoble](./public/assets/logos/logo.svg)
+![Logo](./public/assets/logos/logo.svg)
 
 Short dashboard for exploring parking, transport, bike infrastructure and air quality in Grenoble using open data and interactive visuals.
 
-Essentials:
+## Essentials
+
 - Interactive map (parking, transit lines, EV stations)
 - Key visuals: Bubble chart (Top parking), Sankey (flows), KPIs
 - Dark/Light theme, responsive, client-side processing
 
-Quick start:
+## Data Processing Pipeline
+
+```
+┌─────────────────────┐
+│   CSV Data Files    │
+│  (Parking,Transport,│
+│   ZFE, Air Quality) │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Data Cleaning &    │
+│    Normalization    │
+│  - Remove Duplicates│
+│  - Format CSV→JSON  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Compression &      │
+│    Validation       │
+│  - GZIP (77% red.)  │
+│  - Schema Verify    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Interactive Display │
+│  - Bubble Charts    │
+│  - Sankey Flows     │
+│  - KPI Cards        │
+│  - Interactive Maps │
+└─────────────────────┘
+```
+
+## Key Visualizations
+![Carte Interactive](./public/assets/images/carte.png)
+
+![Sankey Diagram](./public/assets/images/sankey.png)
+
+![Data Pipeline](./public/assets/images/Traitement_données.png)
+
+
+
+## Quick Start
+
 ```bash
 git clone <repo-url>
 cd open-data
@@ -17,44 +63,15 @@ cd open-data
 # open http://localhost:8000
 ```
 
-Image and data paths: `public/assets/images/` and `public/assets/logos/` (logo: `logo.svg`, pipeline image: `Traitement_données.png`).
+## Tech Stack
 
-Tech: Vanilla JS, D3.js v7, SVG/GeoJSON, CSS variables.
+Vanilla JS, D3.js v7, SVG/GeoJSON, CSS variables.
 
-License: Open data / educational use.
+## License
 
-See `GUIDE_PARKING_COMPLET.md` for details.
-# 🚀 MOBIL'AIR Grenoble - Interactive Mobility Analytics Platform
+Open data / educational use.
 
-![MOBIL'AIR Grenoble](./assets/logos/logo.png)
-
-> **Transform urban mobility data into actionable insights for sustainable cities**
-
-A cutting-edge web application that provides real-time, interactive analysis of transportation, parking, air quality, and mobility infrastructure across Grenoble and its metropolitan region.
-
----
-
-## 🎯 Executive Summary
-
-**MOBIL'AIR** is an intelligent mobility dashboard designed to empower three key stakeholders:
-
-- 🏙️ **Citizens & Tourists** → Find parking, bikes, charging stations, and plan journeys
-- 🏛️ **Urban Planners & Decision Makers** → Data-driven insights for sustainable policies
-- 📊 **Analysts** → Deep dive into mobility patterns and correlations
-
-With **8,000+ parking spaces, 200+ transportation data points, and real-time air quality metrics**, this platform transforms raw open data into **visual intelligence**.
-
----
-
-## ✨ Key Features
-
-### 📍 **Interactive Map**
-- Real-time display of 200+ parking facilities with availability
-- Transportation networks (TAG buses & trams) with color-coded routes
-- EV charging stations (IRVE) - 147 stations, 356+ charging points
-- Bike infrastructure: 49 municipalities with cyclable paths
-- Low-Emission Zone (ZFE) visualization with real-time alerts
-- Click-to-explore tooltips with detailed facility information
+See `GUIDE_PARKING_COMPLET.md` for more details.
 
 ### 📊 **Advanced Analytics Dashboard**
 
@@ -91,34 +108,20 @@ With **8,000+ parking spaces, 200+ transportation data points, and real-time air
 - Pedestrian flow analysis
 - Vehicle/bike modal split comparisons
 
-### 🌓 **User Experience**
-- ✅ Dark/Light theme with persistent localStorage
-- ✅ Fully responsive (mobile, tablet, desktop)
-- ✅ Smooth D3.js animations and transitions
-- ✅ Accessible keyboard navigation (ARIA labels)
-- ✅ Performance-optimized (GZIP compression: 77% reduction)
+###  **User Experience**
+-  Dark/Light theme with persistent localStorage
+-  Fully responsive (mobile, tablet, desktop)
+-  Smooth D3.js animations and transitions
+-  Accessible keyboard navigation (ARIA labels)
+-  Performance-optimized (GZIP compression: 77% reduction)
 
 ---
 
-## 📈 Data Processing Pipeline
+## Data Processing Pipeline
 
 ![Traitement des Données](./assets/images/Traitement_données.png)
 
-### **Data Integration Architecture**
 
-```
-RAW DATA SOURCES
-    ↓
-[Cleaning & Normalization]
-    ↓
-[Validation & Deduplication]
-    ↓
-[GZIP Compression (77% reduction)]
-    ↓
-[Schema Harmonization]
-    ↓
-INTERACTIVE VISUALIZATIONS
-```
 
 ### **Data Sources**
 - 📍 **Stationnement**: Grenoble Open Data (real-time, tarification, capacity)
@@ -130,10 +133,10 @@ INTERACTIVE VISUALIZATIONS
 - 🗺️ **Géolocalisation**: GeoJSON, coordinates, boundaries
 
 ### **Quality Assurance**
-✅ Automated data validation  
-✅ Duplicate detection & removal  
-✅ Schema consistency checks  
-✅ Real-time anomaly detection  
+Automated data validation  
+Duplicate detection & removal  
+Schema consistency checks  
+Real-time anomaly detection  
 
 ---
 
@@ -175,7 +178,7 @@ public/
 
 ---
 
-## 📊 Visualizations Explained
+## Visualizations Explained
 
 ### **1. Bubble Chart (Top 10 Parking)**
 - **Purpose**: Identify largest facilities and their tarification model
@@ -204,7 +207,7 @@ public/
 
 ---
 
-## 🎨 Design & UX Highlights
+## Design & UX Highlights
 
 ### **Visual Hierarchy**
 - Clear color coding (green/blue for parking, rainbow for transport)
@@ -219,10 +222,10 @@ Mobile:   Single column stack
 ```
 
 ### **Accessibility**
-- ✅ ARIA labels for screen readers
-- ✅ Keyboard navigation support
-- ✅ High contrast compatible
-- ✅ Focus indicators on interactive elements
+- ARIA labels for screen readers
+- Keyboard navigation support
+- High contrast compatible
+- Focus indicators on interactive elements
 
 ### **Dark Mode**
 - CSS variables dynamically switch colors
@@ -231,37 +234,37 @@ Mobile:   Single column stack
 
 ---
 
-## 📈 Business Impact & Use Cases
+##  Business Impact & Use Cases
 
 ### **For Citizens**
-✅ Find free parking near stations  
-✅ Locate EV charging stations  
-✅ Discover bike infrastructure  
+Find free parking near stations  
+Locate EV charging stations  
+Discover bike infrastructure  
 
 ### **For Urban Planners**
-✅ Analyze parking utilization  
-✅ Understand ZFE impact  
-✅ Identify infrastructure gaps  
+Analyze parking utilization  
+Understand ZFE impact  
+Identify infrastructure gaps  
 
 ### **For Businesses**
-✅ Optimal car-sharing hub placement  
-✅ Mobility trend analysis  
-✅ Infrastructure investment decisions  
+Optimal car-sharing hub placement  
+Mobility trend analysis  
+Infrastructure investment decisions  
 
 ---
 
-## 🚀 Performance Metrics
+## Performance Metrics
 
 | Metric | Target | Status |
 |--------|--------|--------|
-| **Initial Load** | < 2s | ✅ 1.2s |
-| **Data Compression** | > 70% | ✅ 77% GZIP |
-| **First Interaction** | < 100ms | ✅ 45ms |
-| **Responsive** | All devices | ✅ Mobile-first |
+| **Initial Load** | < 2s | 1.2s |
+| **Data Compression** | > 70% | 77% GZIP |
+| **First Interaction** | < 100ms | 45ms |
+| **Responsive** | All devices | Mobile-first |
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### **Quick Start**
 ```bash
@@ -282,14 +285,14 @@ open http://localhost:8000
 - ~2MB of data
 
 ### **Browser Support**
-- ✅ Chrome/Edge 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Mobile browsers
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 - **`GUIDE_PARKING_COMPLET.md`** → Technical deep dive
 - **`PITCH_PARKING_4MIN.md`** → Presentation script
@@ -297,7 +300,7 @@ open http://localhost:8000
 
 ---
 
-## 📊 Data Insights
+## Data Insights
 
 ### **Finding 1: Parking Distribution**
 - 62% free, 38% paid → Opportunity for sustainable pricing
@@ -310,7 +313,7 @@ open http://localhost:8000
 
 ---
 
-## 🔮 Future Roadmap
+## Future Roadmap
 
 - [ ] Real-time WebSocket integration
 - [ ] ML-based demand forecasting
@@ -321,7 +324,7 @@ open http://localhost:8000
 
 ---
 
-## 📜 License & Credits
+##  License & Credits
 
 Open-source project using public open data.  
 Educational & civic technology initiative.
@@ -332,7 +335,7 @@ Educational & civic technology initiative.
 
 <div align="center">
 
-### 🌍 **Building smarter, greener cities through data**
+### **Building smarter, greener cities through data**
 
 *MOBIL'AIR Grenoble | Interactive Mobility Analytics Platform*
 
