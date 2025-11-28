@@ -16,24 +16,24 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
                                     │  (Parking,Transport,│
                                     │   ZFE, Air Quality) │
                                     └──────────┬──────────┘
-                                                │
-                                                ▼
+                                               │
+                                               ▼
                                     ┌─────────────────────┐
                                     │  Data Cleaning &    │
                                     │    Normalization    │
                                     │  - Remove Duplicates│
                                     │  - Format CSV→JSON  │
                                     └──────────┬──────────┘
-                                                │
-                                                ▼
+                                               │
+                                               ▼
                                     ┌─────────────────────┐
                                     │  Compression &      │
                                     │    Validation       │
                                     │  - GZIP (77% red.)  │
                                     │  - Schema Verify    │
                                     └──────────┬──────────┘
-                                                │
-                                                ▼
+                                               │
+                                               ▼
                                     ┌─────────────────────┐
                                     │ Interactive Display │
                                     │  - Bubble Charts    │
@@ -48,7 +48,6 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
 
 ![Sankey Diagram](./public/assets/images/sankey.png)
 
-![Data Pipeline](./public/assets/images/Traitement_données.png)
 
 
 
@@ -65,13 +64,9 @@ cd open-data
 
 Vanilla JS, D3.js v7, SVG/GeoJSON, CSS variables.
 
-## License
 
-Open data / educational use.
 
-See `GUIDE_PARKING_COMPLET.md` for more details.
-
-### 📊 **Advanced Analytics Dashboard**
+### **Advanced Analytics Dashboard**
 
 #### **Parking Module** 
 - **Top 10 Visualization**: Interactive bubble chart showing largest parking facilities
@@ -88,12 +83,13 @@ See `GUIDE_PARKING_COMPLET.md` for more details.
 
 #### **Key Performance Indicators (KPIs)**
 ```
-📊 Total Parking Spaces: 8,000+
-🟢 Free Parking: 5,000+ (62%)
-💳 Paid Parking: 3,000+ (38%)
-🔌 Electric Charging: 200+ points (2.5%)
-🚗 Car-Sharing (Autopartage): 150+ spots
-♿ PMR Accessible: 250+ spaces
+📊 Total Parking Spaces: 12,022
+🟢 Free Parking: 3,012 (25.1%)
+💳 Paid Parking: 9,010 (74.9%)
+🔌 Electric Charging: 43 points
+🚗 Car-Sharing (Autopartage): 52 spots
+♿ PMR Accessible: 214 spaces
+🚲 Bike Parking: 229 spaces
 ```
 
 #### **Transportation Analysis**
@@ -117,7 +113,7 @@ See `GUIDE_PARKING_COMPLET.md` for more details.
 
 ## Data Processing Pipeline
 
-![Traitement des Données](./assets/images/Traitement_données.png)
+![Data Pipeline](./public/assets/images/Traitement_données.png)
 
 
 
@@ -267,7 +263,7 @@ Infrastructure investment decisions
 ### **Quick Start**
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/mobil-air-grenoble.git
+git clone https://github.com/YassineOUAHMANE/WebApp_GrenobleAIR.git
 cd mobil-air-grenoble
 
 # Start local server
@@ -288,15 +284,6 @@ open http://localhost:8000
 - Safari 14+
 - Mobile browsers
 
----
-
-##  Documentation
-
-- **`GUIDE_PARKING_COMPLET.md`** → Technical deep dive
-- **`PITCH_PARKING_4MIN.md`** → Presentation script
-- **`GUIDE_PARKING_SOUTENANCE.md`** → Thesis defense guide
-
----
 
 ## Data Insights
 
@@ -309,18 +296,7 @@ open http://localhost:8000
 ### **Finding 3: Car-Sharing Growth**
 - 150+ spaces, growing trend → Successful mobility model
 
----
 
-## Future Roadmap
-
-- [ ] Real-time WebSocket integration
-- [ ] ML-based demand forecasting
-- [ ] Push notifications (alerts)
-- [ ] Advanced correlation analysis
-- [ ] Community feedback system
-- [ ] Weather data integration
-
----
 
 ##  License & Credits
 
