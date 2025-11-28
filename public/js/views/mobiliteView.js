@@ -1023,11 +1023,11 @@ export default {
                 <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="text-align: left;">
                         <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${vehiclesData.velos}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Vélos électriques</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Vélos électriques disponibles actuellement</div>
                     </div>
                     <div style="text-align: left;">
                         <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.2rem;">${vehiclesData.trotinettes}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Trottinettes électriques</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Trottinettes électriques disponibles actuellement</div>
                     </div>
                 </div>
             `;
