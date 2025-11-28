@@ -16,24 +16,24 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
                                             │  (Parking,Transport,│
                                             │   ZFE, Air Quality) │
                                             └──────────┬──────────┘
-                                                    │
-                                                    ▼
+                                                       │
+                                                       ▼
                                             ┌─────────────────────┐
                                             │  Data Cleaning &    │
                                             │    Normalization    │
                                             │  - Remove Duplicates│
                                             │  - Format CSV→JSON  │
                                             └──────────┬──────────┘
-                                                    │
-                                                    ▼
+                                                       │
+                                                       ▼
                                             ┌─────────────────────┐
                                             │  Compression &      │
                                             │    Validation       │
                                             │  - GZIP (77% red.)  │
                                             │  - Schema Verify    │
                                             └──────────┬──────────┘
-                                                    │
-                                                    ▼
+                                                       │
+                                                       ▼
                                             ┌─────────────────────┐
                                             │ Interactive Display │
                                             │  - Bubble Charts    │
