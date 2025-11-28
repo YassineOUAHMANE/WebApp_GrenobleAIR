@@ -77,5 +77,6 @@ export const lineColors = {
     SEM_C11: "rgb(238,125,0)",
     SEM_C12: "rgb(238,125,0)",
     SEM_C13: "rgb(238,125,0)",
-    SEM_C14: "rgb(238,125,0)"
+    SEM_C14: "rgb(238,125,0)",
+    default: "rgb(0,114,189)"
 };

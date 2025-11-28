@@ -7,6 +7,7 @@ html[data-theme="dark"] {
   
     /* Foreground / UI elements */
     --fg-1: #c2c0bc;  /* icons, secondary text, subtle UI elements */
+    --fg-2: #969695;  /* icons, secondary text, subtle UI elements */
   
     /* Main text */
     --text-1: #e0e0e0; /* readable on dark bg */
@@ -33,7 +34,8 @@ html[data-theme="light"] {
     --bg-3: #e1dfde;
     --bg-4: #bfbebe;
 
-    --fg-1: #a49f9b;
+    --fg-1: #bcbab9;
+    --fg-2: #a49f9b;
 
     --text-1: #444443;
 

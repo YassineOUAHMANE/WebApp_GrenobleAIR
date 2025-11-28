@@ -265,7 +265,7 @@ export default {
                 .attr("width", d => x(d.length) - x(0))
                 .attr("rx", 6)
                 .attr("ry", 6)
-                .attr("fill", d => lineColors[d.properties.CODE] || "#5b8def")
+                .attr("fill", d => lineColors[d.properties.CODE] || lineColors.default)
 
             // -------- Y axis (names) --------
             svg.append("g")
