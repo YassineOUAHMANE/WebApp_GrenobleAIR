@@ -44,25 +44,31 @@ export default {
       <!-- Traitement des Données -->
       <div class="span-12 card">
         <h2>Traitement des Données</h2>
-        <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Sources de données :</h3>
-          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Stationnement:</strong> Données de disponibilité temps réel, capacités, tarification</li>
-            <li><strong>Transport public:</strong> Lignes de transport en commun (TAG), itinéraires</li>
-            <li><strong>Mobilité douce:</strong> Comptages vélos, pistes cyclables, arceaux</li>
-            <li><strong>Véhicules électriques:</strong> Stations de recharge IRVE (Infrastructure de Recharge)</li>
-            <li><strong>Zones ZFE:</strong> Périmètres et axes des zones à faibles émissions</li>
-            <li><strong>Qualité de l'air:</strong> Données de qualité atmosphérique et pollution</li>
-          </ul>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+          <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
+            <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Sources de données :</h3>
+            <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+              <li><strong>Stationnement:</strong> Données de disponibilité temps réel, capacités, tarification</li>
+              <li><strong>Transport public:</strong> Lignes de transport en commun (TAG), itinéraires</li>
+              <li><strong>Mobilité douce:</strong> Comptages vélos, pistes cyclables, arceaux</li>
+              <li><strong>Véhicules électriques:</strong> Stations de recharge IRVE (Infrastructure de Recharge)</li>
+              <li><strong>Zones ZFE:</strong> Périmètres et axes des zones à faibles émissions</li>
+              <li><strong>Qualité de l'air:</strong> Données de qualité atmosphérique et pollution</li>
+            </ul>
+            
+            <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Pipeline de traitement :</h3>
+            <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+              <li><strong>Nettoyage:</strong> Normalisation des formats CSV, suppression des doublons</li>
+              <li><strong>Validation:</strong> Vérification de la cohérence et de la complétude des données</li>
+              <li><strong>Compression:</strong> Optimisation en GZIP (77% de réduction d'espace) pour rapidité de chargement</li>
+              <li><strong>Intégration:</strong> Fusion de sources multiples avec harmonisation des schémas</li>
+              <li><strong>Visualisation:</strong> Présentation interactive via D3.js et cartes interactives</li>
+            </ul>
+          </div>
           
-          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Pipeline de traitement :</h3>
-          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Nettoyage:</strong> Normalisation des formats CSV, suppression des doublons</li>
-            <li><strong>Validation:</strong> Vérification de la cohérence et de la complétude des données</li>
-            <li><strong>Compression:</strong> Optimisation en GZIP (77% de réduction d'espace) pour rapidité de chargement</li>
-            <li><strong>Intégration:</strong> Fusion de sources multiples avec harmonisation des schémas</li>
-            <li><strong>Visualisation:</strong> Présentation interactive via D3.js et cartes interactives</li>
-          </ul>
+          <div style="text-align: center;">
+            <img src="./assets/images/Traitement_données.png" alt="Pipeline de traitement des données" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          </div>
         </div>
       </div>
 
