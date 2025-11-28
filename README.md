@@ -10,6 +10,8 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
 
 ## Data Processing Pipeline
 
+<div align="center">
+
 ```
 ┌─────────────────────┐
 │   CSV Data Files    │
@@ -42,6 +44,8 @@ Short dashboard for exploring parking, transport, bike infrastructure and air qu
 │  - Interactive Maps │
 └─────────────────────┘
 ```
+
+</div>
 
 ## Key Visualizations
 ![Carte Interactive](./public/assets/images/carte.png)
