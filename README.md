@@ -1,3 +1,29 @@
+MOBIL'AIR Grenoble — Interactive Mobility Dashboard
+
+![MOBIL'AIR Grenoble](./public/assets/logos/logo.svg)
+
+Short dashboard for exploring parking, transport, bike infrastructure and air quality in Grenoble using open data and interactive visuals.
+
+Essentials:
+- Interactive map (parking, transit lines, EV stations)
+- Key visuals: Bubble chart (Top parking), Sankey (flows), KPIs
+- Dark/Light theme, responsive, client-side processing
+
+Quick start:
+```bash
+git clone <repo-url>
+cd open-data
+./scripts/start-server.sh
+# open http://localhost:8000
+```
+
+Image and data paths: `public/assets/images/` and `public/assets/logos/` (logo: `logo.svg`, pipeline image: `Traitement_données.png`).
+
+Tech: Vanilla JS, D3.js v7, SVG/GeoJSON, CSS variables.
+
+License: Open data / educational use.
+
+See `GUIDE_PARKING_COMPLET.md` for details.
 # 🚀 MOBIL'AIR Grenoble - Interactive Mobility Analytics Platform
 
 ![MOBIL'AIR Grenoble](./assets/logos/logo.png)
