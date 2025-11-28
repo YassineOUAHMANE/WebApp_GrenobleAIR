@@ -141,15 +141,6 @@ export default {
           </div>
       </div>       
 
-      <!-- Pour aller plus loin ... -->
-      <div class="span-12 card">
-        <h2>Pour aller plus loin ...</h2>
-        <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="margin-top: 0; margin-bottom: 0.5rem;">1. </h3>
-          <p></p>
-        </div>
-      </div>
-
       <!-- URL données -->
       <div class="span-12 card">
         <h2>Sources des Données Utilisées</h2>
@@ -172,6 +163,43 @@ export default {
             <li><a href="https://react-icons.github.io/react-icons/" target="_blank" rel="noopener">Icones SVG</a></li>
           </ul>
         </div>
+      </div>
+
+      <!-- Perspectives et Améliorations -->
+      <div class="span-12 card">
+        <h2>Perspectives et Améliorations Futures</h2>
+        <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary);">
+          
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Nouvelles données à intégrer :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Données météorologiques :</strong> Température, humidité, vitesse du vent pour analyser leur impact sur la mobilité et la qualité de l'air</li>
+            <li><strong>Données capteurs avancées :</strong> Capteurs IoT supplémentaires pour enrichir les mesures de pollution et de flux</li>
+            <li><strong>Données temps réel :</strong> Intégration d'anticipation des risques (pics de pollution, congestion prévue, alertes météo)</li>
+          </ul>
+
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Contrôle qualité et validation :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Tests de contrôle qualité :</strong> Mise en place de tests automatisés pour valider la cohérence et l'intégrité des données</li>
+            <li><strong>Détection d'anomalies :</strong> Algorithmes pour identifier et signaler les données incohérentes ou manquantes</li>
+            <li><strong>Audit de données :</strong> Vérification régulière des sources pour garantir la fiabilité</li>
+          </ul>
+
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Visualisations enrichies :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Graphiques de corrélation :</strong> Nuages de points interactifs permettant de sélectionner différentes variables pour explorer les corrélations (ex: pollution vs flux de circulation)</li>
+            <li><strong>Graphiques comparatifs avancés :</strong> Outils de comparaison multi-dimensionnels entre zones, périodes et modes de transport</li>
+            <li><strong>Prédictions :</strong> Modèles prédictifs basés sur les tendances historiques</li>
+            <li><strong>Heatmaps temporelles :</strong> Visualisation des variations sur 24h, 7j ou 365j</li>
+          </ul>
+
+          <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Collecte de données supplémentaires :</h3>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Expansion des sources :</strong> Nous cherchons activement à intégrer plus de données auprès des fournisseurs (collectivités, entreprises de mobilité, stations météo)</li>
+            <li><strong>Demandes aux partenaires :</strong> Travail en collaboration avec la métropole de Grenoble, TAG, la mairie pour obtenir des datasets plus complets et détaillés</li>
+            <li><strong>API temps réel :</strong> Connexion directe aux APIs pour actualiser les données en continu</li>
+          </ul>
+
+          
       </div>
 
     </section>
