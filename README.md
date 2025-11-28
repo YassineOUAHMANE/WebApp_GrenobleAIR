@@ -1,7 +1,5 @@
 # MOBIL'AIR Grenoble — Interactive Mobility Dashboard
 
-![Logo](./public/assets/logos/logo.svg)
-
 Short dashboard for exploring parking, transport, bike infrastructure and air quality in Grenoble using open data and interactive visuals.
 
 ## Essentials
