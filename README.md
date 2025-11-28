@@ -288,13 +288,13 @@ open http://localhost:8000
 ## Data Insights
 
 ### **Finding 1: Parking Distribution**
-- 62% free, 38% paid → Opportunity for sustainable pricing
+- 25.1% free, 74.9% paid → High-demand market, sustainable pricing in effect
 
 ### **Finding 2: EV Infrastructure Gap**
-- Only 2.5% EV charging → Priority expansion needed
+- Only 43 charging points across 12,022 spaces (0.36%) → Critical expansion needed
 
 ### **Finding 3: Car-Sharing Growth**
-- 150+ spaces, growing trend → Successful mobility model
+- 52 spaces available → Emerging micro-mobility alternative to traditional parking
 
 
 
